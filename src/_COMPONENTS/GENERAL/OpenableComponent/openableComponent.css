@@ -1,0 +1,28 @@
+.openable {
+    max-height: 1500px;
+    transition: all 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+.openable .arrow {
+    cursor: pointer;
+}
+
+.closed {
+    transition: none;
+    max-height: 15px !important;
+}
+
+.openable.no-label.closed {
+    max-height: 0px !important;
+}
+
+.rotate-arrow {
+    transform: rotate(180deg);
+}
+
+.open-label {
+    color: rgba(0, 0, 0, 0.9);
+    text-decoration: underline;
+    /* text-decoration-style: dotted; */
+}

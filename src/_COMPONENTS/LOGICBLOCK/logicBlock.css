@@ -1,0 +1,107 @@
+.logic-blocks-container {
+    margin: 25px 0;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.block-container {
+    background-color: white;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 10px);
+}
+
+.block-container:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.fields-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.block-fields {
+    display: flex;
+    align-items: center;
+    /* flex-direction: column; */
+    flex-wrap: wrap;
+    gap: 5px;
+    position: relative;
+}
+
+.add-new-field {
+    transition: opacity 0.2s;
+    text-decoration: underline;
+    white-space: nowrap;
+    cursor: pointer;
+    height: 0px;
+
+    opacity: 0;
+    position: static;
+}
+
+.block-container:hover .add-new-field {
+    opacity: 1;
+    position: static;
+    height: 20px;
+}
+
+.logic-blocks-container:last-child:hover .add-new-block {
+    opacity: 1;
+    position: static;
+}
+
+
+.variable-container {
+    position: relative;
+    padding: 7px 12px;
+    border-radius: var(--border-radius-1);
+    max-width: 175px;
+    min-width: 100px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    background-color: white;
+}
+
+.delete-variable {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    color: var(--w2p-woo-main-color);
+    right: 4px;
+    cursor: pointer;
+}
+
+.delete-block {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    color: var(--w2p-woo-main-color);
+    right: 4px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 600;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    padding-right: 10px;
+    margin-right: 10px;
+}
+
+.variable-container>*:not(.delete-variable) {
+    text-align: center;
+    width: 100%;
+}

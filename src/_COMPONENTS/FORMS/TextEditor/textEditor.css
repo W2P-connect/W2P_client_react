@@ -1,0 +1,21 @@
+.public-DraftStyleDefault-block {
+    margin: 0 !important;
+}
+
+.rdw-editor-toolbar {
+    padding: 0 !important;
+}
+
+.rdw-option-wrapper {
+    margin: 0px !important;
+}
+
+.rdw-editor-toolbar>div {
+    margin: 0 !important;
+}
+
+.rdw-editor-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 3px;
+    border-radius: var(--border-radius-1);
+}

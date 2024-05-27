@@ -1,0 +1,41 @@
+.w2p-datalist-container {
+    position: relative;
+}
+
+.w2p-datalist {
+    position: absolute;
+    z-index: -1;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+    box-shadow: 0 0 50px 2px rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius-1);
+    max-height: 300px;
+    overflow: auto;
+}
+
+.w2p-datalist div:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.w2p-datalist div {
+    cursor: pointer;
+    padding: 7px 0;
+}
+
+.w2p-datalist div:hover,
+.w2p-datalist div.selected {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.w2p-datalist-container:focus .w2p-datalist,
+.w2p-datalist:hover,
+.w2p-datalist-container:has(*:focus) .w2p-datalist {
+    opacity: 1;
+    z-index: 99;
+}

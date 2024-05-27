@@ -1,0 +1,40 @@
+.pagination-actions {
+    border: 1px solid rgba(9, 9, 11, .2);
+    box-shadow: var(--box-shadow-1);
+    border-radius: 1rem;
+    overflow: hidden;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    height: 40px;
+
+}
+
+.pagination-actions input:focus-visible {
+    outline: none;
+}
+
+.pagination-actions input {
+    border-left: none !important;
+    border-bottom: none !important;
+    border-top: none !important;
+    border-radius: 0 !important;
+}
+
+.pagination-actions * {
+    border: none;
+    color: black;
+    border-radius: 0;
+    height: 100%;
+    width: 33.33%;
+    text-align: center;
+    align-self: stretch;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.pagination-actions *:not(:last-child) {
+    border-right: 1px solid rgba(9, 9, 11, .2);
+}

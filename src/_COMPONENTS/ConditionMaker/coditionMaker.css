@@ -1,0 +1,34 @@
+.condition-maker {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-weight: 500;
+    /* appearance: none !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important; */
+}
+
+.condition-maker select:hover {
+    color: black
+}
+
+.condition-maker select,
+.condition-maker input {
+    border: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: var(--border-radius-1) !important;
+    background: rgba(0, 0, 0, 0.07);
+}
+
+.condition-maker select:focus,
+.condition-maker input:focus,
+.condition-maker select:focus-visible,
+.condition-maker input:focus-visible {
+    outline: none !important;
+    border-color: rgba(0, 0, 0, 0.6) !important;
+    color: unset !important;
+    box-shadow: none !important;
+}

@@ -1,0 +1,40 @@
+.w2p-input {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    position: relative;
+}
+
+.w2p-input-label {
+    font-size: 0.75rem;
+    color: var(--w2p-primary-color);
+    font-weight: 700;
+    position: relative;
+    top: 0.5rem;
+    margin: 0px 30px 0 10px;
+    padding: 0 5px;
+    width: -moz-fit-content;
+    width: fit-content;
+    /* background: white; */
+    background-color: rgb(255, 255, 255);
+}
+
+.w2p-input input[type=text] {
+    padding: 11px 10px !important;
+    font-size: 0.75rem;
+    border: var(--border-1);
+    border-radius: 5px;
+    background: white;
+}
+
+.w2p-input input[type=text]:focus {
+    outline: none;
+}
+
+.w2p-input input {
+    width: 100%;
+}
+
+.required-star {
+    color: rgb(160, 0, 0)
+}

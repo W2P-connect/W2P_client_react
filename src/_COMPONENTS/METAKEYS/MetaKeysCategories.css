@@ -1,0 +1,32 @@
+.meta-keys-container {
+    width: 100%;
+}
+
+.meta-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.meta-container .meta-key {
+    padding: 7px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius-1);
+    cursor: pointer;
+    text-align: center;
+}
+
+.meta-key .meta-key-value {
+    font-weight: 500;
+}
+
+.meta-key .meta-key-description {
+    font-weight: 300;
+}
+
+.meta-key .meta-key-example {
+    font-style: italic;
+    border-top: 1px solid rgba(0,0,0,0.2);
+    margin-top: 5px;
+    padding-top: 5px;
+}

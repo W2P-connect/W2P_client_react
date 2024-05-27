@@ -1,0 +1,26 @@
+.w2p-nav-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border-bottom: 1px solid var(--fith-color); */
+    column-gap: 32px;
+    margin-bottom: 47px;
+    flex-wrap: wrap;
+}
+
+.w2p-navigation-button {
+    padding: 5px 1px;
+    color: var(--third-color);
+    font-size: 16px !important;
+    font-weight: 600;
+    cursor: pointer;
+    /* transition: all 0.2s ease-in-out; */
+    border-bottom: 3px solid rgba(255, 255, 255, 0);
+
+}
+
+.w2p-navigation-button.active {
+    /* padding: 5px 20px; */
+    color: var(--w2p-primary-color);
+    border-bottom: 3px solid var(--w2p-primary-color);
+}
