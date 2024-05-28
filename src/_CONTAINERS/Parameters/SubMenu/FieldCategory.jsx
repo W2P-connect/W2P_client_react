@@ -45,7 +45,10 @@ export default function FieldCategory({ category }) {
 
   useEffect(() => {
     if (searchField) {
-      setFieldsList(_ => appData.parameters.pipedrive[`${category}Fields`].filter(field => field.name.includes(searchField)))
+      setFieldsList(_ =>
+        appData.parameters.pipedrive[`${category}Fields`]
+          .filter(field => field.name.includes(searchField))
+      )
     } else {
       setFieldsList(appData.parameters.pipedrive[`${category}Fields`])
     }
@@ -71,7 +74,7 @@ export default function FieldCategory({ category }) {
             )}
         </div>
 
-        {hookToShow && hookToShow.enabled
+        {hookToShow && hookToShow.id
           ? <div key={hookToShow.key}>
             <div className='w2p-instructions'>
               <p>{translate(
@@ -97,8 +100,8 @@ export default function FieldCategory({ category }) {
                   ? <div className='flex column m-t-25 gap-1'>
                     {filedsList
                       .filter(field => !field.enabled)
-                      .map((field, index) =>
-                        <PipepdriveField pipedriveField={field} key={field.id} relatedHook={hookToShow} />
+                      .map(field =>
+                        <PipepdriveField pipedriveFieldId={field.id} key={field.id} relatedHook={hookToShow} />
                       )}
                   </div>
                   : <p>{searchField
@@ -114,7 +117,10 @@ export default function FieldCategory({ category }) {
               onClick={e => getCategoryFields(e)}
               className='light-button m-t-25'
             >
-              {translate("Load custom fields")}
+              {filedsList?.length
+                ? translate("Reload custom fields")
+                : translate("Load custom fields")
+              }
             </button>
           </div>
           : <h3 className='center m-t-25'>{translate("Select an event to configure it")}</h3>}

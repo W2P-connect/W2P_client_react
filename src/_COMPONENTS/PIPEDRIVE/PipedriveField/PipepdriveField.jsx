@@ -4,37 +4,26 @@ import { isLogicBlockField, useHookSelector } from '../../../_CONTAINERS/Paramet
 import Skeleton from '../../GENERAL/Skeleton/Skeleton'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox'
 import { translate } from '../../../translation'
-import { PopupContext } from '../../../_CONTEXT/PopupContext'
 import { AppDataContext } from '../../../_CONTEXT/appDataContext'
 import { useCallPipedriveApi } from '../../../helpers'
-import { NotificationContext } from '../../../_CONTEXT/NotificationContext'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
-import { useAppLocalizer } from '../../../_CONTEXT/AppLocalizerContext';
 import { linkableFields } from '../../../appConstante'
 
-export default function PipepdriveField({ pipedriveField, relatedHook }) {
-  const appLocalizer = useAppLocalizer()
+export default function PipepdriveField({ pipedriveFieldId, relatedHook }) {
 
   const { getHookFieldFromPipedrive, setHookField } = useHookSelector()
   const { appData, setAppData } = useContext(AppDataContext)
-  const { addPopupContent, showPopup } = useContext(PopupContext)
-  const { addNotification } = useContext(NotificationContext)
   const callPipedriveApi = useCallPipedriveApi()
 
   const [field, setField] = useState(null)
 
+
   useEffect(() => {
-    const hookFromPipedrive = getHookFieldFromPipedrive(relatedHook.id, pipedriveField)
-
-    setField(hookFromPipedrive)
-
-    // hookFromPipedrive && setField({
-    //   ...hookFromPipedrive,
-    //   required: appLocalizer.CONSTANTES.W2P_REQUIRED_FIELDS[relatedHook.category]
-    //     .includes(pipedriveField.key)
-    // })
-  }, [])
+    pipedriveFieldId === 12462 && console.log(relatedHook)
+    const hookFromPipedrive = getHookFieldFromPipedrive(relatedHook.id, pipedriveFieldId)
+    setField(prv => hookFromPipedrive)
+  }, [appData.parameters.pipedrive[`${relatedHook.category}Fields`]])
 
   useEffect(() => {
     if (field) {
@@ -46,11 +35,6 @@ export default function PipepdriveField({ pipedriveField, relatedHook }) {
     setField(prvField => ({ ...prvField, [key]: value }))
   }
 
-  // useEffect(() => {
-  //   if (appLocalizer.CONSTANTES.W2P_REQUIRED_FIELDS[relatedHook.category].includes(pipedriveField.key)) {
-  //     updateField("enabled", true)
-  //   }
-  // }, [])
 
 
   const loadPipedriveUsers = (e) => {
@@ -126,7 +110,7 @@ export default function PipepdriveField({ pipedriveField, relatedHook }) {
   }
 
   return (
-    <div className='pipedrive-field' key={pipedriveField.id}>
+    <div className='pipedrive-field' key={pipedriveFieldId}>
       {field
         ? <>
           <div className='space-between flex-center'>
@@ -135,12 +119,12 @@ export default function PipepdriveField({ pipedriveField, relatedHook }) {
                 checked={field.enabled}
                 onChange={(value) => updateField("enabled", value)}
               />
-              {pipedriveField.important_flag
+              {field.important_flag
                 ? <span>🚨</span>
                 : null}
-              {`${pipedriveField.name} `}
+              {`${field.name} `}
               (<span className='subtext'>
-                {field.key} - {pipedriveField.field_type}
+                {field.key} - {field.field_type}
               </span>)
             </div>
             {/* <div className='italic'>

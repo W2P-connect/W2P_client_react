@@ -15,8 +15,8 @@ export default function HookSelector({ parentHook, category, selector, active })
 
     useEffect(() => {
         const paramHook = getHookFromParent(parentHook, category)
-        setHook(paramHook)
-    }, [parentHook])
+        setHook(prv => paramHook)
+    }, [parentHook, appData.parameters.pipedrive[`${category}Fields`]])
 
     useMemo(() => {
         const paramHook = getHookFromParent(parentHook, category)
