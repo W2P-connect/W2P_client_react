@@ -45,6 +45,8 @@ function MenuContextProvider(props) {
             setMenuContent(<div>Component not found</div>);
         }
 
+        menu && setCurrentMenu(menu)
+
     }, [])
 
     useEffect(() => {
@@ -55,7 +57,7 @@ function MenuContextProvider(props) {
         submenu && setCurrentSubMenuPage(submenu)
     }, [])
 
-    const setCurrentMenuPage = (menu) => {
+    const setCurrentMenuPage = (menu, subMenu = null) => {
         const url = new URL(window.location.href);
         url.searchParams.set('menu', menu);
         window.history.pushState({}, '', url);
@@ -69,7 +71,7 @@ function MenuContextProvider(props) {
         }
 
         setCurrentMenu(menu)
-        setCurrentSubMenuPage(null)
+        setCurrentSubMenuPage(subMenu)
     };
 
     const setCurrentSubMenuPage = (subMenu) => {

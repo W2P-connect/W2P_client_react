@@ -15,7 +15,7 @@ export default function MainMenu() {
         if (item.uri) {
             window.location.href = item.uri;
         }
-        item.slug && setCurrentMenuPage(item.slug);
+        item.slug && setCurrentMenuPage(item.slug, item.defaultSubmenu);
     };
 
     const menuItems = [
@@ -23,6 +23,7 @@ export default function MainMenu() {
             name: translate("Settings"),
             slug: "settings",
             active: currentMenu === "settings",
+            defaultSubmenu: "general",
         },
         {
             name: translate("Orders"),
@@ -35,6 +36,8 @@ export default function MainMenu() {
             active: currentMenu === "history",
         },
     ]
+
+    console.log(currentMenu);
 
     return (
         <>

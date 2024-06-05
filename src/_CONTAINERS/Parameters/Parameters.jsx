@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+ import React, { useContext, useEffect } from 'react'
 import { translate } from '../../translation'
 import NavBar from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { AppDataContext } from '../../_CONTEXT/appDataContext'

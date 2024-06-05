@@ -22,6 +22,9 @@ export const emptyLocalizer = {
             domain: "w2p-bis.local",
             api_key: "1a5f8cf17e1207f3",
             hookList: [],
+            deals: {},
+            organizations: {},
+            persons: {},
         }
     }
 }
@@ -38,6 +41,11 @@ function AppDataContextProvider(props) {
         setAppData(deepMerge(deepCopy(emptyLocalizer), appLocalizer))
     }, [])
 
+
+    useEffect(() => {
+        console.log('appData', appData);
+    }, [appData])
+
     const updateAppDataKey = (keyPath, value) => {
         setAppData(prevAppData => {
             const newAppData = { ...prevAppData };
@@ -45,7 +53,7 @@ function AppDataContextProvider(props) {
             return newAppData;
         });
     }
-    
+
     const fieldsCategory = [
         {
             slug: "organization",

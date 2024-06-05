@@ -62,7 +62,6 @@ export default function Query({ parentQuery }) {
 
   return (
     <div>
-      {console.log(query)}
       {query ? (
         <div
           className={`w2p-query pointer`}
@@ -134,12 +133,12 @@ export default function Query({ parentQuery }) {
                   <div className='strong-1'>{translate("Trace back")}</div>
                   {query.additional_datas.traceback
                     ?.sort((a, b) => a.time - b.time)
-                    .map(trace => {
+                    .map((trace, index) => {
 
                       var parts = trace.time.split(" ");
                       var seconds = parseFloat(parts[1]);
 
-                      return <div className='m-b-10'>
+                      return <div key={index} className='m-b-10'>
                         <div className='strong-1'>{new Date(seconds * 1000).toLocaleString()} : {translate(trace.step)}</div>
                         <div>
                           {trace.success ? "[Success]" : "[Error]"} {trace.message}

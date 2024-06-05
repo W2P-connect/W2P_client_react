@@ -67,7 +67,7 @@ export default function Connexion() {
 
       <form onSubmit={e => checkW2pAPI(e)}>
         <h2>W2P connexion</h2>
-        <p>
+        <p className='m-b-10'>
           {translate(`To configure your API keys and your domain, 
           connect to your customer area on our site https://w2p.com`)}
         </p>
@@ -126,7 +126,7 @@ export default function Connexion() {
       </form >
       <div className='m-t-100'>
         <h2>Settings</h2>
-        <p>{translate(`If you encounter problems with your settings 
+        <p className='m-b-10'>{translate(`If you encounter problems with your settings 
         - especially if your API key no longer targets the same company 
         - we recommend that you reset your settings`)}</p>
         <div className='flex gap-1'>

@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { AppDataContext } from "../../_CONTEXT/appDataContext"
 import { v4 as uuidv4 } from 'uuid';
+import { unusableFieldsKey } from "../../appConstante";
 
 export const usePipedriveFields = () => {
 
@@ -180,10 +181,6 @@ export const useHookSelector = () => {
     }
 }
 
-const unusableFieldsKey = [
-    "id", "org_id", "people_count", "open_deals_count", "add_time", "update_time", "visible_to"
-]
-
 export const filterUnusableFields = (fieldList) => {
     return fieldList
 }
@@ -199,6 +196,7 @@ export const isFieldTypeText = (fieldType) => {
         || fieldType === "address"
         || fieldType === "phone"
         || fieldType === "text"
+        || fieldType === "varchar_options"
 }
 
 export const isLogicBlockField = (field) => {

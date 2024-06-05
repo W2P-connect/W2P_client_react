@@ -57,7 +57,7 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
                 {logicBlocks.map((block, index) => {
                     return <div key={block.id}
                         style={{ opacity: cantBeActive(block, index) ? 0.5 : 1 }}
-                        className='w-100-p'
+                        className='w-[100%]'
                     >
                         <VariableBlock
                             defautBlock={{ ...block, index: index }}

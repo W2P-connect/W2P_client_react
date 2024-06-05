@@ -124,13 +124,16 @@ export default function VariableBlock({ defautBlock, setter, deleter }) {
     return (
         <div className='block-container'>
             <div className="flex">
-                <div
-                    className='delete-block'
-                    onClick={_ => deleteBlock()}
-                >×</div>
+                {deleter
+                    ? <div
+                        className='delete-block'
+                        onClick={_ => deleteBlock()}
+                    >×</div>
+                    : null}
                 <div>
                     <div className='italic'>{block.index === 0
-                        ? translate("Preferred block")
+                        // ? translate("Preferred block")
+                        ? null
                         : <span>{translate("Backup block")} {block.index}</span>
                     }
                     </div>

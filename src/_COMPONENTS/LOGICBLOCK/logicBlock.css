@@ -60,12 +60,14 @@
     position: static;
 }
 
+.variable-container .w2p-input {
+    max-width: 130px !important;
+}
 
 .variable-container {
     position: relative;
     padding: 7px 12px;
     border-radius: var(--border-radius-1);
-    max-width: 175px;
     min-width: 100px;
     height: 44px;
     display: flex;

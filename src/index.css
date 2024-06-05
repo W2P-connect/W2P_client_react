@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #w2p-app {
     /* background: #f0f0f1; */
     /* color: #3c434a; */
@@ -10,13 +14,13 @@
 
 #w2p-app * {
     box-sizing: border-box;
-    /* font-family: Inter, sans-serif; */
+    font-family: Inter, sans-serif;
 }
 
 
 
 #wpcontent::after {
-    content: "";
+    content: "ok";
     position: absolute;
     top: 0;
     left: 0;
@@ -72,7 +76,7 @@
 /*********/
 
 :root {
-    --w2p-primary-color: rgba(0, 0, 0);
+    --w2p-primary-color: rgb(30, 30, 30);
     --w2p-secondary-color: rgb(77 124 15/1);
     --w2p-third-color: rgba(163, 230, 53, .2);
     --w2p-woo-main-color: #674399;
@@ -98,6 +102,7 @@
 #w2p-app h2 {
     font-size: 22px;
     font-weight: 500;
+    margin-bottom: 25px;
 }
 
 #w2p-app h5 {
@@ -119,6 +124,7 @@
 
 #w2p-app input[type="checkbox"] {
     width: 1rem;
+    min-width: 16px;
     height: 1rem;
     background-color: rgb(30, 30, 30);
 }
@@ -292,6 +298,7 @@ input.flat-input:focus-visible {
     padding: 7px 15px 7px 35px;
     border-radius: var(--border-radius-1);
     position: relative;
+    margin-bottom: 10px;
 }
 
 .w2p-instructions:before {
@@ -356,7 +363,8 @@ input.flat-input:focus-visible {
     flex-wrap: wrap;
 }
 
-#w2p-app .flex-center {
+#w2p-app .flex-center,
+#w2p-app .items-center {
     display: flex;
     align-items: center;
 }
@@ -422,9 +430,10 @@ a.strong-button:hover {
     background-color: rgb(50, 50, 50);
 }
 
+/* 
 button:hover {
     background-color: rgb(242, 242, 242);
-}
+} */
 
 button {
     font-size: 14px;
@@ -457,7 +466,7 @@ button.submitting {
 
 /****************** WIDTH *************************/
 
-.w-100-p {
+.w-full {
     width: 100%;
 }
 

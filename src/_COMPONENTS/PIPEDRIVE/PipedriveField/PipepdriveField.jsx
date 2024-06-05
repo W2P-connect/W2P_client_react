@@ -8,9 +8,9 @@ import { AppDataContext } from '../../../_CONTEXT/appDataContext'
 import { useCallPipedriveApi } from '../../../helpers'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
-import { linkableFields } from '../../../appConstante'
+import { additionalFieldsData, linkableFields } from '../../../appConstante'
 
-export default function PipepdriveField({ pipedriveFieldId, relatedHook }) {
+export default function PipepdriveField({ pipedriveFieldId, relatedHook, priority }) {
 
   const { getHookFieldFromPipedrive, setHookField } = useHookSelector()
   const { appData, setAppData } = useContext(AppDataContext)
@@ -119,7 +119,7 @@ export default function PipepdriveField({ pipedriveFieldId, relatedHook }) {
                 checked={field.enabled}
                 onChange={(value) => updateField("enabled", value)}
               />
-              {field.important_flag
+              {priority
                 ? <span>🚨</span>
                 : null}
               {`${field.name} `}
@@ -138,6 +138,10 @@ export default function PipepdriveField({ pipedriveFieldId, relatedHook }) {
               {field.required
                 ? <p>{translate(`This field is required for creating a ${relatedHook.category}.
                 If the value is null, no call will be made to Pipedrive for creation`)}</p>
+                : null}
+
+              {additionalFieldsData[relatedHook.category]?.[field.key]?.info
+                ? <p>{additionalFieldsData[relatedHook.category][field.key].info}</p>
                 : null}
 
               {/* <h5 className='strong-1 m-t-25 m-b-25'>
@@ -261,11 +265,15 @@ export default function PipepdriveField({ pipedriveFieldId, relatedHook }) {
               }
 
               <div>
+                <h5 className='strong-1 m-t-40 m-b-10'>
+                  {translate("Condition")}
+                </h5>
+                <label>
+                  {translate("Do not update if there is already a value for this field on Pipedrive")}
+                </label>
                 {isLogicBlockField(field)
                   ? <>
-                    <h5 className='strong-1 m-t-40 m-b-10'>
-                      {translate("Condition")}
-                    </h5>
+
                     <ConditionMaker
                       condition={field.condition}
                       setter={condition => setField(prv => ({ ...prv, condition: condition }))}

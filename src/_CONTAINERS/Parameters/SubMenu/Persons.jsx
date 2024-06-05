@@ -17,6 +17,11 @@ export default function Persons() {
                     <input type="checkbox" className='m-r-10' />
                     Use user wordpress Email as name if name is not defined during the event (recommanded)
                 </label>
+                
+                <label className='pointer flex align-center'>
+                    <input type="checkbox" className='m-r-10' />
+                    Use user wordpress Email as name if name is not defined during the event (recommanded)
+                </label>
             </form>
 
             <h2 className='m-t-50'>{translate("Events settings")}</h2>
