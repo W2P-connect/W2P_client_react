@@ -10,7 +10,7 @@ export default function Organizations() {
   const [options, setOptions] = useState(null)
 
   useEffect(() => {
-    setOptions(appData.parameters.w2p.deals)
+    setOptions(appData.parameters.w2p.organizations)
   }, [])
 
   useEffect(() => {

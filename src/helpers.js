@@ -116,3 +116,16 @@ export function deepCopy(obj) {
 export const removeEmptyProperties = (object) => {
     return Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== ""));
 }
+
+export const removeDuplicatesObjectInArray = (key, arr) => {
+    const uniqArrayKey = []
+    return arr.filter(item => {
+        if (!uniqArrayKey.includes(item[key])) {
+            uniqArrayKey.push(item[key])
+            return true
+        } else {
+            return false
+        }
+    })
+}
+

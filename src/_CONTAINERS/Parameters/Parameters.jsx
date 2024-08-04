@@ -1,13 +1,15 @@
- import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { translate } from '../../translation'
 import NavBar from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
-import { AppDataContext } from '../../_CONTEXT/appDataContext'
+import { AppDataContext, formatParameters } from '../../_CONTEXT/appDataContext'
 import { MenuContext } from '../../_CONTEXT/MenuContext'
 
 export default function Parameters() {
 
-  const { saveParameters, apiTest } = useContext(AppDataContext)
+  const { saveParameters, apiTest, appData, appDataInit } = useContext(AppDataContext)
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
+
+  const disableSaveParameters = JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))
 
   useEffect(() => {
     if (!currentSubMenu) {
@@ -57,9 +59,18 @@ export default function Parameters() {
           {translate("API Test")}
         </button>
         <button
-          onClick={e => saveParameters(e)}
+          onClick={e => saveParameters(e, null, true)}
           type='button'
           className='strong-button'
+          disabled={disableSaveParameters}
+          style={{
+            opacity: disableSaveParameters
+              ? 0.6
+              : 1,
+            cursor: disableSaveParameters
+              ? 'default'
+              : 'pointer'
+          }}
         >
           {translate("Save settings")}
         </button>

@@ -22,11 +22,44 @@ export const emptyLocalizer = {
             domain: "w2p-bis.local",
             api_key: "1a5f8cf17e1207f3",
             hookList: [],
-            deals: {},
-            organizations: {},
-            persons: {},
+            deals: {
+                amountsAre: null,
+                createNew: true,
+                searchBeforeCreate: true,
+            },
+            organizations: {
+                autoCreate: false,
+                searchBeforeCreate: true,
+
+            },
+            persons: {
+                linkToOrga: true,
+                defaultEmailAsName: true,
+            },
         }
     }
+}
+
+export const formatHook = (hook) => {
+    const formatedHook = { ...hook }
+    formatedHook.fields = formatedHook.fields.filter(field =>
+        field.enabled &&
+        (field.value !== undefined
+            && (Array.isArray(field.value)
+                ? field.value.length > 0
+                : field.value !== '')));
+
+    return formatedHook
+}
+
+export const formatParameters = (parameters) => {
+
+    const formatedParameters = { ...parameters }
+    formatedParameters.w2p.hookList =
+        formatedParameters.w2p.hookList
+            .filter(hook => hook.fields.length)
+            .map(hook => formatHook(hook))
+    return formatedParameters
 }
 
 function AppDataContextProvider(props) {
@@ -34,17 +67,19 @@ function AppDataContextProvider(props) {
     const { addNotification } = useContext(NotificationContext)
     const appLocalizer = useAppLocalizer()
     const [appData, setAppData] = useState({ ...emptyLocalizer });
+
+    const [appDataInit, setAppDataInit] = useState({ ...emptyLocalizer }); //Only to check changes
+
     const callApi = useCallApi()
 
     useEffect(() => {
-        console.log('appLocalizer', appLocalizer);
-        setAppData(deepMerge(deepCopy(emptyLocalizer), appLocalizer))
+        setAppData(_ => deepMerge(deepCopy(emptyLocalizer), appLocalizer))
+        setAppDataInit(_ => deepMerge(deepCopy(emptyLocalizer), appLocalizer))
     }, [])
 
-
-    useEffect(() => {
-        console.log('appData', appData);
-    }, [appData])
+    // useEffect(() => {
+    //     console.log('appData', appData);
+    // }, [appData])
 
     const updateAppDataKey = (keyPath, value) => {
         setAppData(prevAppData => {
@@ -73,47 +108,28 @@ function AppDataContextProvider(props) {
     //     console.log(appData);
     // }, [appData])
 
-    const formatParameters = (parameters) => {
 
-        const formatedParameters = { ...parameters }
-        formatedParameters.w2p.hookList =
-            formatedParameters.w2p.hookList
-                .filter(hook => hook.fields.length)
-                .map(hook => formatHook(hook))
-        return formatedParameters
-    }
-
-    const formatHook = (hook) => {
-        const formatedHook = { ...hook }
-        formatedHook.fields = formatedHook.fields.filter(field =>
-            field.enabled &&
-            (field.value !== undefined
-                && (Array.isArray(field.value)
-                    ? field.value.length > 0
-                    : field.value !== '')));
-
-        return formatedHook
-    }
-
-    const saveParameters = (e = null, parameters = null) => {
+    const saveParameters = async (e = null, parameters = null, notification = false) => {
         e && e.preventDefault()
-        console.log(parameters);
+        console.log("icii", appLocalizer.parameters);
+        console.log("Laaaa", appData.parameters);
         if (JSON.stringify(parameters ?? appLocalizer.parameters) === JSON.stringify(appData.parameters)) {
-            addNotification({
+            notification && addNotification({
                 error: false,
-                content: translate("Nothing to update")
+                content: translate("Already up to date")
             })
             return
         }
         callApi(`${appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: formatParameters(parameters ?? appData.parameters) }, e)
             .then(res => {
-                addNotification({
+                notification && addNotification({
                     content: translate(res.data.message)
                 })
+                setAppDataInit(_ => appData)
             })
             .catch(error => {
                 console.log(error);
-                addNotification({
+                notification && addNotification({
                     error: true,
                     content: translate(error.response.data.message)
                 })
@@ -140,6 +156,7 @@ function AppDataContextProvider(props) {
     return (
         <AppDataContext.Provider value={{
             appData,
+            appDataInit,
             setAppData,
             updateAppDataKey,
             saveParameters,

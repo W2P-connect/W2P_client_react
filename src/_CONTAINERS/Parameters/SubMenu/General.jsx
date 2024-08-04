@@ -28,8 +28,9 @@ export default function Connexion() {
       domain: appData.parameters.w2p.domain,
       api_key: appData.parameters.w2p.api_key,
     }, e)
-      .then(res => {
+      .then(async res => {
         addNotification({ error: false, content: translate(res.data?.message) })
+        await saveParameters()
       })
       .catch(res => {
         console.log(res);
