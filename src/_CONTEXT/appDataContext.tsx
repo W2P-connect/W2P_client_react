@@ -4,8 +4,10 @@ import { useCallApi, deepMerge, deepCopy } from '../helpers';
 import { translate } from '../translation';
 import { NotificationContext } from './NotificationContext';
 import { useAppLocalizer } from './AppLocalizerContext';
+import { Hook } from '../_CONTAINERS/Parameters/parametersHelpers';
 
 export const AppDataContext = createContext();
+
 
 export const emptyLocalizer = {
     parameters: {
@@ -73,8 +75,9 @@ function AppDataContextProvider(props) {
     const callApi = useCallApi()
 
     useEffect(() => {
-        setAppData(_ => deepMerge(deepCopy(emptyLocalizer), appLocalizer))
-        setAppDataInit(_ => deepMerge(deepCopy(emptyLocalizer), appLocalizer))
+        const appData = deepMerge(deepCopy(emptyLocalizer), appLocalizer)
+        setAppData(_ => appData)
+        setAppDataInit(_ => appData)
     }, [])
 
     // useEffect(() => {
@@ -111,9 +114,7 @@ function AppDataContextProvider(props) {
 
     const saveParameters = async (e = null, parameters = null, notification = false) => {
         e && e.preventDefault()
-        console.log("icii", appLocalizer.parameters);
-        console.log("Laaaa", appData.parameters);
-        if (JSON.stringify(parameters ?? appLocalizer.parameters) === JSON.stringify(appData.parameters)) {
+        if (JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(parameters ?? appData.parameters))) {
             notification && addNotification({
                 error: false,
                 content: translate("Already up to date")
@@ -125,7 +126,7 @@ function AppDataContextProvider(props) {
                 notification && addNotification({
                     content: translate(res.data.message)
                 })
-                setAppDataInit(_ => appData)
+                setAppDataInit(_ => ({ ...appData }))
             })
             .catch(error => {
                 console.log(error);

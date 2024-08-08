@@ -16,13 +16,13 @@ export default function FieldCategory({ category }) {
   const { formatPipedriveFields } = usePipedriveFields()
 
   const { appData, saveParameters, setAppData } = useContext(AppDataContext)
-  const { setOptionHook, getHook } = useHookSelector()
+  const { setOptionHook, getHook, getHookFromParent } = useHookSelector()
   const { addNotification } = useContext(NotificationContext)
 
   const [searchField, setSearchField] = useState("")
   const [filedsList, setFieldsList] = useState(null)
   const [hookToShow, setHookToShow] = useState(null)
-  const [selectHookId, setSelectHookId] = useState(null)
+  const [selectHook, setSelectHook] = useState(null)
 
   const getCategoryFields = (e) => {
     callPipedriveApi(`${category}Fields`, null, null, null, e)
@@ -58,13 +58,19 @@ export default function FieldCategory({ category }) {
   }, [searchField])
 
   const selectHookToSetUp = (hook) => {
-    console.log(hook);
-    setSelectHookId(_ => hook.id)
+    setSelectHook(_ => hook)
   }
 
   useEffect(() => {
-    setHookToShow(_ => getHook(selectHookId))
-  }, [selectHookId, appData])
+    if (selectHook) {
+      const hook = getHook(selectHook.id)
+      if (hook) {
+        setHookToShow(_ => hook)
+      } else {
+        getHookFromParent(hook, category)
+      }
+    }
+  }, [selectHook?.id, appData])
 
   return (
     <div key={category}>

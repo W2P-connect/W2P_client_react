@@ -37,8 +37,6 @@ export default function MainMenu() {
         },
     ]
 
-    console.log(currentMenu);
-
     return (
         <>
             <div className="main-menu-container">

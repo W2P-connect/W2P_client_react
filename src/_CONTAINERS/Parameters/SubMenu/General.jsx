@@ -16,8 +16,9 @@ export default function Connexion() {
   const checkPipedriveApi = (e) => {
     e.preventDefault()
     callPipedriveApi("dealFields", null, null, null, e)
-      .then(_ => {
+      .then(async _ => {
         addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
+        await saveParameters()
       })
       .catch(_ => addNotification({ error: true, content: translate("Connection failed. Please check the API key or company domain.") }))
   }

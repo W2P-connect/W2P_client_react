@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { translate } from '../../translation'
 import NavBar from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { AppDataContext, formatParameters } from '../../_CONTEXT/appDataContext'
@@ -8,6 +8,11 @@ export default function Parameters() {
 
   const { saveParameters, apiTest, appData, appDataInit } = useContext(AppDataContext)
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
+
+  // const disableSaveParameters = useMemo(() =>
+  //   JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))
+  //   , [appDataInit, appData]
+  // )
 
   const disableSaveParameters = JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))
 
@@ -65,7 +70,7 @@ export default function Parameters() {
           disabled={disableSaveParameters}
           style={{
             opacity: disableSaveParameters
-              ? 0.6
+              ? 0.8
               : 1,
             cursor: disableSaveParameters
               ? 'default'

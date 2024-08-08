@@ -4,6 +4,7 @@ import { useHookSelector } from '../../_CONTAINERS/Parameters/parametersHelpers'
 import set from 'lodash/set.js';
 import InputCheckbox from '../FORMS/InputCheckbox/InputCheckbox';
 import { AppDataContext } from '../../_CONTEXT/appDataContext';
+import { translate } from '../../translation';
 
 export default function HookSelector({ parentHook, category, selector, active }) {
 
@@ -15,12 +16,12 @@ export default function HookSelector({ parentHook, category, selector, active })
 
     useEffect(() => {
         const paramHook = getHookFromParent(parentHook, category)
-        setHook(prv => paramHook)
+        setHook(_ => paramHook)
+        setFields(paramHook.fields.filter(field => field.enabled))
     }, [parentHook, appData.parameters.pipedrive[`${category}Fields`]])
 
-    useMemo(() => {
-        const paramHook = getHookFromParent(parentHook, category)
-        setFields(paramHook.fields.filter(field => field.enabled))
+    useEffect(() => {
+        console.log("hookList.length", appData.parameters.w2p.hookList.length);
     }, [appData.parameters.w2p.hookList])
 
 
@@ -40,11 +41,8 @@ export default function HookSelector({ parentHook, category, selector, active })
     }
 
     const selectHook = (e, hook) => {
-        console.log("className", e.target.className);
-        console.log("hook.enabled", hook.enabled);
         if (
             e.target.className
-            && typeof e.target.className === 'string'
             && !e.target.className.includes("w2p-checkbox")
             && hook.enabled
         ) {
@@ -57,34 +55,36 @@ export default function HookSelector({ parentHook, category, selector, active })
     return (
         <>{hook
             ? <div
-                onClick={e => selectHook(e, hook)}
+                // onClick={e => selectHook(e, hook)}
                 style={{
                     opacity: hook.enabled ? 1 : 0.4,
                     boxShadow: active && hook.enabled ? '0 0 20px 2px rgba(60,60,60, 0.12)' : null,
                 }}
-                className={`flex-1 border-1 hook-selector`}
+                className={`flex-1 border-1 hook-selector flex-col space-between`}
             >
-                <div className='flex-center'>
-                    <InputCheckbox
-                        checked={hook.enabled}
-                        onChange={(bool) => updateHook("enabled", bool)}
-                    />
-                    <div className='hook-label'>{parentHook.label}</div>
+                <div>
+                    <div className='flex-center'>
+                        <InputCheckbox
+                            checked={hook.enabled}
+                            onChange={(bool) => updateHook("enabled", bool)}
+                        />
+                        <div className='hook-label'>{parentHook.label}</div>
+                    </div>
+                    {fields
+                        .filter(field => field.enabled)
+                        .map((field) => <li key={field.id} className='m-b-0'>
+                            {field.name}
+                        </li>)
+                    }
+                    <div className='subtext italic'>
+                        {parentHook.description}
+                    </div>
                 </div>
-                {fields
-                    .filter(field => field.enabled)
-                    .map((field) => <li key={field.id} className='m-b-0'>
-                        {field.name}
-                    </li>)
-                }
-                <div className='subtext italic'>
-                    {parentHook.description}
-                </div>
-                {/* <div
-                    onClick={_ => selector(hook)}
+                <div
+                    onClick={e => selectHook(e, hook)}
                     className='underline center pointer'>
                     {translate("Set up")}
-                </div> */}
+                </div>
             </div>
             : null
         }</>

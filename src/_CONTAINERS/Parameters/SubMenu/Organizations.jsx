@@ -36,7 +36,7 @@ export default function Organizations() {
                   type="checkbox"
                   className='m-r-10'
                   onChange={(e) => updateOption("autoCreate", e.target.checked)}
-                  checked={options.createNew ?? false}
+                  checked={options.autoCreate ?? false}
                 />
                 <div>
                   {translate("Automatically create the company when the 'billing_company' field is provided by the user, regardless of the event type, and name it according to the value specified in 'billing_company'.")}

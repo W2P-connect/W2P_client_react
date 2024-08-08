@@ -2,14 +2,15 @@ import { useContext } from "react"
 import { AppDataContext } from "../../_CONTEXT/appDataContext"
 import { v4 as uuidv4 } from 'uuid';
 import { unusableFieldsKey } from "../../appConstante";
+import { AppData, Category, Field, Hook, HookField } from "../../../Types";
 
 export const usePipedriveFields = () => {
 
     const formatPipedriveFields = (pipedriveFieldsResponse) => {
         const filteredResponse = pipedriveFieldsResponse
-            .filter(field => field.id)
-            .filter(field => field.bulk_edit_allowed)
-            .filter(field => !unusableFieldsKey.includes(field.key))
+            .filter((field: Field) => field.id)
+            .filter((field: Field) => field.bulk_edit_allowed)
+            .filter((field: Field) => !unusableFieldsKey.includes(field.key))
         return filteredResponse
     }
 
@@ -19,7 +20,7 @@ export const usePipedriveFields = () => {
 export const useHookSelector = () => {
     const { appData, setAppData } = useContext(AppDataContext)
 
-    const emptyHook = {
+    const emptyHook: Hook = {
         id: "",
         label: "",
         key: "",
@@ -31,8 +32,8 @@ export const useHookSelector = () => {
 
     /************************* HOOK INITIALISATION  **************************/
 
-    const setOptionHook = (newHook) => {
-        setAppData(prvAppData => {
+    const setOptionHook = (newHook: Hook) => {
+        setAppData((prvAppData: AppData) => {
             const newAppData = prvAppData
             newAppData.parameters.w2p.hookList =
                 newAppData.parameters.w2p.hookList.map(hook =>
@@ -40,12 +41,16 @@ export const useHookSelector = () => {
                         ? newHook
                         : hook
                 )
-            return { ...newAppData }
+            return newAppData
         })
     }
 
-    const addNewHook = (hook) => {
-        setAppData(prvAppData => {
+    const addNewHook = (hook: Hook) => {
+
+
+        console.log("appData", appData);
+
+        setAppData((prvAppData: AppData) => {
             const newAppData = prvAppData
             newAppData.parameters.w2p.hookList =
                 [...newAppData.parameters.w2p.hookList, hook]
@@ -53,18 +58,19 @@ export const useHookSelector = () => {
         })
     }
 
-    const getHookFromParent = (hook, category) => {
-        const wantedHook = appData.parameters.w2p.hookList.find(h => hook.key === h.key && category === h.category)
+    const getHookFromParent = (hook: Hook, category: Category) => {
+
+        const wantedHook = appData.parameters.w2p.hookList.find((h: Hook) => hook.key === h.key && category === h.category)
 
         if (wantedHook) {
             const fields = wantedHook.fields
-                .map(hookField => {
+                .map((hookField: HookField) => {
                     const updatedPipedriveField = getPipedriveField(wantedHook.category, hookField.id)
                     return updatedPipedriveField
                         ? { ...hookField, ...updatedPipedriveField }
                         : null
                 })
-                .filter(field => field)
+                .filter((field: HookField) => field)
 
             return { ...wantedHook, fields: fields }
 
@@ -83,17 +89,19 @@ export const useHookSelector = () => {
     const getHook = (id) => {
         // return appData.parameters.w2p.hookList.find(hook => id === hook.id) ?? null
 
-        const wantedHook = appData.parameters.w2p.hookList.find(hook => id === hook.id)
+        console.log(appData.parameters.w2p.hookList);
+
+        const wantedHook = appData.parameters.w2p.hookList.find((hook: Hook) => id === hook.id)
 
         if (wantedHook) {
             const fields = wantedHook.fields
-                .map(hookField => {
+                .map((hookField: HookField) => {
                     const updatedPipedriveField = getPipedriveField(wantedHook.category, hookField.id)
                     return updatedPipedriveField
                         ? { ...hookField, ...updatedPipedriveField }
                         : null
                 })
-                .filter(field => field)
+                .filter((field: HookField) => field)
 
             return { ...wantedHook, fields: fields }
 
@@ -103,7 +111,7 @@ export const useHookSelector = () => {
     }
 
     /************************* HOOK FIELDS  **************************/
-    const emptyHookField = {
+    const emptyHookField: HookField = {
         enabled: false,
         id: '',
         key: '',
@@ -113,14 +121,14 @@ export const useHookSelector = () => {
         options: null,
     }
 
-    const addNewHookField = (hookId, newField) => {
+    const addNewHookField = (hookId: string, newField: HookField) => {
         const hook = getHook(hookId)
         if (hook) {
-            setAppData(prvAppData => {
+            setAppData((prvAppData: AppData) => {
                 const newAppData = prvAppData
                 newAppData.parameters.w2p.hookList =
                     newAppData.parameters.w2p.hookList.map(
-                        hook => hook.id === hookId
+                        (hook: Hook) => hook.id === hookId
                             ? { ...hook, fields: [...hook.fields, newField] }
                             : hook
                     )
@@ -129,15 +137,15 @@ export const useHookSelector = () => {
         }
     }
 
-    const getHookFieldFromPipedrive = (hookId, pipedriveFieldId) => {
+    const getHookFieldFromPipedrive = (hookId: string, pipedriveFieldId: string) => {
         const hook = getHook(hookId)
 
         if (hook) {
 
-            const field = hook.fields.find(field => field.id === pipedriveFieldId)
+            const field = hook.fields.find((field: HookField) => field.id === pipedriveFieldId)
             const pipedriveField =
                 appData.parameters.pipedrive[`${hook.category}Fields`]
-                    .find(field => field.id === pipedriveFieldId)
+                    .find((field: HookField) => field.id === pipedriveFieldId)
 
             if (!field) {
                 addNewHookField(hookId, { ...emptyHookField, ...pipedriveField })
@@ -152,12 +160,12 @@ export const useHookSelector = () => {
         }
     }
 
-    const getPipedriveField = (category, fieldId) => {
-        return appData.parameters.pipedrive[`${category}Fields`].find(field => field.id === fieldId) ?? null
+    const getPipedriveField = (category: Category, fieldId: string) => {
+        return appData.parameters.pipedrive[`${category}Fields`].find((field: HookField) => field.id === fieldId) ?? null
     }
 
     //ICI PRB
-    const setHookField = (hookId, newField) => {
+    const setHookField = (hookId: string, newField: HookField) => {
         const hook = getHook(hookId)
         if (hook) {
             setOptionHook({
