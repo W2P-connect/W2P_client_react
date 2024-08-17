@@ -4,12 +4,21 @@ import { useCallApi, deepMerge, deepCopy } from '../helpers';
 import { translate } from '../translation';
 import { NotificationContext } from './NotificationContext';
 import { useAppLocalizer } from './AppLocalizerContext';
-import { Hook } from '../_CONTAINERS/Parameters/parametersHelpers';
+import { AppData, Hook, HookField, Parameters } from '../../Types';
 
-export const AppDataContext = createContext();
+interface AppDataContextType {
+    appData: AppData;
+    appDataInit: AppData;
+    setAppData: React.Dispatch<React.SetStateAction<AppData>>;
+    updateAppDataKey: (keyPath: string, value: any) => void;
+    saveParameters: (e?: React.FormEvent, parameters?: Parameters, notification?: boolean) => Promise<void>;
+    apiTest: (e?: React.FormEvent) => void;
+    fieldsCategory: { slug: string, name: string }[];
+}
 
+export const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
 
-export const emptyLocalizer = {
+export const emptyLocalizer: AppData = {
     parameters: {
         pipedrive: {
             api_key: "",
@@ -38,23 +47,37 @@ export const emptyLocalizer = {
                 linkToOrga: true,
                 defaultEmailAsName: true,
             },
+        },
+        token: ''
+    },
+    CONSTANTES: {
+        W2P_AVAIBLE_STATES: ["INVALID", "TODO", "SENDED", "ERROR", "DONE"],
+        W2P_HOOK_LIST: [],
+        W2P_META_KEYS: [],
+        W2P_REQUIRED_FIELDS: {
+            deal: [],
+            organization: [],
+            person: [],
         }
-    }
+    },
+    w2p_client_rest_url: '',
+    w2p_distant_rest_url: '',
 }
 
-export const formatHook = (hook) => {
+export const formatHook = (hook: Hook) => {
     const formatedHook = { ...hook }
-    formatedHook.fields = formatedHook.fields.filter(field =>
+    formatedHook.fields = formatedHook.fields.filter((field: HookField) =>
         field.enabled &&
         (field.value !== undefined
             && (Array.isArray(field.value)
                 ? field.value.length > 0
-                : field.value !== '')));
+                : field.value !== '')
+        ));
 
     return formatedHook
 }
 
-export const formatParameters = (parameters) => {
+export const formatParameters = (parameters: Parameters) => {
 
     const formatedParameters = { ...parameters }
     formatedParameters.w2p.hookList =
@@ -64,33 +87,26 @@ export const formatParameters = (parameters) => {
     return formatedParameters
 }
 
-function AppDataContextProvider(props) {
-
-    const { addNotification } = useContext(NotificationContext)
-    const appLocalizer = useAppLocalizer()
-    const [appData, setAppData] = useState({ ...emptyLocalizer });
-
-    const [appDataInit, setAppDataInit] = useState({ ...emptyLocalizer }); //Only to check changes
-
-    const callApi = useCallApi()
+function AppDataContextProvider(props: { children: React.ReactNode }) {
+    const { addNotification } = useContext(NotificationContext);
+    const appLocalizer = useAppLocalizer();
+    const [appData, setAppData] = useState<AppData>({ ...emptyLocalizer });
+    const [appDataInit, setAppDataInit] = useState<AppData>({ ...emptyLocalizer }); // Only to check changes
+    const callApi = useCallApi();
 
     useEffect(() => {
-        const appData = deepMerge(deepCopy(emptyLocalizer), appLocalizer)
-        setAppData(_ => appData)
-        setAppDataInit(_ => appData)
-    }, [])
+        const initialAppData = deepMerge(deepCopy(emptyLocalizer), appLocalizer);
+        setAppData(initialAppData);
+        setAppDataInit(initialAppData);
+    }, [appLocalizer]);
 
-    // useEffect(() => {
-    //     console.log('appData', appData);
-    // }, [appData])
-
-    const updateAppDataKey = (keyPath, value) => {
+    const updateAppDataKey = (keyPath: string, value: any) => {
         setAppData(prevAppData => {
             const newAppData = { ...prevAppData };
             set(newAppData, keyPath, value);
             return newAppData;
         });
-    }
+    };
 
     const fieldsCategory = [
         {
@@ -105,54 +121,36 @@ function AppDataContextProvider(props) {
             slug: "deal",
             name: "Deals fields",
         },
-    ]
+    ];
 
-    // useEffect(() => {
-    //     console.log(appData);
-    // }, [appData])
-
-
-    const saveParameters = async (e = null, parameters = null, notification = false) => {
-        e && e.preventDefault()
-        if (JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(parameters ?? appData.parameters))) {
+    const saveParameters = async (e: React.FormEvent | null = null, parameters: Parameters | null = null, notification = false) => {
+        e && e.preventDefault();
+        if (JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))) {
             notification && addNotification({
                 error: false,
-                content: translate("Already up to date")
-            })
-            return
+                content: translate("Already up to date"),
+            });
+            return;
         }
-        callApi(`${appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: formatParameters(parameters ?? appData.parameters) }, e)
-            .then(res => {
-                notification && addNotification({
-                    content: translate(res.data.message)
-                })
-                setAppDataInit(_ => ({ ...appData }))
-            })
-            .catch(error => {
-                console.log(error);
-                notification && addNotification({
-                    error: true,
-                    content: translate(error.response.data.message)
-                })
-            })
-    }
+        try {
+            const res = await callApi(`${appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: formatParameters(parameters ?? appData.parameters) }, e);
+            notification && addNotification({
+                content: translate(res?.data.message),
+            });
+            setAppDataInit({ ...appData });
+        } catch (error: any) {
+            console.log(error);
+            notification && addNotification({
+                error: true,
+                content: translate(error.response.data.message),
+            });
+        }
+    };
 
-    const apiTest = (e = null) => {
-        e && e.preventDefault()
-        callApi(`${appData.w2p_client_rest_url}/tests`, { method: "get" }, null, null, e)
-        // .then(res => {
-        //     addNotification({
-        //         content: translate(res.data.message)
-        //     })
-        // })
-        // .catch(error => {
-        //     console.log(error);
-        //     addNotification({
-        //         error: true,
-        //         content: translate(error.response.data.message)
-        //     })
-        // })
-    }
+    const apiTest = (e: React.FormEvent | null = null) => {
+        e && e.preventDefault();
+        callApi(`${appData.w2p_client_rest_url}/tests`, { method: "get" }, null, null, e);
+    };
 
     return (
         <AppDataContext.Provider value={{
@@ -162,7 +160,7 @@ function AppDataContextProvider(props) {
             updateAppDataKey,
             saveParameters,
             apiTest,
-            fieldsCategory
+            fieldsCategory,
         }}>
             {props.children}
         </AppDataContext.Provider>

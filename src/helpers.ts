@@ -1,7 +1,7 @@
-import { useContext } from "react"
+import { FormEvent, useContext } from "react"
 import { NotificationContext } from "./_CONTEXT/NotificationContext"
 import { translate } from "./translation"
-import axios from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useAppLocalizer } from './_CONTEXT/AppLocalizerContext';
 
 
@@ -10,55 +10,63 @@ import { useAppLocalizer } from './_CONTEXT/AppLocalizerContext';
 /*************************************************************************************/
 
 export const useCallApi = () => {
-    const appLocalizer = useAppLocalizer()
-    const { addNotification } = useContext(NotificationContext)
+    const appLocalizer = useAppLocalizer();
+    const { addNotification } = useContext(NotificationContext);
+
     /**
      *
-     * @param {string} uri (obligatoire) URL du endpoint pour la requête
-     * @param {Object} options  (obligatoire) object contenant les options de la requête - {method: "get"} / {method: "post"}....
-     * @param {AbortController} abortSignal (recommandé) AbortController permettant d'annuler la requête - controler.signal
-     * @param {Object} data (optionnel) données à envoyer dans le corps de la requête
+     * @param {string} url - URL of the endpoint for the request (required)
+     * @param {AxiosRequestConfig} options - Object containing the options for the request (required)
+     * @param {AbortSignal | null} abortSignal - AbortController's signal to cancel the request (optional)
+     * @param {Object} data - Data to send in the request body (optional)
+     * @param {React.FormEvent | null} e - Form event (optional)
+     * @returns {Promise<AxiosResponse<any>> | null}
      */
-    const callApi = async (url, options = { method: 'get' }, abortSignal = null, data = {}, e = null) => {
-        if ((e && !e.target.classList.contains("submitting")) || !e) {
-            e && e.target.classList.add("submitting")
-            return new Promise((resolve, reject) => {
-                const APIoptions = {
+    const callApi = async (
+        url: string,
+        options: AxiosRequestConfig = { method: 'get' },
+        abortSignal: AbortSignal | null = null,
+        data: Record<string, any> | null = {},
+        e: React.FormEvent | null = null
+    ): Promise<AxiosResponse<any> | null> => {
+        if ((e && !e.currentTarget.classList.contains("submitting")) || !e) {
+            e && e.currentTarget.classList.add("submitting");
+            try {
+                const APIoptions: AxiosRequestConfig = {
                     ...options,
                     headers: {
-                        Authorization: `Bearer ${appLocalizer.token}`
+                        Authorization: `Bearer ${appLocalizer.token}`,
+                        ...options.headers,
                     },
-                    signal: abortSignal,
+                    signal: abortSignal ?? undefined,
                     url: url,
-                }
-                if (!options || options?.method?.toLowerCase() === "get") {
-                    APIoptions.params = data
+                };
+
+                if (options.method?.toLowerCase() === "get") {
+                    APIoptions.params = data;
                 } else {
-                    APIoptions.data = data
+                    APIoptions.data = data;
                 }
 
-                axios(APIoptions)
-                    .then((response) => {
-                        resolve(response)
-                    })
-                    .catch((error) => {
-                        if (error?.response?.request?.status === 401 && url.startsWith(appLocalizer.w2p_client_rest_url)) {
-                            addNotification({
-                                error: true,
-                                content: translate("You are not allowed to access this resource. Please refresh the page.")
-                            })
-                        }
-                        reject(error)
-                    })
-                    .finally(_ => {
-                        e && e.target.classList.remove("submitting")
-                    })
-            })
+                const response = await axios(APIoptions);
+                return response;
+            } catch (error: any) {
+                if (error?.response?.status === 401 && url.startsWith(appLocalizer.w2p_client_rest_url)) {
+                    addNotification({
+                        error: true,
+                        content: translate("You are not allowed to access this resource. Please refresh the page."),
+                    });
+                }
+                return Promise.reject(error);
+            } finally {
+                e && e.currentTarget.classList.remove("submitting");
+            }
         } else {
-            return null
+            return null;
         }
-    }
-    return callApi
+    };
+
+    return callApi;
 }
 
 export const useCallPipedriveApi = () => {

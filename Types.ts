@@ -1,6 +1,6 @@
 export interface AppData {
     CONSTANTES: {
-        W2P_AVAIBLE_STATES: 'INVALID' | 'TODO' | "SENDED" | "ERROR" | "DONE"
+        W2P_AVAIBLE_STATES: ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")[]
         W2P_HOOK_LIST: Hook[]
         W2P_META_KEYS: MetaKeyCategory[]
         W2P_REQUIRED_FIELDS: {
@@ -9,13 +9,14 @@ export interface AppData {
             person: string[]
         }
     },
-    parameters: Parameters
+    parameters: Parameters,
+    w2p_client_rest_url: string,
+    w2p_distant_rest_url: string,
 }
 
 export interface Parameters {
     pipedrive: PipedriveParameters
     w2p: W2pParameters
-    w2p_distant_rest_url: string
     token: string
 }
 
@@ -215,7 +216,7 @@ export interface Field {
     name: string;
     order_nr: number;
     field_type: string;
-    add_time: string; 
+    add_time: string;
     update_time: string | null;
     active_flag: boolean;
     edit_flag: boolean;
@@ -230,7 +231,7 @@ export interface Field {
     mandatory_flag: boolean;
     json: any;
     options?: Array<{ id: string; label: string; color: string }>; // If the field has options like dropdowns
-  }
+}
 
 interface Access {
     admin: boolean

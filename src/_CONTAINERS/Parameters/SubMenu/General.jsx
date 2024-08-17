@@ -38,7 +38,7 @@ export default function Connexion() {
         if (res?.response?.request?.status === 500) {
           addNotification({ error: true, content: translate("Our servers are under maintenance, please try again soon") })
         } else {
-          addNotification({ error: true, content: translate(res?.response?.data?.message) })
+          addNotification({ error: true, content: translate(res?.response?.data?.message ?? 'An error occured') })
         }
       }
       )

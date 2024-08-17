@@ -134,12 +134,14 @@ export default function Query({ parentQuery }) {
                   {query.additional_datas.traceback
                     ?.sort((a, b) => a.time - b.time)
                     .map((trace, index) => {
-
-                      var parts = trace.time.split(" ");
-                      var seconds = parseFloat(parts[1]);
+                      var parts = trace.time?.split(" ") ?? null;
+                      var seconds = parts ? parseFloat(parts[1]) : null;
 
                       return <div key={index} className='m-b-10'>
-                        <div className='strong-1'>{new Date(seconds * 1000).toLocaleString()} : {translate(trace.step)}</div>
+                        {seconds
+                          ? <div className='strong-1'>{new Date(seconds * 1000).toLocaleString()} : {translate(trace.step)}</div>
+                          : null
+                        }
                         <div>
                           {trace.success ? "[Success]" : "[Error]"} {trace.message}
                         </div>
