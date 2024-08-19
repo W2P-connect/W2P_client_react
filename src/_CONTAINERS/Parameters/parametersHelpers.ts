@@ -5,18 +5,6 @@ import { unusableFieldsKey } from "appConstante";
 import { AppData, Category, PipedriveField, Hook, HookField, PipedriveFieldType, BaseHookField } from "Types";
 import { useAppDataContext } from "_CONTEXT/hook/contextHook";
 
-export const usePipedriveFields = () => {
-
-    const formatPipedriveFields = (pipedriveFieldsResponse: PipedriveField[]) => {
-        const filteredResponse = pipedriveFieldsResponse
-            .filter((field: PipedriveField) => field.id)
-            .filter((field: PipedriveField) => field.bulk_edit_allowed)
-            .filter((field: PipedriveField) => !unusableFieldsKey.includes(field.key))
-        return filteredResponse
-    }
-
-    return { formatPipedriveFields }
-}
 
 export const useHookSelector = () => {
     const { appData, setAppData } = useAppDataContext()

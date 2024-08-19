@@ -25,9 +25,7 @@ export interface PipedriveParameters {
     company_domain: string
     users: User[],
     stages: Stage[],
-    organizationFields: PipedriveField[],
-    personFields: PipedriveField[],
-    dealFields: PipedriveField[],
+    fields: PipedriveField[],
 }
 
 interface W2pParameters {
@@ -86,17 +84,22 @@ export interface Hook {
     active: boolean
     show: boolean,
     category: Category,
+    createActivity: boolean,
     fields: HookField[],
 }
 
 export type BaseHookField = {
     enabled: boolean;
     key: string;
-    value: string;
+    value: string | Array<any>;
     condition: string;
+    pipedriveFieldId: number;
+    hookId: string;
 };
 
-export interface HookField extends BaseHookField, PipedriveField { }
+export interface HookField extends BaseHookField {
+    pipedrive: PipedriveField
+}
 
 /*************************************************************************/
 /******************************* PIPEDRIVE *******************************/

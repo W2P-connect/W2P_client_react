@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { translate } from '../../../translation'
 import { useCallPipedriveApi } from '../../../helpers'
-import PipepdriveField from '../../../_COMPONENTS/PIPEDRIVE/PipedriveField/PipepdriveField'
-import { useHookSelector, usePipedriveFields } from '../parametersHelpers'
-import Datalist from '../../../_COMPONENTS/FORMS/INPUT/datalist/Datalist'
-import HookSelector from '../../../_COMPONENTS/HookSelector/HookSelector'
+import PipepdriveField from '_COMPONENTS/PIPEDRIVE/PipedriveField/PipepdriveField'
+import { useHookSelector } from '../parametersHelpers'
+import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist'
+import HookSelector from '_COMPONENTS/HookSelector/HookSelector'
 import { priorityFieldsKey, unusableFieldsKey } from '../../../appConstante'
-import { Category, Hook, PipedriveField } from 'Types'
+import { Category, Hook, HookField, PipedriveField } from 'Types'
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook'
 import { AxiosResponse } from 'axios'
+import { observer } from 'mobx-react-lite'
+import { pipedriveFieldsStore, PipedriveFieldStore } from '_STORES/PipedriveFields'
+import { error } from 'console'
+import { hookStore } from '_STORES/Hooks'
 
-export default function FieldCategory({ category }: { category: Category }) {
+const FieldCategory = ({ category }: { category: Category }) => {
 
   const callPipedriveApi = useCallPipedriveApi()
-
-  const { formatPipedriveFields } = usePipedriveFields()
 
   const { appData, saveParameters, setAppData } = useAppDataContext()
   const { setOptionHook, getHook, getHookFromParent } = useHookSelector()
@@ -22,20 +24,25 @@ export default function FieldCategory({ category }: { category: Category }) {
 
   const [searchField, setSearchField] = useState<string>("")
   const [filedsList, setFieldsList] = useState<null | PipedriveField[]>(null)
+
   const [hookToShow, setHookToShow] = useState<Hook | null>(null)
+  
   const [selectHook, setSelectHook] = useState<Hook | null>(null)
 
-  const categoryFields: PipedriveField[] = appData.parameters.pipedrive[`${category}Fields`]
 
   const getCategoryFields = (e: React.FormEvent) => {
     callPipedriveApi(`${category}Fields`, null, null, null, e)
-      .then((res: AxiosResponse) => {
-        setAppData(prvAppData => {
-          prvAppData.parameters.pipedrive[`${category}Fields`] = formatPipedriveFields(res.data.data)
-          return { ...prvAppData }
-        })
-      }
-      )
+      .then((res: AxiosResponse<any, any> | null) => {
+        if (!res?.data?.data) {
+          throw Error("No data in Pipedrive response")
+        }
+        res.data.data.forEach((field: any) => {
+          const newField = { ...field as PipedriveField, category: category }
+
+          PipedriveFieldStore.isFieldValid(newField) && pipedriveFieldsStore.addPipedriveField({ ...field, category: category })
+        });
+      })
+
       .catch(error => {
         addNotification({
           error: true,
@@ -44,10 +51,11 @@ export default function FieldCategory({ category }: { category: Category }) {
       })
   }
 
+  const categoryFields: HookField[] | null = hookStore.getHook(category)
+
   useEffect(() => {
     setFieldsList(categoryFields)
   }, [categoryFields, category])
-
 
   useEffect(() => {
     if (searchField) {
@@ -171,3 +179,6 @@ export default function FieldCategory({ category }: { category: Category }) {
     </div>
   )
 }
+
+
+export default observer(FieldCategory)
