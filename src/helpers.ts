@@ -1,8 +1,7 @@
-import { FormEvent, useContext } from "react"
-import { NotificationContext } from "./_CONTEXT/NotificationContext"
-import { translate } from "./translation"
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useAppLocalizer } from './_CONTEXT/AppLocalizerContext';
+import { useNotification } from "_CONTEXT/hook/contextHook";
+import { translate } from 'translation';
 
 
 /*************************************************************************************/
@@ -11,7 +10,7 @@ import { useAppLocalizer } from './_CONTEXT/AppLocalizerContext';
 
 export const useCallApi = () => {
     const appLocalizer = useAppLocalizer();
-    const { addNotification } = useContext(NotificationContext);
+    const { addNotification } = useNotification();
 
     /**
      *
@@ -70,41 +69,42 @@ export const useCallApi = () => {
 }
 
 export const useCallPipedriveApi = () => {
-    const callApi = useCallApi()
-    const appLocalizer = useAppLocalizer()
+    const callApi = useCallApi();
+    const appLocalizer = useAppLocalizer();
 
-    /**
-     *
-     * @param {String} url pipedrive URL to call
-     * @param {Object} options options to pass to axions (exemple:   {method: 'get' })
-     * @param {Object} data data to send for the request
-     * @returns
-     */
-    const callPipedriveApi = (uri, options = { method: "get" }, abortSignal = null, data = null, e = null) =>
-        new Promise(async (resolve, reject) => {
-            const url = `https://${appLocalizer.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appLocalizer.parameters.pipedrive.api_key}`
-            callApi(url, options, abortSignal, data, e)
+    // Define the function with proper TypeScript types
+    const callPipedriveApi = (
+        uri: string,
+        options: AxiosRequestConfig | null,
+        abortSignal: AbortSignal | null = null,
+        data: object | null = null,
+        e: React.FormEvent | null = null
+    ): Promise<AxiosResponse<any> | null> => {
+        return new Promise(async (resolve, reject) => {
+            const url = `https://${appLocalizer.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appLocalizer.parameters.pipedrive.api_key}`;
+            callApi(url, options = { method: "get" }, abortSignal, data, e)
                 .then((res) => {
-                    resolve(res)
+                    resolve(res);
                 })
                 .catch(async (error) => {
                     if (error.code !== "ERR_CANCELED") {
                         if (error.response && error.response.status === 429) {
                             setTimeout(() => {
-                                callPipedriveApi(uri, options, data)
-                            }, 750)
+                                callPipedriveApi(uri, options, abortSignal, data, e).then(resolve).catch(reject);
+                            }, 750);
                         } else {
-                            reject(error)
+                            reject(error);
                         }
                     }
-                })
-        })
-    return callPipedriveApi
-}
+                });
+        });
+    };
+
+    return callPipedriveApi;
+};
 
 
-
-export function deepMerge(obj1, obj2) {
+export function deepMerge(obj1: Record<string, any>, obj2: Record<string, any>) {
     for (const key in obj2) {
         if (obj2.hasOwnProperty(key)) {
             if (obj2[key] instanceof Object && obj1[key] instanceof Object) {
@@ -117,23 +117,23 @@ export function deepMerge(obj1, obj2) {
     return obj1;
 }
 
-export function deepCopy(obj) {
+export function deepCopy(obj: Record<string, any>) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-export const removeEmptyProperties = (object) => {
+export const removeEmptyProperties = (object: Record<string, any>) => {
     return Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== ""));
 }
 
-export const removeDuplicatesObjectInArray = (key, arr) => {
-    const uniqArrayKey = []
-    return arr.filter(item => {
-        if (!uniqArrayKey.includes(item[key])) {
-            uniqArrayKey.push(item[key])
-            return true
-        } else {
-            return false
-        }
-    })
-}
-
+export const removeDuplicatesObjectInArray =
+    <T extends Record<string, any>>(key: keyof T, arr: T[]): T[] => {
+        const uniqArrayKey: any[] = [];
+        return arr.filter(item => {
+            if (!uniqArrayKey.includes(item[key])) {
+                uniqArrayKey.push(item[key]);
+                return true;
+            } else {
+                return false;
+            }
+        });
+    };

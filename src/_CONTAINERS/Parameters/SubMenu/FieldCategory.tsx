@@ -1,32 +1,35 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { translate } from '../../../translation'
 import { useCallPipedriveApi } from '../../../helpers'
-import { AppDataContext } from '../../../_CONTEXT/appDataContext'
 import PipepdriveField from '../../../_COMPONENTS/PIPEDRIVE/PipedriveField/PipepdriveField'
-import { NotificationContext } from '../../../_CONTEXT/NotificationContext'
 import { useHookSelector, usePipedriveFields } from '../parametersHelpers'
 import Datalist from '../../../_COMPONENTS/FORMS/INPUT/datalist/Datalist'
 import HookSelector from '../../../_COMPONENTS/HookSelector/HookSelector'
 import { priorityFieldsKey, unusableFieldsKey } from '../../../appConstante'
+import { Category, Hook, PipedriveField } from 'Types'
+import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook'
+import { AxiosResponse } from 'axios'
 
-export default function FieldCategory({ category }) {
+export default function FieldCategory({ category }: { category: Category }) {
 
   const callPipedriveApi = useCallPipedriveApi()
 
   const { formatPipedriveFields } = usePipedriveFields()
 
-  const { appData, saveParameters, setAppData } = useContext(AppDataContext)
+  const { appData, saveParameters, setAppData } = useAppDataContext()
   const { setOptionHook, getHook, getHookFromParent } = useHookSelector()
-  const { addNotification } = useContext(NotificationContext)
+  const { addNotification } = useNotification()
 
-  const [searchField, setSearchField] = useState("")
-  const [filedsList, setFieldsList] = useState(null)
-  const [hookToShow, setHookToShow] = useState(null)
-  const [selectHook, setSelectHook] = useState(null)
+  const [searchField, setSearchField] = useState<string>("")
+  const [filedsList, setFieldsList] = useState<null | PipedriveField[]>(null)
+  const [hookToShow, setHookToShow] = useState<Hook | null>(null)
+  const [selectHook, setSelectHook] = useState<Hook | null>(null)
 
-  const getCategoryFields = (e) => {
+  const categoryFields: PipedriveField[] = appData.parameters.pipedrive[`${category}Fields`]
+
+  const getCategoryFields = (e: React.FormEvent) => {
     callPipedriveApi(`${category}Fields`, null, null, null, e)
-      .then(res => {
+      .then((res: AxiosResponse) => {
         setAppData(prvAppData => {
           prvAppData.parameters.pipedrive[`${category}Fields`] = formatPipedriveFields(res.data.data)
           return { ...prvAppData }
@@ -42,22 +45,22 @@ export default function FieldCategory({ category }) {
   }
 
   useEffect(() => {
-    setFieldsList(appData.parameters.pipedrive[`${category}Fields`])
-  }, [appData.parameters.pipedrive[`${category}Fields`]])
+    setFieldsList(categoryFields)
+  }, [categoryFields, category])
 
 
   useEffect(() => {
     if (searchField) {
       setFieldsList(_ =>
-        appData.parameters.pipedrive[`${category}Fields`]
+        categoryFields
           .filter(field => field.name.includes(searchField))
       )
     } else {
-      setFieldsList(appData.parameters.pipedrive[`${category}Fields`])
+      setFieldsList(categoryFields)
     }
   }, [searchField])
 
-  const selectHookToSetUp = (hook) => {
+  const selectHookToSetUp = (hook: Hook) => {
     setSelectHook(_ => hook)
   }
 
@@ -66,8 +69,6 @@ export default function FieldCategory({ category }) {
       const hook = getHook(selectHook.id)
       if (hook) {
         setHookToShow(_ => hook)
-      } else {
-        getHookFromParent(hook, category)
       }
     }
   }, [selectHook?.id, appData])
@@ -123,7 +124,7 @@ export default function FieldCategory({ category }) {
                   <Datalist
                     label={translate("Search a field")}
                     placehoder={translate("Name, owner, email,...")}
-                    items={appData.parameters.pipedrive[`${category}Fields`].map(field => ({ value: field.name, id: field.id }))}
+                    items={categoryFields.map(field => ({ value: field.name, id: field.id }))}
                     value={searchField}
                     onInput={setSearchField}
                   />

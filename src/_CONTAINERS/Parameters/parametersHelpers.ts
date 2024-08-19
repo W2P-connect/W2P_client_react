@@ -1,16 +1,17 @@
 import { useContext } from "react"
 import { AppDataContext } from "../../_CONTEXT/appDataContext"
 import { v4 as uuidv4 } from 'uuid';
-import { unusableFieldsKey } from "../../appConstante";
-import { AppData, Category, Field, Hook, HookField } from "../../../Types";
+import { unusableFieldsKey } from "appConstante";
+import { AppData, Category, PipedriveField, Hook, HookField, PipedriveFieldType, BaseHookField } from "Types";
+import { useAppDataContext } from "_CONTEXT/hook/contextHook";
 
 export const usePipedriveFields = () => {
 
-    const formatPipedriveFields = (pipedriveFieldsResponse) => {
+    const formatPipedriveFields = (pipedriveFieldsResponse: PipedriveField[]) => {
         const filteredResponse = pipedriveFieldsResponse
-            .filter((field: Field) => field.id)
-            .filter((field: Field) => field.bulk_edit_allowed)
-            .filter((field: Field) => !unusableFieldsKey.includes(field.key))
+            .filter((field: PipedriveField) => field.id)
+            .filter((field: PipedriveField) => field.bulk_edit_allowed)
+            .filter((field: PipedriveField) => !unusableFieldsKey.includes(field.key))
         return filteredResponse
     }
 
@@ -18,15 +19,17 @@ export const usePipedriveFields = () => {
 }
 
 export const useHookSelector = () => {
-    const { appData, setAppData } = useContext(AppDataContext)
+    const { appData, setAppData } = useAppDataContext()
 
     const emptyHook: Hook = {
         id: "",
         label: "",
         key: "",
+        disabledFor: [],
         description: "",
-        active: false,
         show: false,
+        active: false,
+        category: "person",
         fields: [],
     }
 
@@ -47,9 +50,6 @@ export const useHookSelector = () => {
 
     const addNewHook = (hook: Hook) => {
 
-
-        console.log("appData", appData);
-
         setAppData((prvAppData: AppData) => {
             const newAppData = prvAppData
             newAppData.parameters.w2p.hookList =
@@ -60,22 +60,24 @@ export const useHookSelector = () => {
 
     const getHookFromParent = (hook: Hook, category: Category) => {
 
-        const wantedHook = appData.parameters.w2p.hookList.find((h: Hook) => hook.key === h.key && category === h.category)
+        const wantedHook: Hook | undefined = appData.parameters.w2p.hookList.find((h: Hook) => hook.key === h.key && category === h.category)
 
         if (wantedHook) {
-            const fields = wantedHook.fields
+            const fields: HookField[] = wantedHook.fields
                 .map((hookField: HookField) => {
-                    const updatedPipedriveField = getPipedriveField(wantedHook.category, hookField.id)
-                    return updatedPipedriveField
-                        ? { ...hookField, ...updatedPipedriveField }
+                    const pipedriveField: PipedriveField | null = getPipedriveField(wantedHook.category, hookField.id)
+                    const formatedHookField: HookField | null = pipedriveField
+                        ? { ...hookField, ...pipedriveField }
                         : null
+                    return formatedHookField
                 })
-                .filter((field: HookField) => field)
+                .filter(field => field !== null);
 
-            return { ...wantedHook, fields: fields }
+            const hook: Hook = { ...wantedHook, fields: fields }
+            return hook
 
         } else {
-            const newHook = {
+            const newHook: Hook = {
                 ...emptyHook,
                 ...hook,
                 category: category,
@@ -86,24 +88,22 @@ export const useHookSelector = () => {
         }
     }
 
-    const getHook = (id) => {
-        // return appData.parameters.w2p.hookList.find(hook => id === hook.id) ?? null
-
-        console.log(appData.parameters.w2p.hookList);
+    const getHook = (id: string) => {
 
         const wantedHook = appData.parameters.w2p.hookList.find((hook: Hook) => id === hook.id)
 
         if (wantedHook) {
-            const fields = wantedHook.fields
+            const fields: HookField = wantedHook.fields
                 .map((hookField: HookField) => {
                     const updatedPipedriveField = getPipedriveField(wantedHook.category, hookField.id)
                     return updatedPipedriveField
                         ? { ...hookField, ...updatedPipedriveField }
                         : null
                 })
-                .filter((field: HookField) => field)
+                .filter((field: HookField | null) => field)
 
-            return { ...wantedHook, fields: fields }
+            const hook: Hook = { ...wantedHook, fields: fields }
+            return hook
 
         } else {
             return null
@@ -111,14 +111,11 @@ export const useHookSelector = () => {
     }
 
     /************************* HOOK FIELDS  **************************/
-    const emptyHookField: HookField = {
+    const emptyHookField: BaseHookField = {
         enabled: false,
-        id: '',
         key: '',
         value: "",
         condition: "",
-        field_type: "",
-        options: null,
     }
 
     const addNewHookField = (hookId: string, newField: HookField) => {
@@ -137,17 +134,22 @@ export const useHookSelector = () => {
         }
     }
 
-    const getHookFieldFromPipedrive = (hookId: string, pipedriveFieldId: string) => {
+    const getHookFieldFromPipedrive = (hookId: string, pipedriveFieldId: number) => {
         const hook = getHook(hookId)
 
         if (hook) {
 
-            const field = hook.fields.find((field: HookField) => field.id === pipedriveFieldId)
+            const field: HookField | undefined = hook.fields.find((field: HookField) => field.id === pipedriveFieldId)
+
             const pipedriveField =
                 appData.parameters.pipedrive[`${hook.category}Fields`]
-                    .find((field: HookField) => field.id === pipedriveFieldId)
+                    .find((field: PipedriveField) => field.id === pipedriveFieldId)
 
-            if (!field) {
+            if (!pipedriveField) {
+                return null
+            }
+
+            if (!field && pipedriveField) {
                 addNewHookField(hookId, { ...emptyHookField, ...pipedriveField })
             }
 
@@ -160,8 +162,8 @@ export const useHookSelector = () => {
         }
     }
 
-    const getPipedriveField = (category: Category, fieldId: string) => {
-        return appData.parameters.pipedrive[`${category}Fields`].find((field: HookField) => field.id === fieldId) ?? null
+    const getPipedriveField = (category: Category, fieldId: number): PipedriveField | null => {
+        return appData.parameters.pipedrive[`${category}Fields`].find((field: PipedriveField) => field.id === fieldId) ?? null
     }
 
     //ICI PRB
@@ -189,17 +191,17 @@ export const useHookSelector = () => {
     }
 }
 
-export const filterUnusableFields = (fieldList) => {
+export const filterUnusableFields = (fieldList: PipedriveField[]) => {
     return fieldList
 }
 
-export const isFieldTypeNumber = (fieldType) => {
+export const isFieldTypeNumber = (fieldType: PipedriveFieldType) => {
     return fieldType === "monetary"
         || fieldType === "double"
         || fieldType === "int"
 }
 
-export const isFieldTypeText = (fieldType) => {
+export const isFieldTypeText = (fieldType: PipedriveFieldType) => {
     return fieldType === "varchar"
         || fieldType === "address"
         || fieldType === "phone"
@@ -207,7 +209,7 @@ export const isFieldTypeText = (fieldType) => {
         || fieldType === "varchar_options"
 }
 
-export const isLogicBlockField = (field) => {
+export const isLogicBlockField = (field: PipedriveField) => {
     return isFieldTypeText(field.field_type)
         || field.field_type === "date"
         || isFieldTypeNumber(field.field_type)

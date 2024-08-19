@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { AppData } from '../../Types';
+import { AppData } from '../Types';
 
 
 const AppLocalizerContext = createContext<AppData | null>(null);

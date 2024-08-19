@@ -1,12 +1,12 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import set from 'lodash/set.js';
 import { useCallApi, deepMerge, deepCopy } from '../helpers';
-import { translate } from '../translation';
-import { NotificationContext } from './NotificationContext';
+import { translate } from 'translation';
 import { useAppLocalizer } from './AppLocalizerContext';
-import { AppData, Hook, HookField, Parameters } from '../../Types';
+import { AppData, Hook, HookField, Parameters } from 'Types';
+import { useNotification } from './hook/contextHook';
 
-interface AppDataContextType {
+export interface AppDataContextType {
     appData: AppData;
     appDataInit: AppData;
     setAppData: React.Dispatch<React.SetStateAction<AppData>>;
@@ -15,8 +15,6 @@ interface AppDataContextType {
     apiTest: (e?: React.FormEvent) => void;
     fieldsCategory: { slug: string, name: string }[];
 }
-
-export const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
 
 export const emptyLocalizer: AppData = {
     parameters: {
@@ -48,7 +46,6 @@ export const emptyLocalizer: AppData = {
                 defaultEmailAsName: true,
             },
         },
-        token: ''
     },
     CONSTANTES: {
         W2P_AVAIBLE_STATES: ["INVALID", "TODO", "SENDED", "ERROR", "DONE"],
@@ -62,6 +59,7 @@ export const emptyLocalizer: AppData = {
     },
     w2p_client_rest_url: '',
     w2p_distant_rest_url: '',
+    token: '',
 }
 
 export const formatHook = (hook: Hook) => {
@@ -88,14 +86,14 @@ export const formatParameters = (parameters: Parameters) => {
 }
 
 function AppDataContextProvider(props: { children: React.ReactNode }) {
-    const { addNotification } = useContext(NotificationContext);
+    const { addNotification } = useNotification();
     const appLocalizer = useAppLocalizer();
     const [appData, setAppData] = useState<AppData>({ ...emptyLocalizer });
     const [appDataInit, setAppDataInit] = useState<AppData>({ ...emptyLocalizer }); // Only to check changes
     const callApi = useCallApi();
 
     useEffect(() => {
-        const initialAppData = deepMerge(deepCopy(emptyLocalizer), appLocalizer);
+        const initialAppData: AppData = deepMerge(deepCopy(emptyLocalizer), appLocalizer) as AppData;
         setAppData(initialAppData);
         setAppDataInit(initialAppData);
     }, [appLocalizer]);
@@ -166,5 +164,7 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
         </AppDataContext.Provider>
     );
 }
+
+export const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
 
 export default AppDataContextProvider;

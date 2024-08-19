@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useMemo } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import './hookSlector.css'
 import { useHookSelector } from '../../_CONTAINERS/Parameters/parametersHelpers'
 import set from 'lodash/set.js';

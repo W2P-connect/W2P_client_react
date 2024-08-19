@@ -12,12 +12,12 @@ export interface AppData {
     parameters: Parameters,
     w2p_client_rest_url: string,
     w2p_distant_rest_url: string,
+    token: string,
 }
 
 export interface Parameters {
     pipedrive: PipedriveParameters
     w2p: W2pParameters
-    token: string
 }
 
 export interface PipedriveParameters {
@@ -25,9 +25,9 @@ export interface PipedriveParameters {
     company_domain: string
     users: User[],
     stages: Stage[],
-    organizationFields: Organization[],
-    personFields: Person[],
-    dealFields: Deal[],
+    organizationFields: PipedriveField[],
+    personFields: PipedriveField[],
+    dealFields: PipedriveField[],
 }
 
 interface W2pParameters {
@@ -73,33 +73,36 @@ export interface MetaKey {
     value: string
 }
 
-export type Category = 'deal' | 'organization'
+export type Category = 'deal'
+    | 'organization'
+    | "person"
 
 export interface Hook {
-    id: string,
     label: string
     key: string
     description: string
+    disabledFor: Category[]
+    id: string,
     active: boolean
-    show: boolean
+    show: boolean,
+    category: Category,
     fields: HookField[],
 }
 
-export interface HookField {
-    enabled: boolean,
-    id: string
-    key: string
-    value: string
-    condition: string
-    field_type: string
-    options: null,
-}
+export type BaseHookField = {
+    enabled: boolean;
+    key: string;
+    value: string;
+    condition: string;
+};
+
+export interface HookField extends BaseHookField, PipedriveField { }
 
 /*************************************************************************/
 /******************************* PIPEDRIVE *******************************/
 /*************************************************************************/
 
-export interface Deal {
+export interface PipedriveDeal {
     id: number;
     title: string;
     value: number;
@@ -130,7 +133,7 @@ export interface Deal {
     add_products?: boolean;
 }
 
-export interface Person {
+export interface PipedrivePerson {
     id: number;
     name: string;
     first_name?: string;
@@ -151,7 +154,7 @@ export interface Person {
     picture_id?: number;
 }
 
-export interface Organization {
+export interface PipedriveOrganization {
     id: number;
     name: string;
     people_count: number;
@@ -210,12 +213,12 @@ export interface User {
     access: Access[];
 }
 
-export interface Field {
+export interface PipedriveField {
     id: number;
     key: string;
     name: string;
     order_nr: number;
-    field_type: string;
+    field_type: PipedriveFieldType;
     add_time: string;
     update_time: string | null;
     active_flag: boolean;
@@ -231,7 +234,32 @@ export interface Field {
     mandatory_flag: boolean;
     json: any;
     options?: Array<{ id: string; label: string; color: string }>; // If the field has options like dropdowns
+    category: Category  //Ajout manuel car n'est pas inclus par détault dans Pipedrive ! (gestion plus simple)
 }
+
+export type PipedriveFieldType =
+    | 'varchar'
+    | 'text'
+    | 'int'
+    | 'double'
+    | 'monetary'
+    | 'date'
+    | 'set'
+    | 'enum'
+    | 'phone'
+    | 'time'
+    | 'timerange'
+    | 'daterange'
+    | 'user'
+    | 'org'
+    | 'people'
+    | 'stage'
+    | 'address'
+    | 'bool'
+    | 'email'
+    | 'timeinterval'
+    | 'varchar_options'
+    | 'attachment';
 
 interface Access {
     admin: boolean
