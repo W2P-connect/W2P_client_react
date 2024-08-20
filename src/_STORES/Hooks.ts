@@ -1,8 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import { appDataStore } from './AppData';
-import { Category, Hook, HookField } from 'Types';
+import { Category, Hook, HookField, PreHook } from 'Types';
 import { v4 as uuidv4 } from 'uuid';
-import { pipedriveFieldsStore } from './PipedriveFields';
+import { hookFieldStore } from './HookField';
 
 class HookStore {
     constructor() {
@@ -16,12 +16,13 @@ class HookStore {
         disabledFor: [],
         description: "",
         show: false,
-        active: false,
+        enabled: false,
         category: "person",
         createActivity: false,
         fields: [],
     };
 
+    preHooks: PreHook[] = []
     hooks: Hook[] = []
 
     setOptionHook(newHook: Hook) {
@@ -32,24 +33,25 @@ class HookStore {
     }
 
     addNewHook(hook: Hook) {
-        const updatedHookList = [...appDataStore.appData.parameters.w2p.hookList, hook];
-        appDataStore.updateHookList(updatedHookList);
+        this.hooks.push(hook)
+    }
+    
+    updateHook(id: string, updatedData: Partial<Hook>) {
+        const hookIndex = this.hooks.findIndex(hook => hook.id === id);
+        if (hookIndex > -1) {
+            this.hooks[hookIndex] = { ...this.hooks[hookIndex], ...updatedData };
+        }
     }
 
-    getHookFromParent(hook: Hook, category: Category): Hook {
-        const wantedHook = appDataStore.appData.parameters.w2p.hookList.find(
-            (h: Hook) => hook.key === h.key && category === h.category
-        );
+
+    getHookFromPreHook(preHook: PreHook, category: Category): Hook {
+        const wantedHook = this.hooks.find(h => preHook.key === h.key && category === h.category);
 
         if (wantedHook) {
-            const fields = wantedHook.fields.map(hookField => {
-                const pipedriveField = appDataStore.getPipedriveField(wantedHook.category, hookField.id);
-                return pipedriveField ? { ...hookField, ...pipedriveField } : null;
-            }).filter(Boolean);
-
-            return { ...wantedHook, fields: fields as HookField[] };
+            const fields = this.getFields(wantedHook.id)
+            return { ...wantedHook, fields: fields };
         } else {
-            const newHook = { ...this.emptyHook, ...hook, category, id: uuidv4() };
+            const newHook = { ...this.emptyHook, ...preHook, category, id: uuidv4() };
             this.addNewHook(newHook);
             return newHook;
         }
@@ -58,17 +60,16 @@ class HookStore {
     getHook(id: string): Hook | null {
         const wantedHook = this.hooks.find(hook => hook.id === id)
         if (wantedHook) {
-            const fields = wantedHook.fields.map(hookField => {
-                //Permet de toujours garder les fields pipedrive à jour si il y a un update sur Pipedrive
-                const pipedriveFields = pipedriveFieldsStore.getPiepdriveField(hookField.pipedriveFieldId);
-                return pipedriveFields
-                    ? { ...hookField, ...pipedriveFields }
-                    : null;
-            }).filter(Boolean);
-
-            return { ...wantedHook, fields: fields as HookField[] };
+            const fields = this.getFields(wantedHook.id)
+            return { ...wantedHook, fields: fields };
         }
         return null;
+    }
+
+    getFields(hookId: string): HookField[] {
+        const fields = hookFieldStore.getHookFields(hookId)
+
+        return fields
     }
 }
 

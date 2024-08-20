@@ -6,29 +6,28 @@ import { useHookSelector } from '../parametersHelpers'
 import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist'
 import HookSelector from '_COMPONENTS/HookSelector/HookSelector'
 import { priorityFieldsKey, unusableFieldsKey } from '../../../appConstante'
-import { Category, Hook, HookField, PipedriveField } from 'Types'
+import { Category, Hook, PipedriveField } from 'Types'
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook'
 import { AxiosResponse } from 'axios'
 import { observer } from 'mobx-react-lite'
 import { pipedriveFieldsStore, PipedriveFieldStore } from '_STORES/PipedriveFields'
-import { error } from 'console'
+import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
+
 
 const FieldCategory = ({ category }: { category: Category }) => {
 
   const callPipedriveApi = useCallPipedriveApi()
 
-  const { appData, saveParameters, setAppData } = useAppDataContext()
-  const { setOptionHook, getHook, getHookFromParent } = useHookSelector()
+  const { saveParameters } = useAppDataContext()
+
   const { addNotification } = useNotification()
 
   const [searchField, setSearchField] = useState<string>("")
-  const [filedsList, setFieldsList] = useState<null | PipedriveField[]>(null)
-
-  const [hookToShow, setHookToShow] = useState<Hook | null>(null)
-  
+  const [pipedriveFieldsList, setPipedriveFieldsList] = useState<null | PipedriveField[]>(null)
   const [selectHook, setSelectHook] = useState<Hook | null>(null)
 
+  const [hookToShow, setHookToShow] = useState<Hook | null>(null)
 
   const getCategoryFields = (e: React.FormEvent) => {
     callPipedriveApi(`${category}Fields`, null, null, null, e)
@@ -51,20 +50,20 @@ const FieldCategory = ({ category }: { category: Category }) => {
       })
   }
 
-  const categoryFields: HookField[] | null = hookStore.getHook(category)
+  const categoryFields: PipedriveField[] = pipedriveFieldsStore.getCategoryFields(category)
 
   useEffect(() => {
-    setFieldsList(categoryFields)
+    setPipedriveFieldsList(categoryFields)
   }, [categoryFields, category])
 
   useEffect(() => {
     if (searchField) {
-      setFieldsList(_ =>
+      setPipedriveFieldsList(_ =>
         categoryFields
           .filter(field => field.name.includes(searchField))
       )
     } else {
-      setFieldsList(categoryFields)
+      setPipedriveFieldsList(categoryFields)
     }
   }, [searchField])
 
@@ -74,12 +73,20 @@ const FieldCategory = ({ category }: { category: Category }) => {
 
   useEffect(() => {
     if (selectHook) {
-      const hook = getHook(selectHook.id)
+      const hook = hookStore.getHook(selectHook.id)
       if (hook) {
         setHookToShow(_ => hook)
       }
     }
-  }, [selectHook?.id, appData])
+  }, [selectHook?.id])
+
+
+  /*********** checked ***********/
+
+  const updateHook = (hookId: string, key: keyof Hook, value: any) => {
+    hookStore.updateHook(hookId, { [key]: value });
+  };
+
 
   return (
     <div key={category}>
@@ -88,15 +95,14 @@ const FieldCategory = ({ category }: { category: Category }) => {
           <p>{translate(`Select the different events that will sync Woocommerce and wordpress informations to Pipedrive.`)}</p>
         </div>
         <div className='flex gap-1 w2p-wrap m-b-25 m-t-25'>
-          {appData.CONSTANTES.W2P_HOOK_LIST
+          {hookStore.preHooks
             .filter(hook => !hook?.disabledFor?.includes(category))
             .map(hook => {
-              return <HookSelector key={hook.key} parentHook={hook} selector={selectHookToSetUp} category={category} active={hookToShow?.key === hook.key} />
-            }
-            )}
+              return <HookSelector key={hook.key} preHook={hook} selector={selectHookToSetUp} category={category} active={hookToShow?.key === hook.key} />
+            })}
         </div>
 
-        {hookToShow && hookToShow.id
+        {hookToShow
           ? <div key={hookToShow.key}>
             {/* <div className='w2p-instructions'>
               <p>{translate(
@@ -106,7 +112,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
                 {translate("Set the value to assign to the fields during various user events.")}
               </p>
             </div> */}
-            {filedsList
+            {hookToShow.fields
               ? <div key={category}>
                 <h5 className='m-b-25'>{translate(`Parameter of the event : ${hookToShow.label}`)}</h5>
 
@@ -114,10 +120,11 @@ const FieldCategory = ({ category }: { category: Category }) => {
                   <input
                     type="checkbox"
                     className='m-r-10'
-                    onChange={(e) => setOptionHook({
-                      ...hookToShow,
-                      createActivity: e.target.checked
-                    })}
+                    onChange={(e) => updateHook(
+                      hookToShow.id,
+                      "createActivity",
+                      e.target.checked
+                    )}
                     checked={hookToShow.createActivity ?? false}
                   />
                   <div>
@@ -137,22 +144,22 @@ const FieldCategory = ({ category }: { category: Category }) => {
                     onInput={setSearchField}
                   />
                 </div>
-                {filedsList.length
+                {hookToShow.fields.length
                   ? <div className='flex column m-t-25 gap-1'>
                     {/* Priority fields */}
-                    {filedsList
-                      .filter(field => !field.enabled)
-                      .filter(field => priorityFieldsKey[category.toLowerCase()]?.includes(field.key))
+                    {hookToShow.fields
+                      .filter(field => PipedriveFieldStore.isFieldValid(field.pipedrive))
+                      .filter(field => priorityFieldsKey[category]?.includes(field.key))
                       .map(field =>
-                        <PipepdriveField pipedriveFieldId={field.id} key={field.id} relatedHook={hookToShow} priority={true} />
+                        <PipepdriveField pipedriveFieldId={field.pipedriveFieldId} key={field.pipedriveFieldId} relatedHook={hookToShow} priority={true} />
                       )}
                     {/* other fields */}
-                    {filedsList
+                    {hookToShow.fields
                       .filter(field => !field.enabled)
                       .filter(field => !unusableFieldsKey.includes(field.key))
-                      .filter(field => !priorityFieldsKey[category.toLowerCase()]?.includes(field.key))
+                      .filter(field => !priorityFieldsKey[category]?.includes(field.key))
                       .map(field =>
-                        <PipepdriveField pipedriveFieldId={field.id} key={field.id} relatedHook={hookToShow} priority={false} />
+                        <PipepdriveField pipedriveFieldId={field.pipedriveFieldId} key={field.pipedriveFieldId} relatedHook={hookToShow} priority={false} />
                       )}
                   </div>
                   : <p>{searchField
@@ -168,7 +175,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
               onClick={e => getCategoryFields(e)}
               className='light-button m-t-25'
             >
-              {filedsList?.length
+              {pipedriveFieldsList?.length
                 ? translate("Reload custom fields")
                 : translate("Load custom fields")
               }

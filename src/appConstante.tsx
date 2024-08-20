@@ -25,7 +25,7 @@ export const unusableFieldsKey: string[] = [
     "person_id" //Forcément l'utilisateur
 ]
 
-export const priorityFieldsKey: Record<Category, any> = {
+export const priorityFieldsKey: Record<Category, Array<string>> = {
     'person': [
         'name',
         'email',

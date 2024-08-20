@@ -75,11 +75,13 @@ export type Category = 'deal'
     | 'organization'
     | "person"
 
-export interface Hook {
+export interface PreHook {
     label: string
     key: string
     description: string
     disabledFor: Category[]
+}
+export interface Hook extends PreHook {
     id: string,
     active: boolean
     show: boolean,

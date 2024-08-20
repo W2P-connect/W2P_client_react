@@ -10,9 +10,7 @@ class AppDataStore {
                 company_domain: "",
                 users: [],
                 stages: [],
-                organizationFields: [],
-                personFields: [],
-                dealFields: [],
+                fields: [],
             },
             w2p: {
                 domain: "w2p-bis.local",
@@ -66,8 +64,8 @@ class AppDataStore {
         return this.appData.parameters.w2p.hookList.find(hook => hook.id === id);
     }
 
-    getPipedriveField(category: Category, fieldId: number): PipedriveField | null {
-        return this.appData.parameters.pipedrive[`${category}Fields`].find((field: PipedriveField) => field.id === fieldId) ?? null;
+    getPipedriveField(fieldId: number): PipedriveField | null {
+        return this.appData.parameters.pipedrive.fields.find((field: PipedriveField) => field.id === fieldId) ?? null;
     }
 }
 
