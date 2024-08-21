@@ -83,7 +83,7 @@ export interface PreHook {
 }
 export interface Hook extends PreHook {
     id: string,
-    active: boolean
+    enabled: boolean,
     show: boolean,
     category: Category,
     createActivity: boolean,
@@ -92,8 +92,9 @@ export interface Hook extends PreHook {
 
 export type BaseHookField = {
     enabled: boolean;
+    id: string;
     key: string;
-    value: string | Array<any>;
+    value: string | Array<number>;
     condition: string;
     pipedriveFieldId: number;
     hookId: string;
@@ -264,6 +265,8 @@ export type PipedriveFieldType =
     | 'email'
     | 'timeinterval'
     | 'varchar_options'
+    | 'status' //??
+    | 'visible_to' //??
     | 'attachment';
 
 interface Access {

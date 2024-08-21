@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { translate } from '../../../translation'
 import { useCallPipedriveApi } from '../../../helpers'
-import PipepdriveField from '_COMPONENTS/PIPEDRIVE/PipedriveField/PipepdriveField'
-import { useHookSelector } from '../parametersHelpers'
 import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist'
-import HookSelector from '_COMPONENTS/HookSelector/HookSelector'
-import { priorityFieldsKey, unusableFieldsKey } from '../../../appConstante'
+import HookSelector from '_COMPONENTS/HOOK/HookSelector/HookSelector'
 import { Category, Hook, PipedriveField } from 'Types'
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook'
 import { AxiosResponse } from 'axios'
@@ -13,6 +10,7 @@ import { observer } from 'mobx-react-lite'
 import { pipedriveFieldsStore, PipedriveFieldStore } from '_STORES/PipedriveFields'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
+import HookField from '_COMPONENTS/HOOK/HookField/HookField'
 
 
 const FieldCategory = ({ category }: { category: Category }) => {
@@ -148,18 +146,15 @@ const FieldCategory = ({ category }: { category: Category }) => {
                   ? <div className='flex column m-t-25 gap-1'>
                     {/* Priority fields */}
                     {hookToShow.fields
-                      .filter(field => PipedriveFieldStore.isFieldValid(field.pipedrive))
-                      .filter(field => priorityFieldsKey[category]?.includes(field.key))
+                      .filter(hookfield => hookFieldStore.isImportant(hookfield))
                       .map(field =>
-                        <PipepdriveField pipedriveFieldId={field.pipedriveFieldId} key={field.pipedriveFieldId} relatedHook={hookToShow} priority={true} />
+                        <HookField key={field.pipedriveFieldId} hookField={field} />
                       )}
                     {/* other fields */}
                     {hookToShow.fields
-                      .filter(field => !field.enabled)
-                      .filter(field => !unusableFieldsKey.includes(field.key))
-                      .filter(field => !priorityFieldsKey[category]?.includes(field.key))
+                      .filter(hookfield => !hookFieldStore.isImportant(hookfield))
                       .map(field =>
-                        <PipepdriveField pipedriveFieldId={field.pipedriveFieldId} key={field.pipedriveFieldId} relatedHook={hookToShow} priority={false} />
+                        <HookField key={field.pipedriveFieldId} hookField={field} />
                       )}
                   </div>
                   : <p>{searchField

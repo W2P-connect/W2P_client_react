@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { BaseHookField, Hook, HookField } from 'Types';
 import { hookStore } from './Hooks'
-import { pipedriveFieldsStore } from './PipedriveFields';
+import { pipedriveFieldsStore, PipedriveFieldStore } from './PipedriveFields';
+import { priorityFieldsKey } from 'appConstante';
+import { v4 as uuidv4 } from 'uuid';
 
 class HookFieldStore {
 
@@ -10,6 +12,7 @@ class HookFieldStore {
     }
 
     emptyHookField: BaseHookField = {
+        id: '',
         enabled: false,
         key: '',
         value: '',
@@ -22,8 +25,24 @@ class HookFieldStore {
 
 
     addHookField(hookId: string, pipedriveFieldId: number, hookField = this.emptyHookField) {
-        const newHookField = { ...this.emptyHookField, pipedriveFieldId, hookId }
+        const newHookField = {
+            ...this.emptyHookField,
+            id: uuidv4(),
+            pipedriveFieldId,
+            hookId
+        }
         this.hookFields.push(newHookField)
+    }
+
+    addNewHookField(hookField: HookField) {
+        this.hookFields.push(hookField)
+    }
+
+    updateHookField(id: string, updatedData: Partial<HookField>) {
+        const hookFieldIndex = this.hookFields.findIndex(hookField => hookField.id === id);
+        if (hookFieldIndex > -1) {
+            this.hookFields[hookFieldIndex] = { ...this.hookFields[hookFieldIndex], ...updatedData };
+        }
     }
 
     getHookFields(hookId: string): HookField[] {
@@ -43,8 +62,12 @@ class HookFieldStore {
             .filter(field => field !== null)
     }
 
-    getHook(id: string): Hook | null {
-        return hookStore.getHook(id)
+    isImportant(hookField: HookField) {
+        const hook = hookStore.getHook(hookField.hookId)
+        if (hook) {
+            return PipedriveFieldStore.isFieldValid(hookField.pipedrive)
+                && priorityFieldsKey[hook.category]?.includes(hookField.key)
+        }
     }
 }
 

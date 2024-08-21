@@ -1,6 +1,6 @@
 import './hookSlector.css'
-import InputCheckbox from '../FORMS/InputCheckbox/InputCheckbox';
-import { translate } from '../../translation';
+import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox';
+import { translate } from '../../../translation';
 import { observer } from 'mobx-react-lite';
 import { Category, Hook, HookField, PreHook } from 'Types';
 import { hookStore } from '_STORES/Hooks';

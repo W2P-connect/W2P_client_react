@@ -45,9 +45,9 @@ export const priorityFieldsKey: Record<Category, Array<string>> = {
 }
 
 interface AdditionalFieldsData {
-    deal: {
-        status: {
-            info: ReactNode
+    'deal': {
+        'status': {
+            'info': ReactNode
         }
     }
 }
