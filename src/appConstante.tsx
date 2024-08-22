@@ -46,14 +46,15 @@ export const priorityFieldsKey: Record<Category, Array<string>> = {
     ]
 }
 
-interface AdditionalFieldsData {
-    deal: {
-        'status': {
-            'info': ReactNode
-        }
-    },
-    organization: {},
-    person: {},
+
+export type AdditionalFieldsData = {
+    [category in Category]: {
+        [key: string]: FieldData;
+    };
+};
+
+interface FieldData {
+    info?: JSX.Element;
 }
 
 export const additionalFieldsData: AdditionalFieldsData = {

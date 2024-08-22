@@ -4,7 +4,7 @@ import { translate } from '../../translation'
 import { PopupContext } from '../../_CONTEXT/PopupContext'
 import MetaKeysCategories from '../METAKEYS/MetaKeysCategories'
 import { v4 as uuidv4 } from 'uuid';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Block, MetaKey, Variable as VariableType } from 'Types'
 
 export const emptyBlock: Block = {
@@ -26,7 +26,7 @@ export const getBlockExemple = (block: Block) => {
 interface Props {
     defautBlock: Block;
     setter: (block: Block) => void;
-    deleter: (id: Block['id']) => void;
+    deleter?: (id: Block['id']) => void;
 }
 
 export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
@@ -40,32 +40,23 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
     }, [])
 
     useEffect(() => {
-        if (block.id && !block.variables.length) {
-            console.log(block);
-            // addElement()
-        }
-    }, [block])
-
-    useEffect(() => {
         setter && setter(block)
     }, [block])
 
-    const addMetaKeyElement = (metaKey: MetaKey) => {
-        showPopup(false)
+    const addElementToBlock = (metaKey?: MetaKey) => {
+        showPopup(false);
+        const newVariable = metaKey
+            ? { ...metaKey, isFreeField: false, id: uuidv4() }
+            : { value: '', isFreeField: true, id: uuidv4() };
+        
         setBlock(prvBlock => ({
             ...prvBlock,
-            variables: [...prvBlock.variables, { ...metaKey, isFreeField: false, id: uuidv4() }]
-        }))
+            variables: [...prvBlock.variables, newVariable]
+        }));
     }
-
-    const addFreeTextElement = () => {
-        showPopup(false)
-        setBlock(prvBlock => ({
-            ...prvBlock,
-            variables: [...prvBlock.variables, { value: '', isFreeField: true, id: uuidv4() }]
-        }))
-    }
-
+    const addMetaKeyElement = (metaKey: MetaKey) => addElementToBlock(metaKey);
+    const addFreeTextElement = () => addElementToBlock();
+    
     const deleteVariable = (id: VariableType["id"]) => {
         setBlock(prv => ({
             ...prv,
@@ -75,19 +66,17 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
 
     const deleteBlock = () => {
         if (window.confirm(translate("Are you sure you want to delete this custom block ?"))) {
-            deleter(block.id)
+            deleter && deleter(block.id)
         }
     }
 
     const updateVariable = (updatedVariable: VariableType) => {
         setBlock(prv => ({
             ...prv,
-            variables: prv.variables.map(
-                variable => variable.id === updatedVariable.id
-                    ? updatedVariable
-                    : variable
+            variables: prv.variables.map(variable =>
+                variable.id === updatedVariable.id ? updatedVariable : variable
             )
-        }))
+        }));
     }
 
     const addElement = () => {
@@ -112,7 +101,7 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
         )
     }
 
-    const handleDragEnd = (result) => {
+    const handleDragEnd = (result: DropResult) => {
         if (!result.destination) {
             return;
         }

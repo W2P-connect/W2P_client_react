@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { translate } from '../../../translation'
-import { useCallPipedriveApi } from '../../../helpers'
+import { updateNestedObject, useCallPipedriveApi } from '../../../helpers'
 import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist'
 import HookSelector from '_COMPONENTS/HOOK/HookSelector/HookSelector'
 import { Category, Hook, PipedriveField } from 'Types'
@@ -24,7 +24,6 @@ const FieldCategory = ({ category }: { category: Category }) => {
   const [searchField, setSearchField] = useState<string>("")
   const [pipedriveFieldsList, setPipedriveFieldsList] = useState<null | PipedriveField[]>(null)
   const [selectHook, setSelectHook] = useState<Hook | null>(null)
-
   const [hookToShow, setHookToShow] = useState<Hook | null>(null)
 
   const getCategoryFields = (e: React.FormEvent) => {
@@ -81,8 +80,12 @@ const FieldCategory = ({ category }: { category: Category }) => {
 
   /*********** checked ***********/
 
-  const updateHook = (hookId: string, key: keyof Hook, value: any) => {
-    hookStore.updateHook(hookId, { [key]: value });
+  const updateHook = (hookId: string, path: string, value: any) => {
+    const hook = hookStore.getHook(hookId)
+    if (hook) {
+      const updatedHook = updateNestedObject(hook, path, value);
+      hookStore.updateHook(hookId, updatedHook);
+    }
   };
 
 
@@ -120,10 +123,10 @@ const FieldCategory = ({ category }: { category: Category }) => {
                     className='m-r-10'
                     onChange={(e) => updateHook(
                       hookToShow.id,
-                      "createActivity",
+                      "aoption.createActivity",
                       e.target.checked
                     )}
-                    checked={hookToShow.createActivity ?? false}
+                    checked={hookToShow.option.createActivity ?? false}
                   />
                   <div>
                     {translate("Add an activity when this event is triggered.")}

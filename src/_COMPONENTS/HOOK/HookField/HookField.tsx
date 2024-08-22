@@ -2,17 +2,18 @@ import './hookField.css'
 import { isLogicBlockField } from '../../../_CONTAINERS/Parameters/parametersHelpers'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox'
 import { translate } from '../../../translation'
-import { useCallPipedriveApi } from '../../../helpers'
+import { isNumberArray, useCallPipedriveApi } from '../../../helpers'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
 import { additionalFieldsData, linkableFields } from '../../../appConstante'
-import { HookField, Hook } from 'Types'
+import { HookField as HookFieldType, Block, GroupedStages } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
+import { MouseEvent } from 'react'
 
 interface Props {
-  hookField: HookField
+  hookField: HookFieldType
 }
 
 export default function HookField({ hookField }: Props) {
@@ -22,31 +23,29 @@ export default function HookField({ hookField }: Props) {
 
   const hook = hookStore.getHook(hookField.hookId)
 
-  const updateHookField = (key: keyof HookField, value: any) => {
+  const updateHookField = (key: keyof HookFieldType, value: any) => {
     hookFieldStore.updateHookField(hookField.id, { [key]: value });
   };
 
-  const updateHook = (key: keyof Hook, value: any) => {
-    hook && hookStore.updateHook(hook.id, { [key]: value });
-  };
-
-  const loadPipedriveUsers = (e) => {
+  const loadPipedriveUsers = (e: MouseEvent) => {
     callPipedriveApi("users", null, null, null, e)
       .then(res => {
-        setAppData(prvData => {
-          prvData.parameters.pipedrive.users = res.data.data
-          return { ...prvData }
-        })
+        if (res) {
+          const newAppDataStore = appDataStore.appData
+          newAppDataStore.parameters.pipedrive.users = res.data.data
+          appDataStore.setAppData(newAppDataStore)
+        }
       })
   }
 
-  const loadPipedriveStages = (e) => {
+  const loadPipedriveStages = (e: MouseEvent) => {
     callPipedriveApi("stages", null, null, null, e)
       .then(res => {
-        setAppData(prvData => {
-          prvData.parameters.pipedrive.stages = res.data.data
-          return { ...prvData }
-        })
+        if (res) {
+          const newAppDataStore = appDataStore.appData
+          newAppDataStore.parameters.pipedrive.stages = res.data.data
+          appDataStore.setAppData(newAppDataStore)
+        }
       })
   }
 
@@ -61,7 +60,7 @@ export default function HookField({ hookField }: Props) {
       updateHookField('value', id)
     } else if (hookField.pipedrive.field_type === "set" || hookField.pipedrive.field_type === "visible_to") {
       if (Array.isArray(hookField.value)) {
-        hookField.value.includes(id)
+        isNumberArray(hookField.value) && hookField.value.includes(id)
           ? updateHookField('value', Array.isArray(hookField.value) ? hookField.value.filter(val => val !== id) : [])
           : updateHookField("value", id)
       } else {
@@ -72,20 +71,23 @@ export default function HookField({ hookField }: Props) {
   }
 
   const renderStages = () => {
-    const groupedStages = appData.parameters.pipedrive.stages.reduce((acc, item) => {
+    // Typage explicite du résultat de reduce
+    const groupedStages: GroupedStages = appDataStore.appData.parameters.pipedrive.stages.reduce((acc, item) => {
       const { pipeline_name } = item;
       if (!acc[pipeline_name]) {
         acc[pipeline_name] = [];
       }
       acc[pipeline_name].push(item);
       return acc;
-    }, {});
+    }, {} as GroupedStages);  // Type de l'accumulateur explicitement défini
 
+    // Transformation de l'objet en tableau
     const groupedStagesArray = Object.entries(groupedStages).map(([pipeline_name, stages]) => ({
       pipeline_name,
       stages
     }));
 
+    // Rendu JSX
     return groupedStagesArray.map(group => (
       <div key={group.pipeline_name} className='flex column m-b-10'>
         <div className='strong-1 m-b-5'>{group.pipeline_name}</div>
@@ -94,9 +96,9 @@ export default function HookField({ hookField }: Props) {
             group.stages.map(stage => (
               <div
                 key={stage.id}
-                onClick={e => selectOption(stage.id)}
-                className={`pipedrive-option-field ${field.value === stage.id ? "selected" : ""}`}
-                style={{ backgroundColor: stage.color ? stage.color : "white" }}
+                onClick={() => selectOption(stage.id)}
+                className={`pipedrive-option-field ${hookField.value === stage.id ? "selected" : ""}`}
+                style={{ backgroundColor: "white" }}
               >
                 {stage.name}
               </div>
@@ -105,7 +107,7 @@ export default function HookField({ hookField }: Props) {
         </div>
       </div>
     ));
-  }
+  };
 
   return (
     <div className='pipedrive-field'>
@@ -113,14 +115,14 @@ export default function HookField({ hookField }: Props) {
         <div className='field-name'>
           <InputCheckbox
             checked={hookField.enabled}
-            onChange={(value) => updateField("enabled", value)}
+            onChange={(value) => updateHookField("enabled", value)}
           />
           {hookFieldStore.isImportant(hookField)
             ? <span>🚨</span>
             : null}
-          {`${hookField.name} `}
+          {`${hookField.pipedrive.name} `}
           (<span className='subtext'>
-            {hookField.key} - {hookField.field_type}
+            {hookField.pipedrive.key} - {hookField.pipedrive.field_type}
           </span>)
         </div>
         {/* <div className='italic'>
@@ -136,8 +138,8 @@ export default function HookField({ hookField }: Props) {
                 If the value is null, no call will be made to Pipedrive for creation`)}</p>
             : null}
 
-          {additionalFieldsData[hook.category]?.[hookField.key]?.info
-            ? <p>{additionalFieldsData[relatedHook.category][hookField.key].info}</p>
+          {additionalFieldsData[hook.category][hookField.pipedrive.key]?.info
+            ? <p>{additionalFieldsData[hook.category][hookField.pipedrive.key].info}</p>
             : null}
 
           {/* <h5 className='strong-1 m-t-25 m-b-25'>
@@ -153,7 +155,7 @@ export default function HookField({ hookField }: Props) {
                   <div
                     key={index}
                     onClick={e => selectOption(option.id)}
-                    className={`pipedrive-option-field ${(Array.isArray(hookField.value) && hookField.value.includes(option.id))
+                    className={`pipedrive-option-field ${(isNumberArray(hookField.value) && hookField.value.includes(option.id))
                       ? "selected"
                       : ""}`}
                     style={{ backgroundColor: option.color ? option.color : "white" }}
@@ -185,8 +187,8 @@ export default function HookField({ hookField }: Props) {
           {isLogicBlockField(hookField.pipedrive)
             ? <LogicBlocks
               fieldCondition={hookField.condition}
-              setter={(logicBlocks) => updateField("value", logicBlocks)}
-              defaultLogicBlocks={hookField.value}
+              setter={(logicBlocks) => updateHookField("value", logicBlocks)}
+              defaultLogicBlocks={hookField.value as Block[]}
             />
             : null
           }
@@ -199,7 +201,7 @@ export default function HookField({ hookField }: Props) {
                   <div
                     key={index}
                     onClick={e => selectOption(user.id)}
-                    className={`pipedrive-option-field ${(Array.isArray(hookField.value) && hookField.value.includes(user.id))
+                    className={`pipedrive-option-field ${(isNumberArray(hookField.value) && hookField.value.includes(user.id))
                       ? "selected"
                       : ""}`}
                     style={{ backgroundColor: "white" }}

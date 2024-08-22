@@ -137,3 +137,25 @@ export const removeDuplicatesObjectInArray =
             }
         });
     };
+
+export const isNumberArray = (value: unknown): value is number[] => Array.isArray(value);
+
+export function updateNestedObject<T extends object>(
+    obj: T,
+    path: string,
+    value: any
+): T {
+    const keys = path.split('.');
+    let current: any = obj;
+
+    keys.slice(0, -1).forEach(key => {
+        if (!current[key]) {
+            current[key] = {}; // Si la clé n'existe pas, crée un objet vide
+        }
+        current = current[key];
+    });
+
+    current[keys[keys.length - 1]] = value;
+
+    return { ...obj }; // Retourne un nouvel objet avec les mises à jour
+}

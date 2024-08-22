@@ -3,16 +3,17 @@ import { translate } from '../../translation'
 import VariableBlock, { emptyBlock } from './VariableBlock'
 import { v4 as uuidv4 } from 'uuid';
 import "./logicBlock.css"
-import { LogicBlock } from 'Types';
+import { Block, FieldCondition } from 'Types';
 
 interface Props {
-    defaultLogicBlocks: LogicBlock;
-    setter(logicBlock: LogicBlock)
+    defaultLogicBlocks: Block[];
+    setter: (logicBlock: Block[]) => void;
+    fieldCondition: FieldCondition;
 }
 
 export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition }: Props) {
 
-    const [logicBlocks, setLogicBlocks] = useState([{ ...emptyBlock, id: uuidv4() }])
+    const [logicBlocks, setLogicBlocks] = useState<Block[]>([{ ...emptyBlock, id: uuidv4() }])
 
     useEffect(() => {
         setter && setter(logicBlocks)
@@ -22,7 +23,7 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
         defaultLogicBlocks && setLogicBlocks(defaultLogicBlocks)
     }, [])
 
-    const updateBlock = (updatedBlock) => {
+    const updateBlock = (updatedBlock: Block) => {
         setLogicBlocks(prv => [...prv.map(block =>
             block.id === updatedBlock.id
                 ? updatedBlock
@@ -34,13 +35,13 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
         setLogicBlocks(prv => [...prv, { ...emptyBlock, id: uuidv4() }])
     }
 
-    const deleteBlock = (id) => {
+    const deleteBlock = (id: Block["id"]) => {
         setLogicBlocks(prv => prv.length > 1
             ? prv.filter(block => block.id !== id)
             : [{ ...emptyBlock, id: uuidv4() }])
     }
 
-    const cantBeActive = (block, index) => {
+    const cantBeActive = (block: Block, index: number) => {
         if (fieldCondition.enabled === false) {
             return index > 0
         } else {

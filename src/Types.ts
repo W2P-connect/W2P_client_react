@@ -95,7 +95,7 @@ export interface Hook extends PreHook {
 export type BaseHookField = {
     enabled: boolean;
     id: string;
-    value: number | Array<number>;
+    value: number | Array<number> | Block[];
     condition: FieldCondition;
     pipedriveFieldId: number;
     findInPipedrive?: boolean
@@ -216,6 +216,10 @@ interface Stage {
     active_flag: boolean;
     add_time: string;
     update_time: string | null;
+}
+
+export interface GroupedStages {
+    [pipeline_name: string]: Stage[];
 }
 
 export interface User {

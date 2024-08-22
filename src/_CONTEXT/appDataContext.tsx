@@ -23,9 +23,7 @@ export const emptyLocalizer: AppData = {
             company_domain: "",
             users: [],
             stages: [],
-            organizationFields: [],
-            personFields: [],
-            dealFields: [],
+            fields: [],
         },
         w2p: {
             domain: "w2p-bis.local",
@@ -69,7 +67,7 @@ export const formatHook = (hook: Hook) => {
         (field.value !== undefined
             && (Array.isArray(field.value)
                 ? field.value.length > 0
-                : field.value !== '')
+                : field.value !== 0)
         ));
 
     return formatedHook
