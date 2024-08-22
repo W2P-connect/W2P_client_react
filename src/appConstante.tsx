@@ -1,12 +1,14 @@
 import { ReactNode } from "react"
-import { Category, PipedriveField } from "Types"
+import { Category } from "Types"
 
 export const linkableFields: {
-    person: ("name" | "email" | "phone")[],
-    organization: ("name")[]
+    person: string[],
+    organization: string[],
+    deal: string[],
 } = {
     'person': ["name", "email", "phone"],
-    'organization': ["name"]
+    'organization': ["name"],
+    'deal': []
 }
 
 export const unusableFieldsKey: string[] = [
@@ -45,11 +47,13 @@ export const priorityFieldsKey: Record<Category, Array<string>> = {
 }
 
 interface AdditionalFieldsData {
-    'deal': {
+    deal: {
         'status': {
             'info': ReactNode
         }
-    }
+    },
+    organization: {},
+    person: {},
 }
 
 export const additionalFieldsData: AdditionalFieldsData = {
@@ -64,5 +68,7 @@ export const additionalFieldsData: AdditionalFieldsData = {
                 </div>
             </>
         }
-    }
+    },
+    'organization': {},
+    'person': {},
 }

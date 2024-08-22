@@ -17,8 +17,10 @@ class HookStore {
         description: "",
         show: false,
         enabled: false,
+        option: {
+            createActivity: false,
+        },
         category: "person",
-        createActivity: false,
         fields: [],
     };
 
@@ -35,7 +37,7 @@ class HookStore {
     addNewHook(hook: Hook) {
         this.hooks.push(hook)
     }
-    
+
     updateHook(id: string, updatedData: Partial<Hook>) {
         const hookIndex = this.hooks.findIndex(hook => hook.id === id);
         if (hookIndex > -1) {

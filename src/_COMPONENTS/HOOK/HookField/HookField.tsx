@@ -1,17 +1,15 @@
-import { useContext, useState, useEffect } from 'react'
 import './hookField.css'
-import { isLogicBlockField, useHookSelector } from '../../../_CONTAINERS/Parameters/parametersHelpers'
-import Skeleton from '../../GENERAL/Skeleton/Skeleton'
+import { isLogicBlockField } from '../../../_CONTAINERS/Parameters/parametersHelpers'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox'
 import { translate } from '../../../translation'
-import { AppDataContext } from '../../../_CONTEXT/appDataContext'
 import { useCallPipedriveApi } from '../../../helpers'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
 import { additionalFieldsData, linkableFields } from '../../../appConstante'
-import { HookField } from 'Types'
+import { HookField, Hook } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
+import { appDataStore } from '_STORES/AppData'
 
 interface Props {
   hookField: HookField
@@ -26,6 +24,10 @@ export default function HookField({ hookField }: Props) {
 
   const updateHookField = (key: keyof HookField, value: any) => {
     hookFieldStore.updateHookField(hookField.id, { [key]: value });
+  };
+
+  const updateHook = (key: keyof Hook, value: any) => {
+    hook && hookStore.updateHook(hook.id, { [key]: value });
   };
 
   const loadPipedriveUsers = (e) => {
@@ -127,14 +129,14 @@ export default function HookField({ hookField }: Props) {
                 : null}
             </div> */}
       </div>
-      {hookField.enabled
+      {hook && hookField.enabled
         ? <div>
-          {hookField.required
+          {hookFieldStore.isRequired(hookField)
             ? <p>{translate(`This field is required for creating a ${hook?.category}.
                 If the value is null, no call will be made to Pipedrive for creation`)}</p>
             : null}
 
-          {hook && additionalFieldsData[hook.category]?.[hookField.key]?.info
+          {additionalFieldsData[hook.category]?.[hookField.key]?.info
             ? <p>{additionalFieldsData[relatedHook.category][hookField.key].info}</p>
             : null}
 
@@ -144,14 +146,16 @@ export default function HookField({ hookField }: Props) {
           {/* <div className='strong-1 m-t-10 m-b-10'>Assigned value</div> */}
 
           {/* FIELDTYPE SET */}
-          {field.field_type === "set"
-            ? field.options && field.options.length
+          {hookField.pipedrive.field_type === "set"
+            ? hookField.pipedrive.options && hookField.pipedrive.options.length
               ? <div className='pipedrive-option-field-container'> {
-                field.options.map((option, index) =>
+                hookField.pipedrive.options.map((option, index) =>
                   <div
                     key={index}
                     onClick={e => selectOption(option.id)}
-                    className={`pipedrive-option-field ${field.value.includes(option.id) ? "selected" : ""}`}
+                    className={`pipedrive-option-field ${(Array.isArray(hookField.value) && hookField.value.includes(option.id))
+                      ? "selected"
+                      : ""}`}
                     style={{ backgroundColor: option.color ? option.color : "white" }}
                   >{option.label}</div>
                 )
@@ -161,14 +165,14 @@ export default function HookField({ hookField }: Props) {
             : null
           }
           {/* FIELDTYPE ENUM */}
-          {(field.field_type === "enum" || field.field_type === "status")
-            ? field.options
+          {(hookField.pipedrive.field_type === "enum" || hookField.pipedrive.field_type === "status")
+            ? hookField.pipedrive.options
               ? <div className='pipedrive-option-field-container'> {
-                field.options.map((option, index) =>
+                hookField.pipedrive.options.map((option, index) =>
                   <div
                     key={index}
                     onClick={e => selectOption(option.id)}
-                    className={`pipedrive-option-field ${field.value === option.id ? "selected" : ""}`}
+                    className={`pipedrive-option-field ${hookField.value === option.id ? "selected" : ""}`}
                     style={{ backgroundColor: option.color ? option.color : "white" }}
                   >{option.label}</div>
                 )
@@ -178,25 +182,27 @@ export default function HookField({ hookField }: Props) {
             : null
           }
           {/* FIELDTYPE VARCHAR / ADRESS */}
-          {isLogicBlockField(field)
+          {isLogicBlockField(hookField.pipedrive)
             ? <LogicBlocks
-              fieldCondition={field.condition}
+              fieldCondition={hookField.condition}
               setter={(logicBlocks) => updateField("value", logicBlocks)}
-              defaultLogicBlocks={field.value}
+              defaultLogicBlocks={hookField.value}
             />
             : null
           }
 
           {/* FIELDTYPE VISIBLE_TO */}
-          {(field.field_type === "visible_to")
-            ? appData.parameters.pipedrive.users.length
+          {(hookField.pipedrive.field_type === "visible_to")
+            ? appDataStore.appData.parameters.pipedrive.users.length
               ? <div className='pipedrive-option-field-container'> {
-                appData.parameters.pipedrive.users.map((user, index) =>
+                appDataStore.appData.parameters.pipedrive.users.map((user, index) =>
                   <div
                     key={index}
                     onClick={e => selectOption(user.id)}
-                    className={`pipedrive-option-field ${field.value.includes(user.id) ? "selected" : ""}`}
-                    style={{ backgroundColor: user.color ? user.color : "white" }}
+                    className={`pipedrive-option-field ${(Array.isArray(hookField.value) && hookField.value.includes(user.id))
+                      ? "selected"
+                      : ""}`}
+                    style={{ backgroundColor: "white" }}
                   >{user.name}</div>
                 )
               }
@@ -206,21 +212,24 @@ export default function HookField({ hookField }: Props) {
                 className='light-button'
                 onClick={e => loadPipedriveUsers(e)}
               >
-                {translate("Load pipedrive's users")}
+                {appDataStore.appData.parameters.pipedrive.users.length
+                  ? translate("Reload pipedrive's users")
+                  : translate("Load pipedrive's users")
+                }
               </button>
             : null
           }
 
           {/* FIELDTYPE USER */}
-          {(field.field_type === "user")
+          {(hookField.pipedrive.field_type === "user")
             ? <>
               <div className='pipedrive-option-field-container'> {
-                appData.parameters.pipedrive.users.map((user, index) =>
+                appDataStore.appData.parameters.pipedrive.users.map((user, index) =>
                   <div
                     key={index}
                     onClick={e => selectOption(user.id)}
-                    className={`pipedrive-option-field ${field.value === user.id ? "selected" : ""}`}
-                    style={{ backgroundColor: user.color ? user.color : "white" }}
+                    className={`pipedrive-option-field ${hookField.value === user.id ? "selected" : ""}`}
+                    style={{ backgroundColor: "white" }}
                   >{user.name}</div>
                 )
               }
@@ -230,7 +239,7 @@ export default function HookField({ hookField }: Props) {
                 className='light-button'
                 onClick={e => loadPipedriveUsers(e)}
               >
-                {appData.parameters.pipedrive.users.length
+                {appDataStore.appData.parameters.pipedrive.users.length
                   ? translate("Reload pipedrive's users")
                   : translate("Load pipedrive's users")}
               </button>
@@ -239,7 +248,7 @@ export default function HookField({ hookField }: Props) {
           }
 
           {/* FIELDTYPE STAGE */}
-          {(field.field_type === "stage")
+          {(hookField.pipedrive.field_type === "stage")
             ? <>
               <div className='pipedrive-option-field-container'> {
                 renderStages()
@@ -250,7 +259,7 @@ export default function HookField({ hookField }: Props) {
                 className='light-button'
                 onClick={e => loadPipedriveStages(e)}
               >
-                {appData.parameters.pipedrive.stages.length
+                {appDataStore.appData.parameters.pipedrive.stages.length
                   ? translate("Reload pipedrive's stages")
                   : translate("Load pipedrive's stages")}
               </button>
@@ -265,12 +274,12 @@ export default function HookField({ hookField }: Props) {
             <label>
               {translate("Do not update if there is already a value for this field on Pipedrive")}
             </label>
-            {isLogicBlockField(field)
+            {isLogicBlockField(hookField.pipedrive)
               ? <>
 
                 <ConditionMaker
-                  condition={field.condition}
-                  setter={condition => setField(prv => ({ ...prv, condition: condition }))}
+                  condition={hookField.condition}
+                  setter={condition => updateHookField("condition", condition)}
                 />
               </>
               : null
@@ -288,19 +297,19 @@ export default function HookField({ hookField }: Props) {
                 </label>
               </div> */}
           {
-            linkableFields[relatedHook.category]?.includes(field.key)
+            linkableFields[hook.category].includes(hookField.pipedrive.key)
               ? <div className='m-t-10'>
                 <label>
                   <input
                     type='checkbox'
                     // className='w2p-normal-checkbox'
-                    onChange={e => setField(prv => ({ ...prv, findInPipedrive: e.target.checked }))}
-                    checked={field.findInPipedrive}
+                    onChange={e => updateHookField("findInPipedrive", e.target.checked)}
+                    checked={hookField.findInPipedrive}
                   />
-                  {relatedHook.category === "person"
+                  {hook.category === "person"
                     ? translate(`If a person already has this value for this field in Pipedrive, 
                       then link the Woocommerce account to that person. (only if the Woocommerce account is not already linked).`)
-                    : relatedHook.category === "organization"
+                    : hook.category === "organization"
                       ? translate(`If an organization already has this value for this field in Pipedrive, 
                         then link the Woocommerce account to that organization. (only if the Woocommerce account is not already linked).`)
                       : null //deal donc tchi

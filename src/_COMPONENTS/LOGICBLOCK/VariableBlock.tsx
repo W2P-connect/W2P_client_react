@@ -167,7 +167,6 @@ export default function VariableBlock({ defautBlock, setter, deleter }) {
 
                                         {block.variables.length
                                             ? <div
-                                                type='button'
                                                 className='add-new-field'
                                                 onClick={_ => addElement()}
                                             >

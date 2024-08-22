@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../FORMS/INPUT/input/Input'
 import { translate } from '../../translation'
+import { Variable as VariableType } from 'Types'
 
-// const emptyField = {
-//     value: '',
-// }
+interface Props {
+    defautVariable?: VariableType;
+    setter?: (variable: VariableType) => void;
+    deleter?: (id: string) => void
+}
 
-export default function Variable({ defautVariable, setter, deleter }) {
+const emptyVariable: VariableType = {
+    id: '',
+    isFreeField: false,
+    exemple: '',
+    value: '',
+}
 
-    const [variable, setVariable] = useState({})
+export default function Variable({ defautVariable, setter, deleter }: Props) {
+
+    const [variable, setVariable] = useState<VariableType>(emptyVariable)
 
     useEffect(() => {
         defautVariable && setVariable(defautVariable)
@@ -20,7 +30,7 @@ export default function Variable({ defautVariable, setter, deleter }) {
 
     const deleteVariable = () => {
         if (window.confirm(translate("Are you sure you want to delete this variable ?"))) {
-            deleter(variable.id)
+            deleter && deleter(variable.id)
         }
     }
 
@@ -36,15 +46,15 @@ export default function Variable({ defautVariable, setter, deleter }) {
                     ? <Input
                         className='flat-input'
                         value={variable.value}
-                        onInput={(value) => setVariable(prv => ({ ...prv, value: value }))}
+                        onInput={(value: string) => setVariable(prv => ({ ...prv, value: value }))}
                     />
                     : <div className='flex column'>
                         <div>
                             {variable.value}
                         </div>
-                        {variable.example
+                        {variable.exemple
                             ? <div className='italic subtext'>
-                                {variable.example}
+                                {variable.exemple}
                             </div>
                             : null
                         }

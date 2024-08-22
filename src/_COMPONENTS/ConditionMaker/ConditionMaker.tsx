@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { translate } from '../../translation'
 import './coditionMaker.css'
+import { FieldCondition } from 'Types'
 
 /**
  * 
@@ -9,13 +10,18 @@ import './coditionMaker.css'
  * @returns 
  */
 
-const emptyConditionMaker = {
+const emptyConditionMaker: FieldCondition = {
     enabled: false,
-    fieldNumber: ''
+    fieldNumber: 'ALL'
 }
-export default function ConditionMaker({ condition, setter }) {
 
-    const [conditionMaker, setConditionMaker] = useState(emptyConditionMaker)
+interface Props {
+    condition: FieldCondition;
+    setter: (condition: FieldCondition) => void
+}
+export default function ConditionMaker({ condition, setter = () => { } }: Props) {
+
+    const [conditionMaker, setConditionMaker] = useState<FieldCondition>(emptyConditionMaker)
 
     useEffect(() => {
         setConditionMaker({ ...emptyConditionMaker, ...condition })
@@ -43,7 +49,7 @@ export default function ConditionMaker({ condition, setter }) {
                         ? <>
                             <select
                                 value={conditionMaker.fieldNumber}
-                                onChange={e => setConditionMaker(prv => ({ ...prv, fieldNumber: e.target.value }))}
+                                onChange={e => setConditionMaker(prv => ({ ...prv, fieldNumber: e.target.value as "ALL" | "1" }))}
                             >
                                 <option value={"ALL"}>{translate("ALL FIELDS")}</option>
                                 <option value={"1"}>{translate("A LEAST ONE FIELD")}</option>

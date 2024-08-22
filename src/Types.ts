@@ -86,22 +86,44 @@ export interface Hook extends PreHook {
     enabled: boolean,
     show: boolean,
     category: Category,
-    createActivity: boolean,
+    option: {
+        createActivity?: boolean,
+    }
     fields: HookField[],
 }
 
 export type BaseHookField = {
     enabled: boolean;
     id: string;
-    key: string;
-    value: string | Array<number>;
-    condition: string;
+    value: number | Array<number>;
+    condition: FieldCondition;
     pipedriveFieldId: number;
+    findInPipedrive?: boolean
     hookId: string;
 };
 
+export type FieldCondition = {
+    enabled: boolean;
+    fieldNumber: "ALL" | "1"
+}
 export interface HookField extends BaseHookField {
     pipedrive: PipedriveField
+}
+
+/****************************** LOGIC BLOCK  ****************************/
+
+export type Variable = {
+    id: string;
+    exemple?: string;
+    isFreeField: boolean;
+    value: string;
+}
+
+export type Block = {
+    variables: Variable[],
+    id: string,
+    index: number,
+
 }
 
 /*************************************************************************/
@@ -239,7 +261,7 @@ export interface PipedriveField {
     sortable_flag: boolean;
     mandatory_flag: boolean;
     json: any;
-    options?: Array<{ id: string; label: string; color: string }>; // If the field has options like dropdowns
+    options?: Array<{ id: number; label: string; color?: string }>; // If the field has options like dropdowns
     category: Category  //Ajout manuel car n'est pas inclus par détault dans Pipedrive ! (gestion plus simple)
 }
 

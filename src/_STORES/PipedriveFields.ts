@@ -34,8 +34,10 @@ class PipedriveFieldStore {
         return filteredResponse
     }
 
-    static isFieldValid(field: PipedriveField) {
-        return field.bulk_edit_allowed && field.id && !unusableFieldsKey.includes(field.key) && field.category
+    static isFieldValid(field: PipedriveField): boolean {
+        return (field.bulk_edit_allowed && field.id && !unusableFieldsKey.includes(field.key) && field.category)
+            ? true
+            : false
     }
 }
 
