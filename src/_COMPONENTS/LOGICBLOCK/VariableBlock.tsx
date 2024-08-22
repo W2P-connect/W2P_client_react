@@ -5,28 +5,35 @@ import { PopupContext } from '../../_CONTEXT/PopupContext'
 import MetaKeysCategories from '../METAKEYS/MetaKeysCategories'
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Block, MetaKey, Variable as VariableType } from 'Types'
 
-export const emptyBlock = {
+export const emptyBlock: Block = {
     variables: [],
-    id: 0,
+    id: '',
     index: 0,
 }
 
-export const getBlockExemple = (block) => {
+export const getBlockExemple = (block: Block) => {
     if (block.variables) {
         return block.variables.map((variable, index) =>
-            `${variable.example ? variable.example : variable.value}${index !== (block.variables.length - 1) ? ' ' : ''}`
+            `${variable.exemple ? variable.exemple : variable.value}${index !== (block.variables.length - 1) ? ' ' : ''}`
         )
     } else {
         console.log(block);
     }
 }
 
-export default function VariableBlock({ defautBlock, setter, deleter }) {
+interface Props {
+    defautBlock: Block;
+    setter: (block: Block) => void;
+    deleter: (id: Block['id']) => void;
+}
+
+export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
 
 
     const { addPopupContent, showPopup } = useContext(PopupContext)
-    const [block, setBlock] = useState(emptyBlock)
+    const [block, setBlock] = useState<Block>(emptyBlock)
 
     useEffect(() => {
         defautBlock && setBlock(defautBlock)
@@ -43,7 +50,7 @@ export default function VariableBlock({ defautBlock, setter, deleter }) {
         setter && setter(block)
     }, [block])
 
-    const addMetaKeyElement = (metaKey) => {
+    const addMetaKeyElement = (metaKey: MetaKey) => {
         showPopup(false)
         setBlock(prvBlock => ({
             ...prvBlock,
@@ -59,7 +66,7 @@ export default function VariableBlock({ defautBlock, setter, deleter }) {
         }))
     }
 
-    const deleteVariable = (id) => {
+    const deleteVariable = (id: VariableType["id"]) => {
         setBlock(prv => ({
             ...prv,
             variables: prv.variables.filter(variable => variable.id !== id)
@@ -72,7 +79,7 @@ export default function VariableBlock({ defautBlock, setter, deleter }) {
         }
     }
 
-    const updateVariable = (updatedVariable) => {
+    const updateVariable = (updatedVariable: VariableType) => {
         setBlock(prv => ({
             ...prv,
             variables: prv.variables.map(

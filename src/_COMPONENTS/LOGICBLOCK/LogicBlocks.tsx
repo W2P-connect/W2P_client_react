@@ -3,9 +3,14 @@ import { translate } from '../../translation'
 import VariableBlock, { emptyBlock } from './VariableBlock'
 import { v4 as uuidv4 } from 'uuid';
 import "./logicBlock.css"
+import { LogicBlock } from 'Types';
 
+interface Props {
+    defaultLogicBlocks: LogicBlock;
+    setter(logicBlock: LogicBlock)
+}
 
-export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition }) {
+export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition }: Props) {
 
     const [logicBlocks, setLogicBlocks] = useState([{ ...emptyBlock, id: uuidv4() }])
 
