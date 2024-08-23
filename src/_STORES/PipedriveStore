@@ -1,0 +1,36 @@
+import { makeAutoObservable } from 'mobx';
+import { PipedriveParameters, PipedriveField, User, Stage } from '../Types';
+
+class PiperiveStore {
+
+    piperiveStore: PipedriveParameters = {
+        api_key: "",
+        company_domain: "",
+        users: [],
+        stages: [],
+        fields: [],
+    }
+
+    constructor() {
+        makeAutoObservable(this);
+    }
+
+    getPipedriveField(fieldId: number): PipedriveField | null {
+        return this.piperiveStore.fields.find((field: PipedriveField) => field.id === fieldId) ?? null;
+    }
+
+    getPipedriveUser(userId: number): User | null {
+        return this.piperiveStore.users.find((user: User) => user.id === userId) ?? null;
+    }
+
+    getPipedriveStage(stagesId: number): Stage | null {
+        return this.piperiveStore.stages.find((stage: Stage) => stage.id === stagesId) ?? null;
+    }
+
+    setPipedriveKey<K extends keyof PipedriveParameters>(key: K, value: PipedriveParameters[K]) {
+        this.piperiveStore[key] = value;
+    }
+
+}
+
+export const pipedriveStore = new PiperiveStore();

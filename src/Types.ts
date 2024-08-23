@@ -203,7 +203,7 @@ export interface PipedriveOrganization {
     visible_to: string;
 }
 
-interface Stage {
+export interface Stage {
     id: number;
     name: string;
     pipeline_id: number;
