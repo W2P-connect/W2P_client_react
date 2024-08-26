@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { BaseHookField, Hook, HookField } from 'Types';
+import { BaseHookField, HookField } from 'Types';
 import { hookStore } from './Hooks'
 import { pipedriveFieldsStore, PipedriveFieldStore } from './PipedriveFields';
 import { priorityFieldsKey } from 'appConstante';

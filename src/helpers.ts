@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { useAppLocalizer } from './_CONTEXT/AppLocalizerContext';
 import { useNotification } from "_CONTEXT/hook/contextHook";
 import { translate } from 'translation';
+import { appDataStore } from '_STORES/AppData';
 
 
 /*************************************************************************************/
@@ -9,7 +9,7 @@ import { translate } from 'translation';
 /*************************************************************************************/
 
 export const useCallApi = () => {
-    const appLocalizer = useAppLocalizer();
+    const appData = appDataStore.appData
     const { addNotification } = useNotification();
 
     /**
@@ -34,7 +34,7 @@ export const useCallApi = () => {
                 const APIoptions: AxiosRequestConfig = {
                     ...options,
                     headers: {
-                        Authorization: `Bearer ${appLocalizer.token}`,
+                        Authorization: `Bearer ${appData.token}`,
                         ...options.headers,
                     },
                     signal: abortSignal ?? undefined,
@@ -50,7 +50,7 @@ export const useCallApi = () => {
                 const response = await axios(APIoptions);
                 return response;
             } catch (error: any) {
-                if (error?.response?.status === 401 && url.startsWith(appLocalizer.w2p_client_rest_url)) {
+                if (error?.response?.status === 401 && url.startsWith(appData.w2p_client_rest_url)) {
                     addNotification({
                         error: true,
                         content: translate("You are not allowed to access this resource. Please refresh the page."),
@@ -70,7 +70,7 @@ export const useCallApi = () => {
 
 export const useCallPipedriveApi = () => {
     const callApi = useCallApi();
-    const appLocalizer = useAppLocalizer();
+    const appData = appDataStore.appData
 
     // Define the function with proper TypeScript types
     const callPipedriveApi = (
@@ -81,7 +81,7 @@ export const useCallPipedriveApi = () => {
         e: React.FormEvent | null = null
     ): Promise<AxiosResponse<any> | null> => {
         return new Promise(async (resolve, reject) => {
-            const url = `https://${appLocalizer.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appLocalizer.parameters.pipedrive.api_key}`;
+            const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
             callApi(url, options = { method: "get" }, abortSignal, data, e)
                 .then((res) => {
                     resolve(res);

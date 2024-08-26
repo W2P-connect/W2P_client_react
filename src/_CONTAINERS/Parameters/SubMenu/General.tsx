@@ -1,19 +1,22 @@
-import React, { useContext } from 'react'
+import React, { FormEvent } from 'react'
 import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../translation';
-import { AppDataContext, emptyLocalizer } from '../../../_CONTEXT/appDataContext';
 import { useCallApi, useCallPipedriveApi } from '../../../helpers';
-import { NotificationContext } from '../../../_CONTEXT/NotificationContext';
+import { appDataStore } from '_STORES/AppData';
+import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
+import { observer } from 'mobx-react-lite';
 
-export default function Connexion() {
+const Connexion = () => {
 
   const callPipedriveApi = useCallPipedriveApi()
   const callApi = useCallApi()
 
-  const { appData, updateAppDataKey, saveParameters, setAppData } = useContext(AppDataContext)
-  const { addNotification } = useContext(NotificationContext)
+  console.log('appDataStore.appData', appDataStore.appData);
+  
+  const { saveParameters } = useAppDataContext()
+  const { addNotification } = useNotification()
 
-  const checkPipedriveApi = (e) => {
+  const checkPipedriveApi = (e: FormEvent) => {
     e.preventDefault()
     callPipedriveApi("dealFields", null, null, null, e)
       .then(async _ => {
@@ -23,14 +26,14 @@ export default function Connexion() {
       .catch(_ => addNotification({ error: true, content: translate("Connection failed. Please check the API key or company domain.") }))
   }
 
-  const checkW2pAPI = (e) => {
+  const checkW2pAPI = (e: FormEvent) => {
     e.preventDefault()
-    callApi(`${appData.w2p_distant_rest_url}/authentification`, null, null, {
-      domain: appData.parameters.w2p.domain,
-      api_key: appData.parameters.w2p.api_key,
+    callApi(`${appDataStore.appData.w2p_distant_rest_url}/authentification`, { method: 'get' }, null, {
+      domain: appDataStore.appData.parameters.w2p.domain,
+      api_key: appDataStore.appData.parameters.w2p.api_key,
     }, e)
       .then(async res => {
-        addNotification({ error: false, content: translate(res.data?.message) })
+        addNotification({ error: false, content: translate(res?.data?.message) })
         await saveParameters()
       })
       .catch(res => {
@@ -44,29 +47,22 @@ export default function Connexion() {
       )
   }
 
-  const restoreSettings = (e) => {
-    setAppData(prv => {
-      prv = { ...prv, parameters: emptyLocalizer.parameters }
-      saveParameters(e, prv.parameters)
-      return prv
-    })
+  const restoreSettings = () => {
+    appDataStore.setAppData({ ...appDataStore.appData, parameters: appDataStore.emptyAppData.parameters })
   }
 
-  const restorePipedriveData = (e) => {
+  const restorePipedriveData = () => {
     if (window.confirm(
       translate("Are you sure you want to delete all of your Pipedrive data")
     )) {
-      setAppData(prv => {
-        const parameters = prv.parameters
-        parameters.pipedrive = emptyLocalizer.parameters.pipedrive
-        return { ...prv, parameters: parameters }
-      })
+      const newAppData = appDataStore.appData
+      newAppData.parameters.pipedrive = appDataStore.emptyPipedriveParameters
+      appDataStore.setAppData(newAppData)
     }
   }
 
   return (
     <>
-
       <form onSubmit={e => checkW2pAPI(e)}>
         <h2>W2P connexion</h2>
         <p className='m-b-10'>
@@ -77,14 +73,14 @@ export default function Connexion() {
           <Input
             className='flex-1 min-w-300'
             label={translate("your site domain")}
-            onInput={(value) => updateAppDataKey('parameters.w2p.domain', value)}
-            value={appData.parameters.w2p.domain}
+            onInput={(value) => appDataStore.setW2pParameter('domain', value)}
+            value={appDataStore.appData.parameters.w2p.domain}
             disabled={true}
           />
           <Input
             label={translate("W2P API Key")}
-            onInput={(value) => updateAppDataKey('parameters.w2p.api_key', value)}
-            value={appData.parameters.w2p.api_key}
+            onInput={(value) => appDataStore.setW2pParameter('api_key', value)}
+            value={appDataStore.appData.parameters.w2p.api_key}
             className='flex-1 min-w-300'
           />
           <button
@@ -109,15 +105,13 @@ export default function Connexion() {
           <Input
             className='flex-1 min-w-300'
             label={translate("Company domain")}
-            onInput={updateAppDataKey}
-            customParameters={['parameters.pipedrive.company_domain']}
-            value={appData.parameters.pipedrive.company_domain}
+            onInput={(value) => appDataStore.setPipedriveParameter("company_domain", value)}
+            value={appDataStore.appData.parameters.pipedrive.company_domain}
           />
           <Input
             label={translate("Pipedrive API Key")}
-            onInput={updateAppDataKey}
-            customParameters={['parameters.pipedrive.api_key']}
-            value={appData.parameters.pipedrive.api_key}
+            onInput={(value) => appDataStore.setPipedriveParameter('api_key', value)}
+            value={appDataStore.appData.parameters.pipedrive.api_key}
             className='flex-1 min-w-300'
           />
           <button
@@ -132,10 +126,10 @@ export default function Connexion() {
         - especially if your API key no longer targets the same company 
         - we recommend that you reset your settings`)}</p>
         <div className='flex gap-1'>
-          <button className='light-button' onClick={e => restoreSettings(e)}>
+          <button className='light-button' onClick={_ => restoreSettings()}>
             {translate("Restore settings")}
           </button>
-          <button className='light-button' onClick={e => restorePipedriveData(e)}>
+          <button className='light-button' onClick={_ => restorePipedriveData()}>
             {translate("Remove all pipedrive data")}
           </button>
         </div>
@@ -143,3 +137,5 @@ export default function Connexion() {
     </>
   )
 }
+
+export default observer(Connexion)

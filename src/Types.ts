@@ -28,7 +28,7 @@ export interface PipedriveParameters {
     fields: PipedriveField[],
 }
 
-interface W2pParameters {
+export interface W2pParameters {
     domain: string;
     api_key: string;
     hookList: Hook[];

@@ -10,15 +10,25 @@ import './navBar.css'
  * @returns 
  */
 
-export default function NavBar({ items }) {
+interface Item {
+    label: string;
+    onClick: (value: string) => void;
+    active: boolean;
+    value: string;
+}
 
-    const [usedItems, setUsedItems] = useState(items)
-    const [activeIndex, setActiveIndex] = useState(null)
+interface Props {
+    items: Item[]
+}
+export default function NavBar({ items }: Props) {
+
+    const [usedItems, setUsedItems] = useState<Item[]>(items)
+    const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
     useEffect(() => {
         if (activeIndex !== null) {
             setUsedItems(
-                items.map((itm, index) => activeIndex === index
+                items.map((itm: Item, index: number) => activeIndex === index
                     ? { ...itm, active: true }
                     : { ...itm, active: false }
                 )
@@ -26,7 +36,7 @@ export default function NavBar({ items }) {
         }
     }, [items, activeIndex])
 
-    const navigate = (item, index) => {
+    const navigate = (item: Item, index: number) => {
         item.onClick(item.value)
         setActiveIndex(index)
     }

@@ -7,6 +7,7 @@ import NotificationContextProvider from './_CONTEXT/NotificationContext';
 import AppDataContextProvider from './_CONTEXT/appDataContext';
 import { AppLocalizerProvider } from './_CONTEXT/AppLocalizerContext';
 import axios from 'axios'
+import { appDataStore } from '_STORES/AppData';
 
 // Render the app inside our shortcode's #app div
 document.addEventListener('DOMContentLoaded', async () => {
@@ -15,10 +16,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("appLocalizer", appLocalizer);
 
+    appDataStore.setAppData(appLocalizer)
+
     const element = document.getElementById('w2p-app');
     if (typeof element !== 'undefined' && element !== null && appLocalizer.data?.data) {
         ReactDOM.render(
-            <AppLocalizerProvider value={appLocalizer.data.data}>
+            <AppLocalizerProvider>
                 <NotificationContextProvider>
                     <AppDataContextProvider>
                         <MenuContextProvider>

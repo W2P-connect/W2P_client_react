@@ -22,6 +22,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
   const { addNotification } = useNotification()
 
   const [searchField, setSearchField] = useState<string>("")
+  const [categoryFields, setCategoryFields] = useState<PipedriveField[]>([])
   const [pipedriveFieldsList, setPipedriveFieldsList] = useState<null | PipedriveField[]>(null)
   const [selectHook, setSelectHook] = useState<Hook | null>(null)
   const [hookToShow, setHookToShow] = useState<Hook | null>(null)
@@ -47,11 +48,13 @@ const FieldCategory = ({ category }: { category: Category }) => {
       })
   }
 
-  const categoryFields: PipedriveField[] = pipedriveFieldsStore.getCategoryFields(category)
+  useEffect(() => {
+    setCategoryFields(pipedriveFieldsStore.getCategoryFields(category))
+  }, [category])
 
   useEffect(() => {
     setPipedriveFieldsList(categoryFields)
-  }, [categoryFields, category])
+  }, [categoryFields])
 
   useEffect(() => {
     if (searchField) {
@@ -62,7 +65,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
     } else {
       setPipedriveFieldsList(categoryFields)
     }
-  }, [searchField])
+  }, [searchField, categoryFields])
 
   const selectHookToSetUp = (hook: Hook) => {
     setSelectHook(_ => hook)

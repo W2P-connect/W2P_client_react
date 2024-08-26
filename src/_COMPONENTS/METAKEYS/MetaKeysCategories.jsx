@@ -3,11 +3,10 @@ import './MetaKeysCategories.css'
 import NavBar from '../NAVIGATION/NavBar/NavBar';
 import MetaKeysCategory from './MetaKeysCategory';
 import CustomMetakeys from './CustomMetakeys';
-import { useAppLocalizer } from '../../_CONTEXT/AppLocalizerContext';
+import { appDataStore } from '_STORES/AppData';
 
 export default function MetaKeysCategories({ onSelect }) {
 
-    const appLocalizer = useAppLocalizer()
 
     const [currentCategory, setCurrentCategory] = useState(null)
 
@@ -17,7 +16,7 @@ export default function MetaKeysCategories({ onSelect }) {
     }
 
     const navBar = [
-        ...appLocalizer.CONSTANTES.W2P_META_KEYS
+        ...appDataStore.appData.CONSTANTES.W2P_META_KEYS
             .map((category, index) => ({
                 label: category.label,
                 active: index === 0,
