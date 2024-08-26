@@ -1,7 +1,7 @@
 export interface AppData {
     CONSTANTES: {
         W2P_AVAIBLE_STATES: ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")[]
-        W2P_HOOK_LIST: Hook[]
+        W2P_HOOK_LIST: PreHook[]
         W2P_META_KEYS: MetaKeyCategory[]
         W2P_REQUIRED_FIELDS: {
             deal: string[]

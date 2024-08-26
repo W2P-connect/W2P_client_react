@@ -3,20 +3,20 @@ import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'
 import VariableBlock from '../../../_COMPONENTS/LOGICBLOCK/VariableBlock'
-import { AppDataContext } from '../../../_CONTEXT/appDataContext'
+import { appDataStore } from '_STORES/AppData'
 
 export default function Deals() {
-
-  const { appData, updateAppDataKey } = useContext(AppDataContext)
 
   const [options, setOptions] = useState(null)
 
   useEffect(() => {
-    setOptions(appData.parameters.w2p.deals)
+    setOptions(appDataStore.appData.parameters.w2p.deals)
   }, [])
 
   useEffect(() => {
-    updateAppDataKey("parameters.w2p.deals", options)
+    const newAppData = appDataStore.appData
+    newAppData.parameters.w2p.deals = options
+    appDataStore.setAppData(newAppData)
   }, [options])
 
   const updateOption = (key, value) => {

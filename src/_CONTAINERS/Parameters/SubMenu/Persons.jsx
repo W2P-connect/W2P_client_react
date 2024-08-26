@@ -2,19 +2,21 @@ import React, { useContext, useState, useEffect } from 'react'
 import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import { AppDataContext } from '../../../_CONTEXT/appDataContext'
+import { observer } from 'mobx-react-lite'
+import { appDataStore } from '_STORES/AppData'
 
-export default function Persons() {
-
-    const { appData, updateAppDataKey } = useContext(AppDataContext)
+const Persons = () => {
 
     const [options, setOptions] = useState(null)
 
     useEffect(() => {
-        setOptions(appData.parameters.w2p.persons)
+        setOptions(appDataStore.appData.parameters.w2p.persons)
     }, [])
 
     useEffect(() => {
-        updateAppDataKey("parameters.w2p.persons", options)
+        const newAppData = appDataStore.appData
+        newAppData.parameters.w2p.persons = options
+        appDataStore.setAppData(newAppData)
     }, [options])
 
     const updateOption = (key, value) => {
@@ -57,3 +59,5 @@ export default function Persons() {
         </>
     )
 }
+
+export default observer(Persons)

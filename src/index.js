@@ -8,6 +8,7 @@ import AppDataContextProvider from './_CONTEXT/appDataContext';
 import { AppLocalizerProvider } from './_CONTEXT/AppLocalizerContext';
 import axios from 'axios'
 import { appDataStore } from '_STORES/AppData';
+import { deepMerge } from 'helpers';
 
 // Render the app inside our shortcode's #app div
 document.addEventListener('DOMContentLoaded', async () => {
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log("appLocalizer", appLocalizer);
 
-    appDataStore.setAppData(appLocalizer)
+    appDataStore.setAppData(deepMerge(appDataStore.emptyAppData, appLocalizer.data.data))
 
     const element = document.getElementById('w2p-app');
     if (typeof element !== 'undefined' && element !== null && appLocalizer.data?.data) {

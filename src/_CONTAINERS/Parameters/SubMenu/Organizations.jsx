@@ -2,19 +2,21 @@ import React, { useContext, useEffect, useState } from 'react'
 import FieldCategory from './FieldCategory'
 import { AppDataContext } from '../../../_CONTEXT/appDataContext'
 import { translate } from '../../../translation'
+import { observer } from 'mobx-react-lite'
+import { appDataStore } from '_STORES/AppData'
 
-export default function Organizations() {
-
-  const { appData, updateAppDataKey } = useContext(AppDataContext)
+const Organizations = () => {
 
   const [options, setOptions] = useState(null)
 
   useEffect(() => {
-    setOptions(appData.parameters.w2p.organizations)
+    setOptions(appDataStore.appData.parameters.w2p.organizations)
   }, [])
 
   useEffect(() => {
-    updateAppDataKey("parameters.w2p.organizations", options)
+    const newAppData = appDataStore.appData
+    newAppData.parameters.w2p.organizations = options
+    appDataStore.setAppData(newAppData)
   }, [options])
 
   const updateOption = (key, value) => {
@@ -62,3 +64,5 @@ export default function Organizations() {
     </>
   )
 }
+
+export default observer(Organizations)

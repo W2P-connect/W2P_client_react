@@ -18,7 +18,7 @@ export default function Parameters() {
     if (!currentSubMenu) {
       setCurrentSubMenuPage('general') //Page par défaut
     }
-  }, [])
+  }, [currentSubMenu, setCurrentSubMenuPage])
 
   const parametersItems = [
     {

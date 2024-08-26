@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { AppData, Hook, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
+import { hookStore } from './Hooks';
 
 class AppDataStore {
 
@@ -74,6 +75,7 @@ class AppDataStore {
 
     setAppData(newAppData: AppData) {
         this.appData = newAppData;
+        // hookStore.setHookList(this.appData.CONSTANTES.W2P_HOOK_LIST)
     }
 
     updateHookList(newHookList: Hook[]) {
@@ -91,7 +93,7 @@ class AppDataStore {
     setPipedriveParameter<K extends keyof PipedriveParameters>(key: K, value: PipedriveParameters[K]) {
         this.appData.parameters.pipedrive[key] = value;
     }
-    
+
     setW2pParameter<K extends keyof W2pParameters>(key: K, value: W2pParameters[K]) {
         this.appData.parameters.w2p[key] = value;
     }

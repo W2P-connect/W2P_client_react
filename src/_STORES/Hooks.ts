@@ -24,7 +24,6 @@ class HookStore {
         fields: [],
     };
 
-    preHooks: PreHook[] = []
     hooks: Hook[] = []
 
     setOptionHook(newHook: Hook) {
@@ -44,7 +43,6 @@ class HookStore {
             this.hooks[hookIndex] = { ...this.hooks[hookIndex], ...updatedData };
         }
     }
-
 
     getHookFromPreHook(preHook: PreHook, category: Category): Hook {
         const wantedHook = this.hooks.find(h => preHook.key === h.key && category === h.category);

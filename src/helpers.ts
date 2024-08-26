@@ -71,6 +71,8 @@ export const useCallApi = () => {
 export const useCallPipedriveApi = () => {
     const callApi = useCallApi();
     const appData = appDataStore.appData
+    const { addNotification } = useNotification();
+
 
     // Define the function with proper TypeScript types
     const callPipedriveApi = (
@@ -81,22 +83,30 @@ export const useCallPipedriveApi = () => {
         e: React.FormEvent | null = null
     ): Promise<AxiosResponse<any> | null> => {
         return new Promise(async (resolve, reject) => {
-            const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
-            callApi(url, options = { method: "get" }, abortSignal, data, e)
-                .then((res) => {
-                    resolve(res);
-                })
-                .catch(async (error) => {
-                    if (error.code !== "ERR_CANCELED") {
-                        if (error.response && error.response.status === 429) {
-                            setTimeout(() => {
-                                callPipedriveApi(uri, options, abortSignal, data, e).then(resolve).catch(reject);
-                            }, 750);
-                        } else {
-                            reject(error);
+            if (!appData.parameters.pipedrive.company_domain || !appData.parameters.pipedrive.api_key) {
+                // addNotification({
+                //     error: true,
+                //     content: translate("You must first add your Pipedrive API information in the settings."),
+                // })
+                reject(false);
+            } else {
+                const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
+                callApi(url, options = { method: "get" }, abortSignal, data, e)
+                    .then((res) => {
+                        resolve(res);
+                    })
+                    .catch(async (error) => {
+                        if (error.code !== "ERR_CANCELED") {
+                            if (error.response && error.response.status === 429) {
+                                setTimeout(() => {
+                                    callPipedriveApi(uri, options, abortSignal, data, e).then(resolve).catch(reject);
+                                }, 750);
+                            } else {
+                                reject(error);
+                            }
                         }
-                    }
-                });
+                    });
+            }
         });
     };
 

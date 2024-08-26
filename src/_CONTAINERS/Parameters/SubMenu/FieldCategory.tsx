@@ -11,6 +11,7 @@ import { pipedriveFieldsStore, PipedriveFieldStore } from '_STORES/PipedriveFiel
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import HookField from '_COMPONENTS/HOOK/HookField/HookField'
+import { appDataStore } from '_STORES/AppData'
 
 
 const FieldCategory = ({ category }: { category: Category }) => {
@@ -72,7 +73,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
   }
 
   useEffect(() => {
-    if (selectHook) {
+    if (selectHook?.id) {
       const hook = hookStore.getHook(selectHook.id)
       if (hook) {
         setHookToShow(_ => hook)
@@ -99,7 +100,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
           <p>{translate(`Select the different events that will sync Woocommerce and wordpress informations to Pipedrive.`)}</p>
         </div>
         <div className='flex gap-1 w2p-wrap m-b-25 m-t-25'>
-          {hookStore.preHooks
+          {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST
             .filter(hook => !hook?.disabledFor?.includes(category))
             .map(hook => {
               return <HookSelector key={hook.key} preHook={hook} selector={selectHookToSetUp} category={category} active={hookToShow?.key === hook.key} />
