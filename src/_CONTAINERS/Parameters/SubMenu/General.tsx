@@ -49,7 +49,14 @@ const Connexion = () => {
   }
 
   const restoreSettings = () => {
-    appDataStore.setAppData({ ...appDataStore.appData, parameters: appDataStore.emptyAppData.parameters })
+    if (window.confirm(
+      translate("Are you sure you want to restore all of your settings")
+    )) {
+      const newAppDataStore = appDataStore.appData
+      newAppDataStore.parameters.w2p = appDataStore.emptyW2Pparameters
+      console.log("newAppDataStore", newAppDataStore);
+      appDataStore.setAppData(newAppDataStore)
+    }
   }
 
   const restorePipedriveData = () => {

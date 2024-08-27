@@ -1,6 +1,7 @@
-import { makeAutoObservable } from 'mobx';
-import { AppData, Hook, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
+import { makeAutoObservable, toJS } from 'mobx';
+import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
 import { hookStore } from './Hooks';
+import { deepCopy } from 'helpers';
 
 class AppDataStore {
 
@@ -11,28 +12,36 @@ class AppDataStore {
         stages: [],
         fields: [],
     }
+
+    emptyW2Pparameters: W2pParameters = {
+        domain: "",
+        api_key: "",
+        hookList: [],
+        deals: {
+            amountsAre: "Tax inclusive",
+            createNew: true,
+            searchBeforeCreate: true,
+        },
+        organizations: {
+            autoCreate: false,
+            searchBeforeCreate: true,
+
+        },
+        persons: {
+            linkToOrga: true,
+            defaultEmailAsName: true,
+        },
+    }
+
+    emptyParameters: Parameters = {
+        pipedrive: this.emptyPipedriveParameters,
+        w2p: this.emptyW2Pparameters
+    }
+
     emptyAppData: AppData = {
         parameters: {
             pipedrive: this.emptyPipedriveParameters,
-            w2p: {
-                domain: "w2p-bis.local",
-                api_key: "1a5f8cf17e1207f3",
-                hookList: [],
-                deals: {
-                    amountsAre: null,
-                    createNew: true,
-                    searchBeforeCreate: true,
-                },
-                organizations: {
-                    autoCreate: false,
-                    searchBeforeCreate: true,
-
-                },
-                persons: {
-                    linkToOrga: true,
-                    defaultEmailAsName: true,
-                },
-            },
+            w2p: this.emptyW2Pparameters,
         },
         CONSTANTES: {
             W2P_AVAIBLE_STATES: [],
@@ -49,7 +58,7 @@ class AppDataStore {
         token: '',
     }
 
-    appData: AppData = this.emptyAppData
+    appData: AppData = deepCopy(this.emptyAppData)
 
     fieldsCategoryfieldsCategory:
         { slug: string, name: string }[] =
@@ -74,6 +83,7 @@ class AppDataStore {
     }
 
     setAppData(newAppData: AppData) {
+        // console.log(toJS(newAppData));
         this.appData = newAppData;
         // hookStore.setHookList(this.appData.CONSTANTES.W2P_HOOK_LIST)
     }
