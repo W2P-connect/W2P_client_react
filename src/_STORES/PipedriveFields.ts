@@ -1,10 +1,10 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { Category, PipedriveField } from "Types";
 import { unusableFieldsKey } from "appConstante";
 
 class PipedriveFieldStore {
 
-    fileds: PipedriveField[] = []
+    fields: PipedriveField[] = []
 
     constructor() {
         makeAutoObservable(this);
@@ -17,19 +17,37 @@ class PipedriveFieldStore {
     }
 
     getCategoryFields(category: Category) {
-        return this.fileds.filter(field => field.category === category)
+        console.log("getCategoryFields");
+        return this.fields.filter(field => field.category === category)
+    }
+
+    addPipedriveFields(PipedriveFields: PipedriveField[]) {
+        const fields = PipedriveFields.filter(field =>
+            this.isFieldValid(field) && !this.getPiepdriveField(field.id)
+        )
+
+        console.log("PipedriveFields", PipedriveFields);
+
+
+        runInAction(() => {
+            console.log('New Pipedrive Fields :', fields);
+
+            this.fields = [...this.fields, ...fields]
+        })
     }
 
     addPipedriveField(pipedriveField: PipedriveField) {
         if (!this.getPiepdriveField(pipedriveField.id)) {
             console.log('New Pipedrive Field :', pipedriveField);
 
-            this.fileds.push(pipedriveField);
+            runInAction(() => {
+                this.fields.push(pipedriveField);
+            })
         }
     }
 
     getPiepdriveField(id: number): PipedriveField | undefined {
-        return this.fileds.find(field => field.id === id)
+        return this.fields.find(field => field.id === id)
     }
 
     removeUnvalidFields = (pipedriveFieldsResponse: PipedriveField[]) => {

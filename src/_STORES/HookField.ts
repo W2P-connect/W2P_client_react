@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { BaseHookField, Hook, HookField, PipedriveField } from 'Types';
 import { hookStore } from './Hooks'
 import { pipedriveFieldsStore } from './PipedriveFields';
@@ -26,25 +26,29 @@ class HookFieldStore {
 
     baseHookFields: BaseHookField[] = []
 
-
     addHookField(hookId: string, pipedriveFieldId: number, hookField: BaseHookField = this.emptyHookField): HookField | null {
-        const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId)
-        const hook = hookStore.getHook(hookId)
+        const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId);
+        const hook = hookStore.getHook(hookId);
         if (pipedriveField && hook) {
             const newBaseHookField: BaseHookField = {
                 ...hookField,
                 id: uuidv4(),
                 pipedriveFieldId,
-                hookId
-            }
-            this.baseHookFields.push(newBaseHookField)
-            return this.getData(newBaseHookField.id)
+                hookId,
+            };
+            runInAction(() => {
+                this.baseHookFields.push(newBaseHookField);
+            })
+            console.log('[HookField] addHookField', newBaseHookField);
+
+            return this.getData(newBaseHookField.id);
         } else {
-            return null
+            return null;
         }
     }
 
     getHookFieldFromPipedrive(hookId: Hook["id"], pipedriveFieldId: PipedriveField["id"]): HookField | null {
+        console.log('[HookField] getHookFieldFromPipedrive');
         const hook = this.baseHookFields.find(hook =>
             hook.pipedriveFieldId === pipedriveFieldId
             && hook.hookId === hookId
@@ -61,7 +65,9 @@ class HookFieldStore {
     }
 
     addNewHookField(hookField: HookField): void {
-        this.baseHookFields.push(hookField)
+        runInAction(() => {
+            this.baseHookFields.push(hookField)
+        })
     }
 
     updateHookField(id: string, updatedData: Partial<HookField>): void {
@@ -72,6 +78,7 @@ class HookFieldStore {
     }
 
     getData(hookFieldId: BaseHookField["id"]): HookField | null {
+        console.log('[HookField] getData');
         const field = this.getHookFieldFromId(hookFieldId)
         if (field) {
             const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId)
@@ -80,7 +87,6 @@ class HookFieldStore {
                 ? {
                     ...field,
                     pipedrive: pipedriveField,
-                    hook: hook
                 }
                 : null
         } else {
@@ -105,8 +111,9 @@ class HookFieldStore {
     isImportant(hookField: HookField | BaseHookField): boolean {
         const hookFieldData = this.getData(hookField.id)
         if (hookFieldData) {
+            const hook = hookStore.getHook(hookFieldData.hookId)
             return (pipedriveFieldsStore.isFieldValid(hookFieldData.pipedrive)
-                && priorityFieldsKey[hookFieldData.hook.category]?.includes(hookFieldData.pipedrive.key))
+                && hook && priorityFieldsKey[hook.category]?.includes(hookFieldData.pipedrive.key))
                 ? true
                 : false
         } else {

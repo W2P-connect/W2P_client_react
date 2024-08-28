@@ -1,6 +1,6 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { appDataStore } from './AppData';
-import { Category, Hook, HookField, PreHook } from 'Types';
+import { BaseHookField, Category, Hook, HookField, PreHook } from 'Types';
 import { v4 as uuidv4 } from 'uuid';
 import { hookFieldStore } from './HookField';
 
@@ -36,7 +36,9 @@ class HookStore {
     }
 
     addNewHook(hook: Hook) {
-        this.hooks.push(hook)
+        runInAction(() => {
+            this.hooks.push(hook)
+        })
     }
 
     updateHook(id: string, updatedData: Partial<Hook>) {
@@ -51,7 +53,10 @@ class HookStore {
 
         if (wantedHook) {
             const fields = this.getFields(wantedHook.id)
-            return { ...wantedHook, fields: fields };
+            return {
+                ...wantedHook,
+                fields: fields
+            };
         } else {
             const newHook = { ...this.emptyHook, ...preHook, category, id: uuidv4() };
             this.addNewHook(newHook);
