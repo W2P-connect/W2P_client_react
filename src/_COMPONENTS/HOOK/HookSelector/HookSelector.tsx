@@ -9,11 +9,9 @@ import { MouseEvent as ReactMouseEvent } from "react";
 interface Props {
     preHook: PreHook;
     category: Category;
-    selector: (hook: Hook) => void;
-    active: boolean;
 }
 
-const HookSelector = ({ preHook, category, selector, active }: Props) => {
+const HookSelector = ({ preHook, category }: Props) => {
 
     const hook: Hook = hookStore.getHookFromPreHook(preHook, category)
 
@@ -24,11 +22,14 @@ const HookSelector = ({ preHook, category, selector, active }: Props) => {
             && !target.className.includes("w2p-checkbox")
             && hook.enabled
         ) {
-            selector(hook)
+            hookStore.selectedHookId = hook.id
         }
     }
 
     const updateHook = (key: keyof Hook, value: any) => {
+        if (key === "enabled" && value === false && hook.id === hookStore.selectedHookId) {
+            hookStore.selectedHookId = null
+        }
         hookStore.updateHook(hook.id, { [key]: value });
     };
 
@@ -39,7 +40,9 @@ const HookSelector = ({ preHook, category, selector, active }: Props) => {
                 // onClick={e => selectHook(e, hook)}
                 style={{
                     opacity: hook.enabled ? 1 : 0.4,
-                    boxShadow: active && hook.enabled ? '0 0 20px 2px rgba(60,60,60, 0.12)' : '',
+                    boxShadow: hook.id === hookStore.selectedHookId && hook.enabled
+                        ? '0 0 20px 2px rgba(60,60,60, 0.12)'
+                        : '',
                 }}
                 className={`flex-1 border-1 hook-selector flex-col space-between`}
             >

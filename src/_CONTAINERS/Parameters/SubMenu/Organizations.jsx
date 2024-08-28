@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FieldCategory from './FieldCategory'
-import { AppDataContext } from '../../../_CONTEXT/appDataContext'
 import { translate } from '../../../translation'
 import { observer } from 'mobx-react-lite'
 import { appDataStore } from '_STORES/AppData'

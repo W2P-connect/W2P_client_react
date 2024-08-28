@@ -108,6 +108,7 @@ export type FieldCondition = {
 }
 export interface HookField extends BaseHookField {
     pipedrive: PipedriveField
+    hook: Hook
 }
 
 /****************************** LOGIC BLOCK  ****************************/

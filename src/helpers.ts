@@ -31,6 +31,7 @@ export const useCallApi = () => {
         if ((e && !e.currentTarget.classList.contains("submitting")) || !e) {
             e && e.currentTarget.classList.add("submitting");
             try {
+                e && e.currentTarget.classList.remove("submitting");
                 const APIoptions: AxiosRequestConfig = {
                     ...options,
                     headers: {
@@ -50,6 +51,7 @@ export const useCallApi = () => {
                 const response = await axios(APIoptions);
                 return response;
             } catch (error: any) {
+                e && e.currentTarget.classList.remove("submitting");
                 if (error?.response?.status === 401 && url.startsWith(appData.w2p_client_rest_url)) {
                     addNotification({
                         error: true,
@@ -57,8 +59,6 @@ export const useCallApi = () => {
                     });
                 }
                 return Promise.reject(error);
-            } finally {
-                e && e.currentTarget.classList.remove("submitting");
             }
         } else {
             return null;

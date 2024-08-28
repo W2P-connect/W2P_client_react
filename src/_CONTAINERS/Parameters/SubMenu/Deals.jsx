@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'

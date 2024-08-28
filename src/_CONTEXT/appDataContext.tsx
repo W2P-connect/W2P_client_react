@@ -48,7 +48,7 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
         //     return;
         // }
         try {
-            const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, appDataStore.appData.parameters, e);
+            const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: appDataStore.appData.parameters }, e);
             notification && addNotification({
                 content: translate(res?.data.message),
             });

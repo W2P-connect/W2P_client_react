@@ -21,20 +21,24 @@ class PipedriveFieldStore {
     }
 
     addPipedriveField(pipedriveField: PipedriveField) {
-        this.fileds.push(pipedriveField);
+        if (!this.getPiepdriveField(pipedriveField.id)) {
+            console.log('New Pipedrive Field :', pipedriveField);
+
+            this.fileds.push(pipedriveField);
+        }
     }
 
     getPiepdriveField(id: number): PipedriveField | undefined {
         return this.fileds.find(field => field.id === id)
     }
 
-    static removeUnvalidFields = (pipedriveFieldsResponse: PipedriveField[]) => {
+    removeUnvalidFields = (pipedriveFieldsResponse: PipedriveField[]) => {
         const filteredResponse = pipedriveFieldsResponse
-            .filter((field: PipedriveField) => PipedriveFieldStore.isFieldValid(field))
+            .filter((field: PipedriveField) => this.isFieldValid(field))
         return filteredResponse
     }
 
-    static isFieldValid(field: PipedriveField): boolean {
+    isFieldValid(field: PipedriveField): boolean {
         return (field.bulk_edit_allowed && field.id && !unusableFieldsKey.includes(field.key) && field.category)
             ? true
             : false

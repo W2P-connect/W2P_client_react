@@ -1,6 +1,5 @@
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
-import { hookStore } from './Hooks';
 import { deepCopy } from 'helpers';
 
 class AppDataStore {

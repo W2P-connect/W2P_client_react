@@ -26,6 +26,8 @@ class HookStore {
 
     hooks: Hook[] = []
 
+    selectedHookId: Hook["id"] | null = null
+
     setOptionHook(newHook: Hook) {
         const updatedHookList = appDataStore.appData.parameters.w2p.hookList.map(hook =>
             newHook.id === hook.id ? newHook : hook
