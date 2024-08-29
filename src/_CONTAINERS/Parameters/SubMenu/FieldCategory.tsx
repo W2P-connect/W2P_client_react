@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { translate } from '../../../translation'
 import { updateNestedObject, useCallPipedriveApi } from '../../../helpers'
 import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist'
 import HookSelector from '_COMPONENTS/HOOK/HookSelector/HookSelector'
-import { Category, Hook, PipedriveField } from 'Types'
+import { Category, Hook, HookField as HookFieldType, PipedriveField } from 'Types'
 import { useNotification } from '_CONTEXT/hook/contextHook'
 import { AxiosResponse } from 'axios'
 import { observer } from 'mobx-react-lite'
@@ -12,6 +12,7 @@ import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import HookField from '_COMPONENTS/HOOK/HookField/HookField'
 import { appDataStore } from '_STORES/AppData'
+import { toJS } from 'mobx'
 
 
 const FieldCategory = ({ category }: { category: Category }) => {
@@ -22,32 +23,41 @@ const FieldCategory = ({ category }: { category: Category }) => {
 
   const [searchField, setSearchField] = useState<string>("")
 
-  const getCategoryFields = (e: React.FormEvent) => {
-    callPipedriveApi(`${category}Fields`, null, null, null, e)
-      .then((res: AxiosResponse<any, any> | null) => {
-        if (!res?.data?.data) {
-          throw Error("No data in Pipedrive response")
-        }
-        const fields = res.data.data.map((field: any) => {
-          return { ...field as PipedriveField, category: category }
-        });
-
-        pipedriveFieldsStore.addPipedriveFields(fields)
-      })
-
-      .catch(_ => {
-        addNotification({
-          error: true,
-          content: translate("Pipedrive has encountered an error, make sure you have configured it correctly")
-        })
-      })
-  }
-
   const categoryFields = pipedriveFieldsStore.getCategoryFields(category);
 
   const filteredPipedriveFieldsList = searchField
     ? categoryFields.filter(field => field.name.includes(searchField))
     : categoryFields;
+
+  const getCategoryFields = (e: React.FormEvent) => {
+    if (hookStore.selectedHook) {
+      callPipedriveApi(`${category}Fields`, null, null, null, e)
+        .then((res: AxiosResponse<any, any> | null) => {
+          if (!res?.data?.data) {
+            throw Error("No data in Pipedrive response")
+          }
+          const fields: PipedriveField[] = res.data.data.map((field: PipedriveField) => {
+            return { ...field as PipedriveField, category: category }
+          });
+
+          pipedriveFieldsStore.addPipedriveFields(fields)
+
+          fields
+            .filter(field => pipedriveFieldsStore.isFieldValid(field))
+            .forEach(pipedriveField => {
+              hookStore.selectedHook && hookFieldStore.getHookFieldFromPipedrive(hookStore.selectedHook.id, pipedriveField.id);
+            })
+            hookStore.refreshSelectedHook()
+        })
+
+        .catch(_ => {
+          addNotification({
+            error: true,
+            content: translate("Pipedrive has encountered an error, make sure you have configured it correctly")
+          })
+        })
+    }
+  }
 
   const updateHook = (hookId: string, path: string, value: any) => {
     const hook = hookStore.getHook(hookId);
@@ -57,9 +67,8 @@ const FieldCategory = ({ category }: { category: Category }) => {
     }
   };
 
-  const selectedHook: Hook | null = hookStore.selectedHookId
-    ? hookStore.getHook(hookStore.selectedHookId)
-    : null;
+  console.log("hookStore.selectedHook", toJS(hookStore.selectedHook));
+
 
   return (
     <div key={category}>
@@ -75,24 +84,24 @@ const FieldCategory = ({ category }: { category: Category }) => {
             })}
         </div>
 
-        {selectedHook ? (
-          <div key={selectedHook.id}>
-            {filteredPipedriveFieldsList ? (
-              <div key={category}>
-                <h5 className='m-b-25'>{translate(`Parameter of the event : ${selectedHook.label}`)}</h5>
+        {hookStore.selectedHook
+          ? <div key={hookStore.selectedHook.id}>
+            {filteredPipedriveFieldsList
+              ? <div key={category}>
+                <h5 className='m-b-25'>{translate(`Parameter of the event : ${hookStore.selectedHook.label}`)}</h5>
 
                 <label className='pointer flex items-center m-b-10'>
                   <input
                     type='checkbox'
                     className='m-r-10'
-                    onChange={e => updateHook(selectedHook.id, 'option.createActivity', e.target.checked)}
-                    checked={selectedHook.option.createActivity ?? false}
+                    onChange={e => hookStore.selectedHook && updateHook(hookStore.selectedHook.id, 'option.createActivity', e.target.checked)}
+                    checked={hookStore.selectedHook.option.createActivity ?? false}
                   />
                   <div>
                     {translate('Add an activity when this event is triggered.')}
                     <div className='subtext'>
                       {translate(
-                        `An activity specifying the updated fields and the triggered event will be automatically added to the ${selectedHook.category} on Pipedrive.`
+                        `An activity specifying the updated fields and the triggered event will be automatically added to the ${hookStore.selectedHook.category} on Pipedrive.`
                       )}
                     </div>
                   </div>
@@ -107,31 +116,15 @@ const FieldCategory = ({ category }: { category: Category }) => {
                     onInput={setSearchField}
                   />
                 </div>
-                {filteredPipedriveFieldsList.length ?
+                {hookStore.selectedHook.fields.length ?
                   <div className='flex column m-t-25 gap-1'>
                     {/* Priority fields */}
-                    {filteredPipedriveFieldsList
-                      .filter(field => pipedriveFieldsStore.isFieldValid(field))
-                      .map(pipedriveField => {
-                        const hook = hookFieldStore.getHookFieldFromPipedrive(selectedHook.id, pipedriveField.id);
-                        console.log("hook", hook);
-                        return hook
-                      })
-                      .filter(
-                        (hookfield): hookfield is NonNullable<typeof hookfield> =>
-                          hookfield !== null && hookFieldStore.isImportant(hookfield)
-                      )
+                    {hookStore.selectedHook.fields
+                      .filter(hookfield => hookFieldStore.isImportant(hookfield))
                       .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
                     {/* other fields */}
-                    {filteredPipedriveFieldsList
-                      .filter(field => pipedriveFieldsStore.isFieldValid(field))
-                      .map(pipedriveField => {
-                        return hookFieldStore.getHookFieldFromPipedrive(selectedHook.id, pipedriveField.id);
-                      })
-                      .filter(
-                        (hookfield): hookfield is NonNullable<typeof hookfield> =>
-                          hookfield !== null && !hookFieldStore.isImportant(hookfield)
-                      )
+                    {hookStore.selectedHook.fields
+                      .filter(hookfield => hookFieldStore.isImportant(hookfield))
                       .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
                   </div>
                   : <p>
@@ -141,16 +134,16 @@ const FieldCategory = ({ category }: { category: Category }) => {
                   </p>
                 }
               </div>
-            ) : null}
+              : null
+            }
             <button type='button' onClick={e => getCategoryFields(e)} className='light-button m-t-25'>
               {categoryFields?.length
                 ? translate('Reload custom fields')
                 : translate('Load custom fields')}
             </button>
           </div>
-        ) : (
-          <h3 className='center m-t-25'>{translate('Select an event to configure it')}</h3>
-        )}
+          : <h3 className='center m-t-25'>{translate('Select an event to configure it')}</h3>
+        }
       </div>
     </div>
   );

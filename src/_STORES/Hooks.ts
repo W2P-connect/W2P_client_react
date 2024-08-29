@@ -26,7 +26,28 @@ class HookStore {
 
     hooks: Hook[] = []
 
-    selectedHookId: Hook["id"] | null = null
+    selectedHook: Hook | null = null
+
+    selectHook(id: Hook["id"] | null) {
+        if (id) {
+            runInAction(() => {
+                this.selectedHook = this.getHook(id)
+            })
+        } else {
+            runInAction(() => {
+                this.selectedHook = null
+            })
+        }
+    }
+
+    refreshSelectedHook() {
+        runInAction(() => {
+            this.selectedHook = this.selectedHook?.id
+                ? this.getHook(this.selectedHook.id)
+                : null
+        })
+    }
+
 
     setOptionHook(newHook: Hook) {
         const updatedHookList = appDataStore.appData.parameters.w2p.hookList.map(hook =>

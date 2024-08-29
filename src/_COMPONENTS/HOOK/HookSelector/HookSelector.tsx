@@ -2,7 +2,7 @@ import './hookSlector.css'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox';
 import { translate } from '../../../translation';
 import { observer } from 'mobx-react-lite';
-import { Category, Hook, HookField, PreHook } from 'Types';
+import { BaseHookField, Category, Hook, HookField, PreHook } from 'Types';
 import { hookStore } from '_STORES/Hooks';
 import { MouseEvent as ReactMouseEvent } from "react";
 
@@ -15,20 +15,16 @@ const HookSelector = ({ preHook, category }: Props) => {
 
     const hook: Hook = hookStore.getHookFromPreHook(preHook, category)
 
-    const selectHook = (e: ReactMouseEvent<HTMLDivElement>, hook: Hook) => {
-        const target = e.target as HTMLElement;
-        if (
-            target.className
-            && !target.className.includes("w2p-checkbox")
-            && hook.enabled
-        ) {
-            hookStore.selectedHookId = hook.id
+    const selectHook = (e: ReactMouseEvent<HTMLDivElement>, hook: Hook, enable: boolean = false) => {
+        // const target = e.target as HTMLElement;
+        if (hook.enabled || enable) {
+            hookStore.selectHook(hook.id)
         }
     }
 
     const updateHook = (key: keyof Hook, value: any) => {
-        if (key === "enabled" && value === false && hook.id === hookStore.selectedHookId) {
-            hookStore.selectedHookId = null
+        if (key === "enabled" && value === false && hook.id === hookStore.selectedHook?.id) {
+            hookStore.selectHook(null)
         }
         hookStore.updateHook(hook.id, { [key]: value });
     };
@@ -37,10 +33,10 @@ const HookSelector = ({ preHook, category }: Props) => {
     return (
         <>{hook
             ? <div
-                // onClick={e => selectHook(e, hook)}
+                onClick={e => selectHook(e, hook, !hook.enabled)}
                 style={{
                     opacity: hook.enabled ? 1 : 0.4,
-                    boxShadow: hook.id === hookStore.selectedHookId && hook.enabled
+                    boxShadow: hook.id === hookStore.selectedHook?.id && hook.enabled
                         ? '0 0 20px 2px rgba(60,60,60, 0.12)'
                         : '',
                 }}
@@ -56,9 +52,11 @@ const HookSelector = ({ preHook, category }: Props) => {
                     </div>
                     {hook.fields
                         .filter(field => field.enabled)
-                        .map((field: HookField) => <li key={field.pipedriveFieldId} className='m-b-0'>
-                            {field.pipedrive.name}
-                        </li>)
+                        .map((field: HookField) =>
+                            <li key={field.pipedriveFieldId} className='m-b-0'>
+                                {field.pipedrive.name}
+                            </li>
+                        )
                     }
                     <div className='subtext italic'>
                         {preHook.description}

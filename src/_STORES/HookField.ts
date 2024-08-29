@@ -12,6 +12,8 @@ class HookFieldStore {
         makeAutoObservable(this);
     }
 
+    dataCache = new Map();
+
     emptyHookField: BaseHookField = {
         id: '',
         enabled: false,
@@ -25,6 +27,10 @@ class HookFieldStore {
     };
 
     baseHookFields: BaseHookField[] = []
+
+    invalidateCache() {
+        this.dataCache.clear();
+    }
 
     addHookField(hookId: string, pipedriveFieldId: number, hookField: BaseHookField = this.emptyHookField): HookField | null {
         const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId);
@@ -78,21 +84,27 @@ class HookFieldStore {
     }
 
     getData(hookFieldId: BaseHookField["id"]): HookField | null {
-        console.log('[HookField] getData');
-        const field = this.getHookFieldFromId(hookFieldId)
+        if (this.dataCache.has(hookFieldId)) {
+            return this.dataCache.get(hookFieldId);
+        }
+
+        const field = this.getHookFieldFromId(hookFieldId);
         if (field) {
-            const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId)
-            const hook = hookStore.getHook(field.hookId)
-            return pipedriveField && hook //On ne veut pas concerver les fields qui n'ont plus de hook ou de pipedrive
+            const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId);
+            const result = pipedriveField
                 ? {
                     ...field,
                     pipedrive: pipedriveField,
                 }
-                : null
+                : null;
+
+            this.dataCache.set(hookFieldId, result);
+            return result;
         } else {
-            return null
+            return null;
         }
     }
+
 
     getHookFields(hookId: string): HookField[] {
         return this.baseHookFields

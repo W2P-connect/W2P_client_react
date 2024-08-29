@@ -21,7 +21,7 @@ export default function HookField({ hookField }: Props) {
   const callPipedriveApi = useCallPipedriveApi()
 
 
-  const hook = hookStore.getHook(hookField.hookId)
+  const hook = hookStore.selectedHook
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
     hookFieldStore.updateHookField(hookField.id, { [key]: value });

@@ -26,9 +26,6 @@ class PipedriveFieldStore {
             this.isFieldValid(field) && !this.getPiepdriveField(field.id)
         )
 
-        console.log("PipedriveFields", PipedriveFields);
-
-
         runInAction(() => {
             console.log('New Pipedrive Fields :', fields);
 
