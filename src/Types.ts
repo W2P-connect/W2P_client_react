@@ -89,7 +89,12 @@ export interface Hook extends PreHook {
     option: {
         createActivity?: boolean,
     }
-    fields: HookField[],
+    fields: HookField[] | BaseHookField[],
+}
+
+export type FieldCondition = {
+    enabled: boolean;
+    fieldNumber: "ALL" | "1"
 }
 
 export type BaseHookField = {
@@ -102,10 +107,6 @@ export type BaseHookField = {
     hookId: string;
 };
 
-export type FieldCondition = {
-    enabled: boolean;
-    fieldNumber: "ALL" | "1"
-}
 export interface HookField extends BaseHookField {
     pipedrive: PipedriveField
     // hook: Hook

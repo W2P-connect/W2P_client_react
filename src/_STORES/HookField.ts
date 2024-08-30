@@ -32,39 +32,6 @@ class HookFieldStore {
         this.dataCache.clear();
     }
 
-    addHookField(hookId: string, pipedriveFieldId: number, hookField: BaseHookField = this.emptyHookField): HookField | null {
-        const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId);
-        const hook = hookStore.getHook(hookId);
-        if (pipedriveField && hook) {
-            const newBaseHookField: BaseHookField = {
-                ...hookField,
-                id: uuidv4(),
-                pipedriveFieldId,
-                hookId,
-            };
-            runInAction(() => {
-                this.baseHookFields.push(newBaseHookField);
-            })
-            console.log('[HookField] addHookField', newBaseHookField);
-
-            return this.getData(newBaseHookField.id);
-        } else {
-            return null;
-        }
-    }
-
-    getHookFieldFromPipedrive(hookId: Hook["id"], pipedriveFieldId: PipedriveField["id"]): HookField | null {
-        console.log('[HookField] getHookFieldFromPipedrive');
-        const hook = this.baseHookFields.find(hook =>
-            hook.pipedriveFieldId === pipedriveFieldId
-            && hook.hookId === hookId
-        )
-        if (hook) {
-            return this.getData(hook.id)
-        } else {
-            return this.addHookField(hookId, pipedriveFieldId)
-        }
-    }
 
     getHookFieldFromId(id: HookField["id"] | BaseHookField["id"]): BaseHookField | null {
         return this.baseHookFields.find(hook => hook.id === id) ?? null

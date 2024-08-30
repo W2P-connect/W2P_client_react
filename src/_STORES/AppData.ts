@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
 import { deepCopy } from 'helpers';
 
@@ -88,7 +88,9 @@ class AppDataStore {
     }
 
     updateHookList(newHookList: Hook[]) {
-        this.appData.parameters.w2p.hookList = newHookList;
+        runInAction(() => {
+            this.appData.parameters.w2p.hookList = newHookList;
+        })
     }
 
     getHookById(id: string): Hook | undefined {

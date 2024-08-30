@@ -42,12 +42,9 @@ const FieldCategory = ({ category }: { category: Category }) => {
 
           pipedriveFieldsStore.addPipedriveFields(fields)
 
-          fields
-            .filter(field => pipedriveFieldsStore.isFieldValid(field))
-            .forEach(pipedriveField => {
-              hookStore.selectedHook && hookFieldStore.getHookFieldFromPipedrive(hookStore.selectedHook.id, pipedriveField.id);
-            })
-            hookStore.refreshSelectedHook()
+          hookStore.selectedHook?.id && hookStore.addHookFieldsFromPipedrive(hookStore.selectedHook.id, fields)
+          hookStore.refreshSelectedHook()
+            
         })
 
         .catch(_ => {
