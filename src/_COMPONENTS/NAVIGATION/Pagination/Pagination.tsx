@@ -8,20 +8,27 @@ import './pagination.css'
  *  
  * @returns 
  */
-export default function Pagination({ currentPage, totalPage, setCurrentPage }) {
+
+interface Props {
+    currentPage: number,
+    totalPage: number,
+    setCurrentPage: (page: number) => void
+}
+
+export default function Pagination({ currentPage, totalPage, setCurrentPage }: Props) {
 
     /* FUNCTIONS */
-    const changePage = (direction, value = false) => {
-        if (value && value >= 1) {
+    const changePage = (direction: number, value: number = -1) => {
+        if (value >= 1) {
             if (totalPage) {
-                value <= totalPage ? setCurrentPage(parseInt(value)) : setCurrentPage(totalPage);
+                value <= totalPage ? setCurrentPage(value) : setCurrentPage(totalPage);
             } else {
-                setCurrentPage(parseInt(value));
+                setCurrentPage(value);
             }
         } else if (direction === -1 && currentPage > 0) {
-            setCurrentPage(parseInt(currentPage + direction));
+            setCurrentPage(currentPage + direction);
         } else if (direction === 1) {
-            setCurrentPage(parseInt(currentPage + direction));
+            setCurrentPage(currentPage + direction);
         }
     };
 
@@ -29,10 +36,10 @@ export default function Pagination({ currentPage, totalPage, setCurrentPage }) {
         <div className='pagination m-b-10'>
             <div className="pagination-actions">
                 <button type='button' disabled={currentPage <= 1} onClick={() => changePage(-1)}>&#10094; </button>
-                <input onInput={(e) => changePage(0, e.target.value)} min="1" max="" type="number" value={(currentPage)} />
+                <input onInput={(e) => changePage(0, parseInt(e.currentTarget.value))} min="1" max="" type="number" value={(currentPage)} />
                 <button type='button' disabled={currentPage >= totalPage} onClick={() => changePage(1)}> &#10095; </button>
             </div>
-            {totalPage ? <div className='center' style={{ width: "150px" }} ><i>{`page ${currentPage} / ${totalPage}`}</i></div> : null}
+            {totalPage > 0 ? <div className='center' style={{ width: "150px" }} ><i>{`page ${currentPage} / ${totalPage}`}</i></div> : null}
         </div>
     )
 }

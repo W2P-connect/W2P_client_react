@@ -274,54 +274,58 @@ const HookField = ({ hookField }: Props) => {
             <h5 className='strong-1 m-t-40 m-b-10'>
               {translate("Condition")}
             </h5>
-            {/* <label>
-              {translate("Do not update if there is already a value for this field on Pipedrive")}
-            </label> */}
-            {isLogicBlockField(hookField.pipedrive)
-              ? <>
+            <div className='flex flex-col gap-2'>
 
-                <ConditionMaker
-                  condition={hookField.condition}
-                  setter={condition => updateHookField("condition", condition)}
-                />
-              </>
-              : null
-            }
-          </div>
-          {/* <div>
-                <label>
-                  <input
-                    type='checkbox'
-                    // className='w2p-normal-checkbox'
-                    onChange={e => setField(prv => ({ ...prv, sendIfEmpty: e.target.checked }))}
-                    checked={field.sendIfEmpty}
-                  />
-                  {translate("Send to Pipedrive even if any field is incomplete")}
-                </label>
-              </div> */}
-          {
-            linkableFields[selectedHook.category].includes(hookField.pipedrive.key)
-              ? <div className='m-t-10'>
-                <label className='flex gap-1 items-center'>
-                  <input
-                    type='checkbox'
-                    // className='w2p-normal-checkbox'
-                    // value={''}
-                    onChange={e => updateHookField("findInPipedrive", e.target.checked)}
-                    checked={hookField.findInPipedrive ?? false}
-                  />
-                  {selectedHook.category === "person"
-                    ? translate(`If a person already has this value for this field in Pipedrive, 
-                      then link the Woocommerce account to that person. (only if the Woocommerce account is not already linked).`)
-                    : selectedHook.category === "organization"
-                      ? translate(`If an organization already has this value for this field in Pipedrive, 
-                        then link the Woocommerce account to that organization. (only if the Woocommerce account is not already linked).`)
-                      : null //deal donc tchi
-                  }
-                </label>
+              <div className='mb-2'>
+                {isLogicBlockField(hookField.pipedrive)
+                  ? <>
+                    <ConditionMaker
+                      condition={hookField.condition}
+                      setter={condition => updateHookField("condition", condition)}
+                    />
+                  </>
+                  : null
+                }
               </div>
-              : null
-          }
+
+              <label className='flex gap-1 items-center'>
+                <input
+                  type='checkbox'
+                  // className='w2p-normal-checkbox'
+                  // value={''}
+                  onChange={e => updateHookField("replaceIfExisting", e.target.checked)}
+                  checked={hookField.replaceIfExisting ?? false}
+                />
+                {translate("Do not update if there is already a value for this field on Pipedrive")}
+              </label>
+
+              <div>
+                {
+                  linkableFields[selectedHook.category].includes(hookField.pipedrive.key)
+                    ? <label className='flex gap-1 items-center'>
+                      <input
+                        type='checkbox'
+                        // className='w2p-normal-checkbox'
+                        // value={''}
+                        onChange={e => updateHookField("findInPipedrive", e.target.checked)}
+                        checked={hookField.findInPipedrive ?? false}
+                      />
+                      {selectedHook.category === "person"
+                        ? translate(`If a person already has this value for this field in Pipedrive, 
+                      then link the Woocommerce account to that person. (only if the Woocommerce account is not already linked).`)
+                        : selectedHook.category === "organization"
+                          ? translate(`If an organization already has this value for this field in Pipedrive, 
+                        then link the Woocommerce account to that organization. (only if the Woocommerce account is not already linked).`)
+                          : null //deal donc tchi
+                      }
+                    </label>
+                    : null
+                }
+              </div>
+
+            </div>
+
+          </div>
           {/* <ConditionMaker
                   condition={field.condition}
                   setter={(value) => updateField("condition", value)}

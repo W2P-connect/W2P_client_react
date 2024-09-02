@@ -24,7 +24,8 @@ export const unusableFieldsKey: string[] = [
     "lost_time",
     "expected_close_date",
     "channel_id",
-    "person_id" //Forcément l'utilisateur
+    "person_id", //Forcément l'utilisateur
+    "label_ids", //Doublon avec Label ?
 ]
 
 export const priorityFieldsKey: Record<Category, Array<string>> = {
