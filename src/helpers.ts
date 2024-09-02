@@ -28,10 +28,13 @@ export const useCallApi = () => {
         data: Record<string, any> | null = {},
         e: React.FormEvent | null = null
     ): Promise<AxiosResponse<any> | null> => {
-        if ((e && !e.currentTarget.classList.contains("submitting")) || !e) {
-            e && e.currentTarget.classList.add("submitting");
+
+        const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLElement | null;
+
+        if ((submitter && !submitter.classList.contains("submitting")) || !e) {
+            submitter && submitter.classList.add("submitting");
+
             try {
-                e && e.currentTarget.classList.remove("submitting");
                 const APIoptions: AxiosRequestConfig = {
                     ...options,
                     headers: {
@@ -49,21 +52,29 @@ export const useCallApi = () => {
                 }
 
                 const response = await axios(APIoptions);
+
+                // Supprimer la classe 'submitting' après l'appel réussi
+                submitter && submitter.classList.remove("submitting");
+
                 return response;
             } catch (error: any) {
-                e && e.currentTarget.classList.remove("submitting");
+                // Supprimer la classe 'submitting' si une erreur se produit
+                submitter && submitter.classList.remove("submitting");
+
                 if (error?.response?.status === 401 && url.startsWith(appData.w2p_client_rest_url)) {
                     addNotification({
                         error: true,
                         content: translate("You are not allowed to access this resource. Please refresh the page."),
                     });
                 }
+
                 return Promise.reject(error);
             }
         } else {
             return null;
         }
     };
+
 
     return callApi;
 }
@@ -114,10 +125,13 @@ export const useCallPipedriveApi = () => {
 };
 
 
-export function deepMerge(obj1: Record<string, any>, obj2: Record<string, any>) {
+export function deepMerge<T extends Record<string, any>>(obj1: T, obj2: T): T {
     for (const key in obj2) {
         if (obj2.hasOwnProperty(key)) {
-            if (obj2[key] instanceof Object && obj1[key] instanceof Object) {
+            if (
+                typeof obj2[key] === 'object' && obj2[key] !== null &&
+                typeof obj1[key] === 'object' && obj1[key] !== null
+            ) {
                 obj1[key] = deepMerge(obj1[key], obj2[key]);
             } else {
                 obj1[key] = obj2[key];
@@ -126,6 +140,8 @@ export function deepMerge(obj1: Record<string, any>, obj2: Record<string, any>) 
     }
     return obj1;
 }
+
+
 
 export function deepCopy(obj: Record<string, any>) {
     return JSON.parse(JSON.stringify(obj));

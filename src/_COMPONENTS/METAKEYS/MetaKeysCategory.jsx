@@ -27,7 +27,7 @@ export default function MetaKeysCategory({ category, onSelect }) {
                                 onClick={_ => onSelect && onSelect(metaKey)}>
                                 <div className='meta-key-value'>{metaKey.label}</div>
                                 <div className='meta-key-descritpion'>{metaKey.description}</div>
-                                <div className='meta-key-example'>Example: {metaKey.example}</div>
+                                <div className='meta-key-exemple'>Exemple: {metaKey.exemple}</div>
                             </div>
                         )}
                     </div>

@@ -11,7 +11,7 @@ export default function CustomMetakeys({ onSelect }) {
 
     const addMetaKey = (e) => {
         e.preventDefault()
-        onSelect && onSelect({ ...metaKey, example: `{{${metaKey.value}}}` })
+        onSelect && onSelect({ ...metaKey, exemple: `{{${metaKey.value}}}` })
     }
 
     return (

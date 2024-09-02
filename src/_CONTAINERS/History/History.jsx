@@ -47,10 +47,6 @@ export default function History() {
 
   }, [parameters, pagination.page])
 
-
-  console.log("queries", queries);
-  console.log("parameters", parameters);
-
   return (
     <div>
       <div className='flex gap-1 m-b-25'>

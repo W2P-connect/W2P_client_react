@@ -4,9 +4,11 @@ import { translate } from 'translation';
 import { Hook, HookField, Parameters } from 'Types';
 import { useNotification } from './hook/contextHook';
 import { appDataStore } from '_STORES/AppData';
+import { hookStore } from '_STORES/Hooks';
+import { isAxiosError } from 'axios';
 
 export interface AppDataContextType {
-    saveParameters: (e?: React.FormEvent, parameters?: Parameters, notification?: boolean) => Promise<void>;
+    saveParameters: (e?: React.FormEvent, notification?: boolean) => Promise<void>;
     apiTest: (e?: React.FormEvent) => void;
 }
 
@@ -38,7 +40,7 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
     const { addNotification } = useNotification();
     const callApi = useCallApi();
 
-    const saveParameters = async (e: React.FormEvent | null = null, parameters: Parameters | null = null, notification = false) => {
+    const saveParameters = async (e: React.FormEvent | null = null, notification = true) => {
         e && e.preventDefault();
         // if (JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))) {
         //     notification && addNotification({
@@ -47,17 +49,30 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
         //     });
         //     return;
         // }
+
+        const newParameters = { parameters: appDataStore.getAppData().parameters }
+
         try {
-            const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: appDataStore.appData.parameters }, e);
+            const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, newParameters, e);
             notification && addNotification({
+                error: false,
                 content: translate(res?.data.message),
             });
-        } catch (error: any) {
+            appDataStore.setInitAppData(appDataStore.getAppData())
+        } catch (error: unknown) {
             console.log(error);
-            notification && addNotification({
-                error: true,
-                content: translate(error.response.data.message),
-            });
+            if (isAxiosError(error)) {
+                notification &&
+                    addNotification({
+                        error: true,
+                        content: translate(error.response?.data.message),
+                    });
+            } else {
+                notification && addNotification({
+                    error: true,
+                    content: translate("An unknown error appeared"),
+                });
+            }
         }
     };
 

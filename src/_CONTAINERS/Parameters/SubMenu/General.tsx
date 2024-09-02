@@ -22,7 +22,7 @@ const Connexion = () => {
     callPipedriveApi("dealFields", null, null, null, e)
       .then(async _ => {
         addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
-        await saveParameters()
+        await saveParameters(e, false)
       })
       .catch(_ => addNotification({ error: true, content: translate("Connection failed. Please check the API key or company domain.") }))
   }
@@ -35,10 +35,9 @@ const Connexion = () => {
     }, e)
       .then(async res => {
         addNotification({ error: false, content: translate(res?.data?.message) })
-        await saveParameters()
+        await saveParameters(e, false)
       })
       .catch(res => {
-        console.log(res);
         if (res?.response?.request?.status === 500) {
           addNotification({ error: true, content: translate("Our servers are under maintenance, please try again soon") })
         } else {
@@ -54,7 +53,6 @@ const Connexion = () => {
     )) {
       const newAppDataStore = appDataStore.appData
       newAppDataStore.parameters.w2p = appDataStore.emptyW2Pparameters
-      console.log("newAppDataStore", newAppDataStore);
       appDataStore.setAppData(newAppDataStore)
     }
   }

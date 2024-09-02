@@ -11,20 +11,21 @@ import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
 import { MouseEvent } from 'react'
+import { observer } from 'mobx-react-lite'
 
 interface Props {
   hookField: HookFieldType
 }
 
-export default function HookField({ hookField }: Props) {
+const HookField = ({ hookField }: Props) => {
 
   const callPipedriveApi = useCallPipedriveApi()
 
 
-  const hook = hookStore.selectedHook
+  const selectedHook = hookStore.getHook(hookField.hookId)
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
-    hookFieldStore.updateHookField(hookField.id, { [key]: value });
+    selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
   };
 
   const loadPipedriveUsers = (e: MouseEvent) => {
@@ -131,15 +132,15 @@ export default function HookField({ hookField }: Props) {
                 : null}
             </div> */}
       </div>
-      {hook && hookField.enabled
+      {selectedHook && hookField.enabled
         ? <div>
           {hookFieldStore.isRequired(hookField)
-            ? <p>{translate(`This field is required for creating a ${hook?.category}.
+            ? <p>{translate(`This field is required for creating a ${selectedHook?.category}.
                 If the value is null, no call will be made to Pipedrive for creation`)}</p>
             : null}
 
-          {additionalFieldsData[hook.category][hookField.pipedrive.key]?.info
-            ? <p>{additionalFieldsData[hook.category][hookField.pipedrive.key].info}</p>
+          {additionalFieldsData[selectedHook.category][hookField.pipedrive.key]?.info
+            ? <p>{additionalFieldsData[selectedHook.category][hookField.pipedrive.key].info}</p>
             : null}
 
           {/* <h5 className='strong-1 m-t-25 m-b-25'>
@@ -273,9 +274,9 @@ export default function HookField({ hookField }: Props) {
             <h5 className='strong-1 m-t-40 m-b-10'>
               {translate("Condition")}
             </h5>
-            <label>
+            {/* <label>
               {translate("Do not update if there is already a value for this field on Pipedrive")}
-            </label>
+            </label> */}
             {isLogicBlockField(hookField.pipedrive)
               ? <>
 
@@ -299,19 +300,20 @@ export default function HookField({ hookField }: Props) {
                 </label>
               </div> */}
           {
-            linkableFields[hook.category].includes(hookField.pipedrive.key)
+            linkableFields[selectedHook.category].includes(hookField.pipedrive.key)
               ? <div className='m-t-10'>
-                <label>
+                <label className='flex gap-1 items-center'>
                   <input
                     type='checkbox'
                     // className='w2p-normal-checkbox'
+                    // value={''}
                     onChange={e => updateHookField("findInPipedrive", e.target.checked)}
-                    checked={hookField.findInPipedrive}
+                    checked={hookField.findInPipedrive ?? false}
                   />
-                  {hook.category === "person"
+                  {selectedHook.category === "person"
                     ? translate(`If a person already has this value for this field in Pipedrive, 
                       then link the Woocommerce account to that person. (only if the Woocommerce account is not already linked).`)
-                    : hook.category === "organization"
+                    : selectedHook.category === "organization"
                       ? translate(`If an organization already has this value for this field in Pipedrive, 
                         then link the Woocommerce account to that organization. (only if the Woocommerce account is not already linked).`)
                       : null //deal donc tchi
@@ -332,3 +334,5 @@ export default function HookField({ hookField }: Props) {
     </div>
   )
 }
+
+export default observer(HookField)

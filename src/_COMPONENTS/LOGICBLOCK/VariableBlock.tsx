@@ -18,9 +18,7 @@ export const getBlockExemple = (block: Block) => {
         return block.variables.map((variable, index) =>
             `${variable.exemple ? variable.exemple : variable.value}${index !== (block.variables.length - 1) ? ' ' : ''}`
         )
-    } else {
-        console.log(block);
-    }
+    } 
 }
 
 interface Props {

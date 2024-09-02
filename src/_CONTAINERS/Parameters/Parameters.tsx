@@ -3,8 +3,11 @@ import { translate } from '../../translation'
 import NavBar from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { MenuContext } from '../../_CONTEXT/MenuContext'
 import { useAppDataContext } from '_CONTEXT/hook/contextHook'
+import { observer } from 'mobx-react-lite'
+import { appDataStore } from '_STORES/AppData'
+import { toJS } from 'mobx'
 
-export default function Parameters() {
+const Parameters = () => {
 
   const { saveParameters, apiTest } = useAppDataContext()
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
@@ -47,6 +50,15 @@ export default function Parameters() {
     },
   ]
 
+  const disableSaveParameters = (
+    JSON.stringify(appDataStore.initAppData.parameters) ===
+    JSON.stringify((appDataStore.getAppData().parameters))
+  )
+
+  console.log(toJS(appDataStore.initAppData.parameters));
+  console.log(toJS(appDataStore.getAppData().parameters));
+  
+
   return (
     <div>
       {/* <h1>{translate("Parameters")}</h1> */}
@@ -61,23 +73,27 @@ export default function Parameters() {
         >
           {translate("API Test")}
         </button>
-        <button
-          onClick={_ => saveParameters()}
-          type='button'
-          className='strong-button'
-          // disabled={disableSaveParameters}
-          // style={{
-          //   opacity: disableSaveParameters
-          //     ? 0.8
-          //     : 1,
-          //   cursor: disableSaveParameters
-          //     ? 'default'
-          //     : 'pointer'
-          // }}
-        >
-          {translate("Save settings")}
-        </button>
+        <form onSubmit={e =>
+          saveParameters(e, true)
+        }>
+          <button
+            className='strong-button'
+            disabled={disableSaveParameters}
+            style={{
+              opacity: disableSaveParameters
+                ? 0.8
+                : 1,
+              cursor: disableSaveParameters
+                ? 'default'
+                : 'pointer'
+            }}
+          >
+            {translate("Save settings")}
+          </button>
+        </form>
       </div>
     </div >
   )
 }
+
+export default observer(Parameters)

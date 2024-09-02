@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
 import { deepCopy } from 'helpers';
+import { hookStore } from './Hooks';
 
 class AppDataStore {
 
@@ -57,6 +58,8 @@ class AppDataStore {
         token: '',
     }
 
+    initAppData: AppData = deepCopy(this.emptyAppData)
+
     appData: AppData = deepCopy(this.emptyAppData)
 
     fieldsCategoryfieldsCategory:
@@ -82,14 +85,13 @@ class AppDataStore {
     }
 
     setAppData(newAppData: AppData) {
-        // console.log(toJS(newAppData));
-        this.appData = newAppData;
-        // hookStore.setHookList(this.appData.CONSTANTES.W2P_HOOK_LIST)
-    }
-
-    updateHookList(newHookList: Hook[]) {
         runInAction(() => {
-            this.appData.parameters.w2p.hookList = newHookList;
+            this.appData = deepCopy(newAppData);
+        })
+    }
+    setInitAppData(newAppData: AppData) {
+        runInAction(() => {
+            this.initAppData = deepCopy(newAppData);
         })
     }
 
@@ -109,8 +111,11 @@ class AppDataStore {
         this.appData.parameters.w2p[key] = value;
     }
 
-
-
+    getAppData(): AppData {
+        const formatedAppData = deepCopy(this.appData)
+        formatedAppData.parameters.w2p.hookList = hookStore.hooks
+        return formatedAppData 
+    }
 }
 
 export const appDataStore = new AppDataStore();

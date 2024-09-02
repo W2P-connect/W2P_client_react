@@ -89,7 +89,7 @@ export interface Hook extends PreHook {
     option: {
         createActivity?: boolean,
     }
-    fields: HookField[] | BaseHookField[],
+    fields: HookField[],
 }
 
 export type FieldCondition = {

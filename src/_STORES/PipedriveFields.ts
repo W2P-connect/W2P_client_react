@@ -17,7 +17,6 @@ class PipedriveFieldStore {
     }
 
     getCategoryFields(category: Category) {
-        console.log("getCategoryFields");
         return this.fields.filter(field => field.category === category)
     }
 
@@ -27,16 +26,14 @@ class PipedriveFieldStore {
         )
 
         runInAction(() => {
-            console.log('New Pipedrive Fields :', fields);
-
             this.fields = [...this.fields, ...fields]
         })
+
+        return fields
     }
 
     addPipedriveField(pipedriveField: PipedriveField) {
         if (!this.getPiepdriveField(pipedriveField.id)) {
-            console.log('New Pipedrive Field :', pipedriveField);
-
             runInAction(() => {
                 this.fields.push(pipedriveField);
             })

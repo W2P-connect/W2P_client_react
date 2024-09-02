@@ -85,15 +85,8 @@ export default function TextEditor({ value = '', setter, customParameters = [], 
 
     const insertVariable = (variable) => {
         const contentState = editorState.getCurrentContent();
-        console.log(contentState);
-
-        const contentStateWithEntity = contentState.createEntity('VARIABLE', 'IMMUTABLE', { variable });
-
-        console.log("contentStateWithEntity", contentStateWithEntity);
-        
+        const contentStateWithEntity = contentState.createEntity('VARIABLE', 'IMMUTABLE', { variable });       
         const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-        console.log("entityKey", entityKey);
-
         const newEditorState = EditorState.push(editorState, contentStateWithEntity, 'insert-characters');
 
         setEditorState(RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey));
