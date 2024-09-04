@@ -57,7 +57,7 @@ const Parameters = () => {
 
   console.log(toJS(appDataStore.initAppData.parameters));
   console.log(toJS(appDataStore.getAppData().parameters));
-  
+
 
   return (
     <div>
@@ -66,13 +66,15 @@ const Parameters = () => {
       {currentSubMenuContent}
 
       <div className='nav-bottom-section'>
-        <button
-          onClick={e => apiTest(e)}
-          type='button'
-          className='strong-button m-r-10'
-        >
-          {translate("API Test")}
-        </button>
+        <form onSubmit={e =>
+          apiTest(e)
+        }>
+          <button
+            className='strong-button m-r-10'
+          >
+            {translate("API Test")}
+          </button>
+        </form>
         <form onSubmit={e =>
           saveParameters(e, true)
         }>

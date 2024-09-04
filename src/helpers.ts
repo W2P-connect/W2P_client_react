@@ -31,7 +31,7 @@ export const useCallApi = () => {
 
         const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLElement | null;
 
-        if ((submitter && !submitter.classList.contains("submitting")) || !e) {
+        if ((submitter && !submitter.classList.contains("submitting")) || !submitter) {
             submitter && submitter.classList.add("submitting");
 
             try {
@@ -94,6 +94,7 @@ export const useCallPipedriveApi = () => {
         e: React.FormEvent | null = null
     ): Promise<AxiosResponse<any> | null> => {
         return new Promise(async (resolve, reject) => {
+            e && e.preventDefault()
             if (!appData.parameters.pipedrive.company_domain || !appData.parameters.pipedrive.api_key) {
                 // addNotification({
                 //     error: true,
@@ -102,11 +103,13 @@ export const useCallPipedriveApi = () => {
                 reject(false);
             } else {
                 const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
-                callApi(url, options = { method: "get" }, abortSignal, data, e)
+                callApi(url, options = options ?? { method: "get" }, abortSignal, data, e)
                     .then((res) => {
                         resolve(res);
                     })
                     .catch(async (error) => {
+                        console.log(error);
+
                         if (error.code !== "ERR_CANCELED") {
                             if (error.response && error.response.status === 429) {
                                 setTimeout(() => {

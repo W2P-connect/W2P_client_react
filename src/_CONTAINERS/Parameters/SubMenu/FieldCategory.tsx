@@ -56,7 +56,9 @@ const FieldCategory = ({ category }: { category: Category }) => {
           hookStore.updateHookFieldsFromPipedriveFields(fields)
         })
 
-        .catch(_ => {
+        .catch(error => {
+          console.log(error);
+
           addNotification({
             error: true,
             content: translate("Pipedrive has encountered an error, make sure you have configured it correctly")
@@ -140,11 +142,13 @@ const FieldCategory = ({ category }: { category: Category }) => {
               </div>
               : null
             }
-            <button type='button' onClick={e => getCategoryFields(e)} className='light-button m-t-25'>
-              {categoryFields?.length
-                ? translate('Reload custom fields')
-                : translate('Load custom fields')}
-            </button>
+            <form onSubmit={e => getCategoryFields(e)}>
+              <button className='light-button m-t-25'>
+                {categoryFields?.length
+                  ? translate('Reload custom fields')
+                  : translate('Load custom fields')}
+              </button>
+            </form>
           </div>
           : <h3 className='center m-t-25'>{translate('Select an event to configure it')}</h3>
         }
