@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, ReactNode } from 'react'
 import './navBar.css'
 
 /**
@@ -12,9 +12,9 @@ import './navBar.css'
 
 interface Item {
     label: string;
-    onClick: (value: string) => void;
+    onClick: (value: any) => void;
     active: boolean;
-    value: string;
+    value: string | ReactNode;
 }
 
 interface Props {

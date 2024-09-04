@@ -55,9 +55,6 @@ const Parameters = () => {
     JSON.stringify((appDataStore.getAppData().parameters))
   )
 
-  console.log(toJS(appDataStore.initAppData.parameters));
-  console.log(toJS(appDataStore.getAppData().parameters));
-
 
   return (
     <div>

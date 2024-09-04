@@ -5,15 +5,20 @@ import Loader from '../../_COMPONENTS/GENERAL/Loader/Loader'
 import Query from '../../_COMPONENTS/Query/Query'
 import { translate } from '../../translation'
 import Pagination from '../../_COMPONENTS/NAVIGATION/Pagination/Pagination'
+import { appDataStore } from '_STORES/AppData'
+import { pipedriveFieldsStore } from '_STORES/PipedriveFields'
+import { Category, Query as QueryType } from 'Types'
+import { Axios } from 'axios'
 
 export default function History() {
 
   const callApi = useCallApi()
-  const { appData, fieldsCategory } = useContext(AppDataContext)
-  const [queries, setQueries] = useState(null)
+
+  const [queries, setQueries] = useState<QueryType[] | null>(null)
+
   const [parameters, setParameters] = useState({
     state: "",
-    category: "",
+    category: "" as Category | "",
     method: "",
     hook: "",
   })
@@ -30,14 +35,16 @@ export default function History() {
     setQueries(_ => null)
 
     callApi(
-      `${appData.w2p_client_rest_url}/queries`,
+      `${appDataStore.appData.w2p_client_rest_url}/queries`,
       { method: "get" },
       controller.signal,
       { ...removeEmptyProperties(parameters), ...pagination },
     )
       .then(res => {
-        setQueries(_ => res.data.data)
-        setPagination(prv => ({ ...prv, ...res.data.pagination }))
+        if (res) {
+          setQueries(_ => res.data.data)
+          setPagination(prv => ({ ...prv, ...res.data.pagination }))
+        }
       })
       .catch(error => console.log(error))
 
@@ -47,30 +54,32 @@ export default function History() {
 
   }, [parameters, pagination.page])
 
+  const fieldsCategory: Category[] = ["deal", "organization", "person"]
+
   return (
     <div>
       <div className='flex gap-1 m-b-25'>
         <select
           value={parameters.hook}
           onChange={e => setParameters(prv => ({ ...prv, hook: e.target.value }))}>
-          <option value={""}>{translate("Filter by hook")}</option>
-          {appData.CONSTANTES.W2P_HOOK_LIST.map(hook =>
+          <option value={""}>{translate("All hooks")}</option>
+          {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST.map(hook =>
             <option key={hook.key} value={hook.label}>{hook.label}</option>
           )}
         </select>
         <select
           value={parameters.category}
-          onChange={e => setParameters(prv => ({ ...prv, category: e.target.value }))}>
-          <option value={""}>{translate("Filter by category")}</option>
+          onChange={e => setParameters(prv => ({ ...prv, category: e.target.value as Category }))}>
+          <option value={""}>{translate("All categories")}</option>
           {fieldsCategory.map(category =>
-            <option key={category.slug} value={category.slug}>{category.slug}</option>
+            <option key={category} value={category}>{category}</option>
           )}
         </select>
         <select
           value={parameters.state}
           onChange={e => setParameters(prv => ({ ...prv, state: e.target.value }))}>
-          <option value={""}>{translate("Filter by state")}</option>
-          {appData.CONSTANTES.W2P_AVAIBLE_STATES.map(state =>
+          <option value={""}>{translate("All states")}</option>
+          {appDataStore.appData.CONSTANTES.W2P_AVAIBLE_STATES.map(state =>
             <option key={state} value={state}>{state}</option>
           )}
         </select>
@@ -98,7 +107,7 @@ export default function History() {
               <div className='m-t-10'>
                 <Pagination
                   currentPage={pagination.page}
-                  totalPage={pagination.total_pages ?? null}
+                  totalPage={pagination.total_pages ?? 0}
                   setCurrentPage={value => setPagination(prv => ({ ...prv, page: value }))}
                 />
               </div>

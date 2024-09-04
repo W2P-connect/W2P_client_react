@@ -42,14 +42,6 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
 
     const saveParameters = async (e: React.FormEvent | null = null, notification = true) => {
         e && e.preventDefault();
-        // if (JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))) {
-        //     notification && addNotification({
-        //         error: false,
-        //         content: translate("Already up to date"),
-        //     });
-        //     return;
-        // }
-
         const newParameters = { parameters: appDataStore.getAppData().parameters }
 
         try {
@@ -58,6 +50,7 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
                 error: false,
                 content: translate(res?.data.message),
             });
+            res?.data.token && appDataStore.setAppData({ ...appDataStore.appData, token: res?.data.token })
             appDataStore.setInitAppData(appDataStore.getAppData())
         } catch (error: unknown) {
             console.log(error);

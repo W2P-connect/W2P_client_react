@@ -1,5 +1,5 @@
 import React from 'react'
-
+import MetaKey from '_COMPONENTS/METAKEYS/MetaKey'
 export default function MetaKeysCategory({ category, onSelect }) {
     return (
         <div>
@@ -17,17 +17,12 @@ export default function MetaKeysCategory({ category, onSelect }) {
             }
 
             {category.subcategories.map((subcategory, index) => (
-                <div key={index}>
-                    <h3>{subcategory.label}</h3>
+                <div key={index} className='mb-3'>
+                    <h3 className='text-sm font-semibold'>{subcategory.label}</h3>
                     <div className='meta-container'>
                         {subcategory.metaKeys.map((metaKey, index) =>
-                            <div
-                                key={index}
-                                className="meta-key"
-                                onClick={_ => onSelect && onSelect(metaKey)}>
-                                <div className='meta-key-value'>{metaKey.label}</div>
-                                <div className='meta-key-descritpion'>{metaKey.description}</div>
-                                <div className='meta-key-exemple'>Exemple: {metaKey.exemple}</div>
+                            <div key={index} onClick={_ => onSelect && onSelect(metaKey)}>
+                                <MetaKey metaKey={metaKey} />
                             </div>
                         )}
                     </div>

@@ -6,6 +6,7 @@ import MetaKeysCategories from '../METAKEYS/MetaKeysCategories'
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Block, MetaKey, Variable as VariableType } from 'Types'
+import { forEach } from 'lodash'
 
 export const emptyBlock: Block = {
     variables: [],
@@ -18,7 +19,7 @@ export const getBlockExemple = (block: Block) => {
         return block.variables.map((variable, index) =>
             `${variable.exemple ? variable.exemple : variable.value}${index !== (block.variables.length - 1) ? ' ' : ''}`
         )
-    } 
+    }
 }
 
 interface Props {
@@ -46,15 +47,19 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
         const newVariable = metaKey
             ? { ...metaKey, isFreeField: false, id: uuidv4() }
             : { value: '', isFreeField: true, id: uuidv4() };
-        
+
         setBlock(prvBlock => ({
             ...prvBlock,
             variables: [...prvBlock.variables, newVariable]
         }));
     }
-    const addMetaKeyElement = (metaKey: MetaKey) => addElementToBlock(metaKey);
+    const addMetaKeyElements = (metaKeys: MetaKey[]) => {
+        metaKeys.forEach(metaKey => {
+            addElementToBlock(metaKey)
+        })
+    };
     const addFreeTextElement = () => addElementToBlock();
-    
+
     const deleteVariable = (id: VariableType["id"]) => {
         setBlock(prv => ({
             ...prv,
@@ -90,7 +95,7 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
                 <button
                     type='button'
                     className='light-button'
-                    onClick={_ => addPopupContent(<MetaKeysCategories onSelect={addMetaKeyElement} />)}
+                    onClick={_ => addPopupContent(<MetaKeysCategories onSelect={addMetaKeyElements} />)}
                 >
                     {translate("variable field")}
                 </button>

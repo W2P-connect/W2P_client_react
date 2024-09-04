@@ -103,8 +103,8 @@ export type BaseHookField = {
     value: number | Array<number> | Block[];
     condition: FieldCondition;
     pipedriveFieldId: number;
-    findInPipedrive?: boolean;
-    replaceIfExisting?: boolean;
+    findInPipedrive?: boolean
+    replaceIfExisting?: boolean
     hookId: string;
 };
 
@@ -127,6 +127,13 @@ export type Block = {
     id: string,
     index: number,
 
+}
+
+
+/******************************* QUERY ***********************************/
+
+export interface Query {
+    
 }
 
 /*************************************************************************/
