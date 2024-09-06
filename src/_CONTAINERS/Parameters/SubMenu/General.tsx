@@ -31,7 +31,7 @@ const Connexion = () => {
 
   const checkW2pAPI = (e: FormEvent) => {
     e.preventDefault()
-    callApi(`${appDataStore.appData.w2p_client_rest_url}/authentification`, { method: 'get' }, null, {
+    callApi(`${appDataStore.appData.w2p_distant_rest_url}/authentification`, { method: 'get' }, null, {
       domain: appDataStore.appData.parameters.w2p.domain,
       api_key: appDataStore.appData.parameters.w2p.api_key,
     }, e)

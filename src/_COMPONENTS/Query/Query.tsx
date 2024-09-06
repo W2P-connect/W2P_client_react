@@ -22,14 +22,13 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
 
   const getActionButton = (state: QueryState) => {
-    if (state === "TODO") {
-      return <button>
-        {translate("Send")}
-      </button>
-    }
-    else if (state === "ERROR") {
-      return <button>
-        {translate("Retry")}
+    if (state === "TODO" || state === 'ERROR') {
+      return <button onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+        {
+          state === "TODO"
+            ? translate("Send")
+            : translate("Retry")
+        }
       </button>
     }
   }
@@ -68,10 +67,12 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
       {query ? (
         <div
           className={`w2p-query pointer`}
-          onClick={(e: React.MouseEvent) => e.currentTarget.tagName.toUpperCase() !== 'BUTTON'
-            ? setOpen(prv => !prv)
-            : null
-          }>
+          onClick={(e: React.MouseEvent) => {
+            if (e.currentTarget.tagName.toUpperCase() !== 'BUTTON') {
+              console.log(e.currentTarget);
+              setOpen(prev => !prev);
+            }
+          }}>
           <div className='w2p-query-main-datas'>
             <div>{getActionButton(query.state)}</div>
             <div>{query.hook}</div>
