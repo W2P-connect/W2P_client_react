@@ -3,19 +3,12 @@ import { translate } from '../../translation'
 import NavBar from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { MenuContext } from '../../_CONTEXT/MenuContext'
 import { useAppDataContext } from '_CONTEXT/hook/contextHook'
-import { observer } from 'mobx-react-lite'
-import { appDataStore } from '_STORES/AppData'
-import { toJS } from 'mobx'
 
-const Parameters = () => {
+
+export default function Parameters() {
 
   const { saveParameters, apiTest } = useAppDataContext()
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
-
-  // const disableSaveParameters = useMemo(() =>
-  //   JSON.stringify(formatParameters(appDataInit.parameters)) === JSON.stringify(formatParameters(appData.parameters))
-  //   , [appDataInit, appData]
-  // )
 
   useEffect(() => {
     if (!currentSubMenu) {
@@ -50,12 +43,6 @@ const Parameters = () => {
     },
   ]
 
-  const disableSaveParameters = (
-    JSON.stringify(appDataStore.initAppData.parameters) ===
-    JSON.stringify((appDataStore.getAppData().parameters))
-  )
-
-
   return (
     <div>
       {/* <h1>{translate("Parameters")}</h1> */}
@@ -77,15 +64,6 @@ const Parameters = () => {
         }>
           <button
             className='strong-button'
-            disabled={disableSaveParameters}
-            style={{
-              opacity: disableSaveParameters
-                ? 0.8
-                : 1,
-              cursor: disableSaveParameters
-                ? 'default'
-                : 'pointer'
-            }}
           >
             {translate("Save settings")}
           </button>
@@ -94,5 +72,3 @@ const Parameters = () => {
     </div >
   )
 }
-
-export default observer(Parameters)

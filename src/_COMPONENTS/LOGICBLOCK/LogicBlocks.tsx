@@ -41,11 +41,11 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
             : [{ ...emptyBlock, id: uuidv4() }])
     }
 
-    const cantBeActive = (block: Block, index: number) => {
-        if (fieldCondition.enabled === false) {
+    const cantBeActive = (index: number) => {
+        if (fieldCondition.logicBlock.enabled === false) {
             return index > 0
         } else {
-            if (Number(fieldCondition.fieldNumber) === 1) {
+            if (Number(fieldCondition.logicBlock.fieldNumber) === 1) {
                 const trueIndex = logicBlocks.findIndex(block => block?.variables?.some(variable => variable.isFreeField))
 
                 return trueIndex !== -1 && index > trueIndex
@@ -62,7 +62,7 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
             <div className='logic-blocks-container'>
                 {logicBlocks.map((block, index) => {
                     return <div key={block.id}
-                        style={{ opacity: cantBeActive(block, index) ? 0.5 : 1 }}
+                        style={{ opacity: cantBeActive(index) ? 0.5 : 1 }}
                         className='w-[100%]'
                     >
                         <VariableBlock

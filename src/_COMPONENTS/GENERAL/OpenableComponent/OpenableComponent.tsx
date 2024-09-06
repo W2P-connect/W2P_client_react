@@ -1,19 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, ReactNode } from 'react'
 import './openableComponent.css'
+
+type Props = {
+    children: ReactNode,
+    stateOpen?: boolean,
+    label?: boolean,
+    openLabel?: string,
+    closeLabel?: string,
+    position?: ("center" | "left" | "right")
+}
 
 export default function OpenableComponent({
     children,
-    stateOpen = null,
+    stateOpen = false,
     label = true,
     openLabel = "",
     closeLabel = "",
     position = "center"
-}) {
+}: Props) {
 
-    const [open, setOpen] = useState(stateOpen !== null ? stateOpen : false)
+    const [open, setOpen] = useState<boolean>(stateOpen)
 
     useEffect(() => {
-        stateOpen !== null && setOpen(stateOpen)
+        setOpen(stateOpen)
     }, [stateOpen])
 
     return (

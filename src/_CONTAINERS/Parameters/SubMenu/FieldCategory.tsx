@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { translate } from '../../../translation'
-import { updateNestedObject, useCallPipedriveApi } from '../../../helpers'
-import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist'
+import { useCallPipedriveApi } from '../../../helpers'
 import HookSelector from '_COMPONENTS/HOOK/HookSelector/HookSelector'
 import { Category, PipedriveField } from 'Types'
 import { useNotification } from '_CONTEXT/hook/contextHook'
 import { AxiosResponse } from 'axios'
 import { observer } from 'mobx-react-lite'
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields'
-import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
-import HookField from '_COMPONENTS/HOOK/HookField/HookField'
 import { appDataStore } from '_STORES/AppData'
-import { toJS } from 'mobx'
+import HookFieldList from '_COMPONENTS/HOOK/HookField/HookFieldList'
 
 
 const FieldCategory = ({ category }: { category: Category }) => {
@@ -21,8 +18,6 @@ const FieldCategory = ({ category }: { category: Category }) => {
   const callPipedriveApi = useCallPipedriveApi()
 
   const { addNotification } = useNotification()
-
-  const [searchField, setSearchField] = useState<string>("")
 
   const categoryFields = pipedriveFieldsStore.getCategoryFields(category);
 
@@ -36,11 +31,8 @@ const FieldCategory = ({ category }: { category: Category }) => {
     }
   }, [category, selectedHook])
 
-  const filteredHookFieldsList = selectedHook
-    ? searchField
-      ? selectedHook.fields.filter(field => field.pipedrive.name.includes(searchField))
-      : selectedHook.fields
-    : null
+
+
 
   const getCategoryFields = (e: React.FormEvent) => {
     if (hookStore.selectedHookId) {
@@ -67,13 +59,6 @@ const FieldCategory = ({ category }: { category: Category }) => {
     }
   }
 
-  const updateHook = (hookId: string, path: string, value: any) => {
-    const hook = hookStore.getHook(hookId);
-    if (hook) {
-      const updatedHook = updateNestedObject(hook, path, value);
-      hookStore.updateHook(hookId, updatedHook);
-    }
-  };
 
 
   return (
@@ -91,68 +76,19 @@ const FieldCategory = ({ category }: { category: Category }) => {
         </div>
 
         {selectedHook
-          ? <div key={selectedHook.id}>
-            {filteredHookFieldsList
-              ? <div key={category}>
-                <h5 className='m-b-25'>{translate(`Parameter of the event : ${selectedHook.label}`)}</h5>
-
-                <label className='pointer flex items-center m-b-10'>
-                  <input
-                    type='checkbox'
-                    className='m-r-10'
-                    onChange={e => selectedHook && updateHook(selectedHook.id, 'option.createActivity', e.target.checked)}
-                    checked={selectedHook.option.createActivity ?? false}
-                  />
-                  <div>
-                    {translate('Add an activity when this event is triggered.')}
-                    <div className='subtext'>
-                      {translate(
-                        `An activity specifying the updated fields and the triggered event will be automatically added to the ${selectedHook.category} on Pipedrive.`
-                      )}
-                    </div>
-                  </div>
-                </label>
-
-                <div className='m-b-25'>
-                  <Datalist
-                    label={translate('Search a field')}
-                    placeholder={translate('Name, owner, email,...')}
-                    items={selectedHook.fields.map(field => ({ value: field.pipedrive.name, id: field.id }))}
-                    value={searchField}
-                    onInput={setSearchField}
-                  />
-                </div>
-                {filteredHookFieldsList.length ?
-                  <div className='flex column m-t-25 gap-1'>
-                    {/* Priority fields */}
-                    {filteredHookFieldsList
-                      .filter(hookfield => hookFieldStore.isImportant(hookfield))
-                      .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
-                    {/* other fields */}
-                    {filteredHookFieldsList
-                      .filter(hookfield => !hookFieldStore.isImportant(hookfield))
-                      .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
-                  </div>
-                  : <p>
-                    {searchField
-                      ? translate('There is no field to show.')
-                      : translate("You haven't loaded custom fields yet.")}
-                  </p>
-                }
-              </div>
-              : null
-            }
-            <form onSubmit={e => getCategoryFields(e)}>
-              <button className='light-button m-t-25'>
-                {categoryFields?.length
-                  ? translate('Reload custom fields')
-                  : translate('Load custom fields')}
-              </button>
-            </form>
-          </div>
+          ? <HookFieldList hook={selectedHook} />
           : <h3 className='center m-t-25'>{translate('Select an event to configure it')}</h3>
         }
       </div>
+
+      <form onSubmit={e => getCategoryFields(e)}>
+        <button className='light-button m-t-25'>
+          {categoryFields?.length
+            ? translate('Reload custom fields')
+            : translate('Load custom fields')}
+        </button>
+      </form>
+
     </div>
   );
 };

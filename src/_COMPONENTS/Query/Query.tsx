@@ -4,51 +4,54 @@ import OpenableComponent from '../GENERAL/OpenableComponent/OpenableComponent'
 import { translate } from '../../translation'
 import { useCallApi } from '../../helpers'
 import RenderIf from '../GENERAL/RenderIf'
-import { NotificationContext } from '../../_CONTEXT/NotificationContext'
-import { AppDataContext } from '../../_CONTEXT/appDataContext'
+import { Query as QueryType, QueryState } from 'Types'
+import { useNotification } from '_CONTEXT/hook/contextHook'
+import { appDataStore } from '_STORES/AppData'
 
-export default function Query({ parentQuery }) {
+export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
   const callApi = useCallApi()
-  const { addNotification } = useContext(NotificationContext)
-  const { appData } = useContext(AppDataContext)
+  const { addNotification } = useNotification()
 
-  const [query, setQuery] = useState(null)
-  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState<QueryType>(parentQuery)
+  const [open, setOpen] = useState<boolean>(false)
 
-  useEffect(() => {
-    setQuery(_ => parentQuery)
-  }, [])
+  // useEffect(() => {
+  //   setQuery(_ => parentQuery)
+  // }, [])
 
 
-  const getActionButton = (state) => {
-    if (state === "TO DO") {
-      return <button onClick={e => sendQuery(e)}>
+  const getActionButton = (state: QueryState) => {
+    if (state === "TODO") {
+      return <button>
         {translate("Send")}
       </button>
     }
     else if (state === "ERROR") {
-      return <button onClick={e => sendQuery(e)}>
+      return <button>
         {translate("Retry")}
       </button>
     }
   }
 
-  const sendQuery = (e) => {
-    addNotification()
+  const sendQuery = (e: React.FormEvent) => {
     callApi(`
-    ${appData.w2p_client_rest_url}/query/${query.id}/send`,
+    ${appDataStore.appData.w2p_client_rest_url}/query/${query.id}/send`,
       { method: "PUT" },
       null,
       { direct_to_pipedrive: true },
       e)
       .then(res => {
-        setQuery(_ => res.data.data)
-        setOpen(_ => true)
-        addNotification({
-          error: res.data.data.success,
-          content: res.data.message
-        })
+        if (res?.data.data) {
+          setQuery(_ => res.data.data)
+          setOpen(_ => true)
+          addNotification({
+            error: res.data.data.success,
+            content: res.data.message
+          })
+        } else {
+          throw new Error("wrong API response answer")
+        }
       })
       .catch(error => {
         error?.response?.data?.data && setQuery(_ => error?.response?.data?.data)
@@ -61,11 +64,11 @@ export default function Query({ parentQuery }) {
   }
 
   return (
-    <div>
+    <form onSubmit={e => sendQuery(e)}>
       {query ? (
         <div
           className={`w2p-query pointer`}
-          onClick={e => e.target.tagName.toUpperCase() !== 'BUTTON'
+          onClick={(e: React.MouseEvent) => e.currentTarget.tagName.toUpperCase() !== 'BUTTON'
             ? setOpen(prv => !prv)
             : null
           }>
@@ -79,8 +82,9 @@ export default function Query({ parentQuery }) {
             <div className={`w2p-query-label
                 ${query.state === "DONE" ? 'success-label' : ''} 
                 ${query.state === "SENDED" ? 'warning-label' : ''} 
-                ${query.state === "TO DO" ? 'warning-label' : ''} 
+                ${query.state === "TODO" ? 'warning-label' : ''} 
                 ${query.state === "ERROR" ? 'error-label' : ''} 
+                ${query.state === "INVALID" ? 'error-label' : ''} 
             `}>
               <div>{query.state}</div>
             </div>
@@ -93,16 +97,16 @@ export default function Query({ parentQuery }) {
                     <div className='strong-1'>{translate("Created at")}</div>
                     <div>{new Date(query.additional_datas?.created_at).toLocaleString()}</div>
                   </div>
-                  <RenderIf condition={query.additional_datas?.sended_at}>
+                  <RenderIf condition={!!query.additional_datas?.sended_at}>
                     <div>
                       <div className='strong-1'>{translate("Sended at")}</div>
-                      <div>{new Date(query.additional_datas.sended_at).toLocaleString()}</div>
+                      <div>{new Date(query.additional_datas?.sended_at ?? '').toLocaleString()}</div>
                     </div>
                   </RenderIf>
-                  <RenderIf condition={query.additional_datas?.last_error}>
+                  <RenderIf condition={!!query.additional_datas?.last_error}>
                     <div>
-                      <div className='strong-1'>{translate("Error occurred during the sending of the request")}</div>
-                      <div>{query.additional_datas.last_error}</div>
+                      {/* <div className='strong-1'>{translate("Error occurred during the sending of the request")}</div> */}
+                      <div className='text-red-700'>{query.additional_datas.last_error}</div>
                     </div>
                   </RenderIf>
                 </div>
@@ -124,15 +128,27 @@ export default function Query({ parentQuery }) {
                       : <div>{translate('No valid data to send.')}</div>
                   }
                   <div>
-                    {query.payload.last_error}
+                    {query.additional_datas.last_error}
                   </div>
                 </div>
               </div>
-              <RenderIf condition={query.additional_datas?.traceback && Array.isArray(query.additional_datas.traceback)}>
+              <RenderIf condition={!!query.additional_datas?.traceback && Array.isArray(query.additional_datas.traceback)}>
                 <div>
                   <div className='strong-1'>{translate("Trace back")}</div>
                   {query.additional_datas.traceback
-                    ?.sort((a, b) => a.time - b.time)
+                    ?.sort((a, b) => {
+                      const parseMicrotime = (time: string): number => {
+                        const parts = time.split(" ");
+                        const seconds = parseFloat(parts[1]);
+                        const microseconds = parseFloat(parts[0]);
+                        return seconds + microseconds;
+                      };
+
+                      const timeA = parseMicrotime(a.time);
+                      const timeB = parseMicrotime(b.time);
+
+                      return timeA - timeB;
+                    })
                     .map((trace, index) => {
                       var parts = trace.time?.split(" ") ?? null;
                       var seconds = parts ? parseFloat(parts[1]) : null;
@@ -156,7 +172,7 @@ export default function Query({ parentQuery }) {
           </OpenableComponent>
         </div>
       ) : null}
-    </div>
+    </form>
   );
 
 }

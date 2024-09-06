@@ -5,7 +5,9 @@ import { useCallApi, useCallPipedriveApi } from '../../../helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
-import { toJS } from 'mobx';
+import { runInAction, toJS } from 'mobx';
+import { hookStore } from '_STORES/Hooks';
+import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 
 const Connexion = () => {
 
@@ -53,6 +55,7 @@ const Connexion = () => {
     )) {
       const newAppDataStore = appDataStore.appData
       newAppDataStore.parameters.w2p = appDataStore.emptyW2Pparameters
+      hookStore.updateHookList([])
       appDataStore.setAppData(newAppDataStore)
     }
   }
@@ -64,6 +67,7 @@ const Connexion = () => {
       const newAppData = appDataStore.appData
       newAppData.parameters.pipedrive = appDataStore.emptyPipedriveParameters
       appDataStore.setAppData(newAppData)
+      pipedriveFieldsStore.ressetPipedriveFields()
     }
   }
 

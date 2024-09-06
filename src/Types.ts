@@ -1,6 +1,6 @@
 export interface AppData {
     CONSTANTES: {
-        W2P_AVAIBLE_STATES: ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")[]
+        W2P_AVAIBLE_STATES: QueryState[]
         W2P_HOOK_LIST: PreHook[]
         W2P_META_KEYS: MetaKeyCategory[]
         W2P_REQUIRED_FIELDS: {
@@ -93,8 +93,12 @@ export interface Hook extends PreHook {
 }
 
 export type FieldCondition = {
-    enabled: boolean;
-    fieldNumber: "ALL" | "1"
+    logicBlock: {
+        enabled: boolean;
+        fieldNumber: "ALL" | "1"
+    }
+    findInPipedrive?: boolean
+    SkipOnExist?: boolean
 }
 
 export type BaseHookField = {
@@ -103,8 +107,6 @@ export type BaseHookField = {
     value: number | Array<number> | Block[];
     condition: FieldCondition;
     pipedriveFieldId: number;
-    findInPipedrive?: boolean
-    replaceIfExisting?: boolean
     hookId: string;
 };
 
@@ -131,10 +133,43 @@ export type Block = {
 
 
 /******************************* QUERY ***********************************/
+type DateTimeString = string;
 
 export interface Query {
-    
+    additional_datas: {
+        created_at: DateTimeString;
+        responded_at?: DateTimeString;
+        last_error?: string | null;
+        sended_at?: DateTimeString;
+        traceback?: QueryTraceback[]
+    }
+    category: Category;
+    hook: Hook["label"];
+    id: number;
+    is_valid: boolean;
+    payload: {
+        category: Category;
+        data: Record<string, any>
+    }
+    method: "POST" | "PUT";
+    state: QueryState;
+    source_id: number;  //wordpress source id
+    target_id: number;  //Pipedrive target id
+    pipedrive_response: Record<string, any>
+
 }
+
+interface QueryTraceback {
+    date: DateTimeString;
+    time: string;
+    step: string;
+    success: boolean;
+    message: string;
+    additional_datas: Record<string, any>;
+    internal: boolean;
+}
+
+export type QueryState = ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")
 
 /*************************************************************************/
 /******************************* PIPEDRIVE *******************************/

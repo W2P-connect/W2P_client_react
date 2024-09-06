@@ -28,9 +28,8 @@ export const useCallApi = () => {
         data: Record<string, any> | null = {},
         e: React.FormEvent | null = null
     ): Promise<AxiosResponse<any> | null> => {
-
+        e && e.preventDefault()
         const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLElement | null;
-
         if ((submitter && !submitter.classList.contains("submitting")) || !submitter) {
             submitter && submitter.classList.add("submitting");
 

@@ -10,21 +10,21 @@ import { FieldCondition } from 'Types'
  * @returns 
  */
 
-const emptyConditionMaker: FieldCondition = {
+const emptyConditionMaker: FieldCondition["logicBlock"] = {
     enabled: false,
     fieldNumber: 'ALL'
 }
 
 interface Props {
-    condition: FieldCondition;
-    setter: (condition: FieldCondition) => void
+    logicBlockCondition: FieldCondition["logicBlock"];
+    setter: (condition: FieldCondition["logicBlock"]) => void
 }
-export default function ConditionMaker({ condition, setter = () => { } }: Props) {
+export default function ConditionMaker({ logicBlockCondition, setter = () => { } }: Props) {
 
-    const [conditionMaker, setConditionMaker] = useState<FieldCondition>(emptyConditionMaker)
+    const [conditionMaker, setConditionMaker] = useState<FieldCondition["logicBlock"]>(emptyConditionMaker)
 
     useEffect(() => {
-        setConditionMaker({ ...emptyConditionMaker, ...condition })
+        setConditionMaker({ ...emptyConditionMaker, ...logicBlockCondition })
     }, [])
 
     useEffect(() => {

@@ -8,12 +8,19 @@ class PipedriveFieldStore {
 
     constructor() {
         makeAutoObservable(this);
-        this.loadFields();
     }
 
     //Api call ?
-    loadFields() {
+    ressetPipedriveFields() {
+        runInAction(() => {
+            pipedriveFieldsStore.fields = []
+        })
+    }
 
+    setPipedriveFields(pipedriveFields: PipedriveField[]) {
+        runInAction(() => {
+            this.fields = pipedriveFields
+        })
     }
 
     getCategoryFields(category: Category) {

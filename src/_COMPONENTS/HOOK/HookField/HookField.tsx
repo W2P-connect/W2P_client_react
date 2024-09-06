@@ -10,7 +10,7 @@ import { HookField as HookFieldType, Block, GroupedStages } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
-import { MouseEvent } from 'react'
+import { MouseEvent, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 
 interface Props {
@@ -21,11 +21,16 @@ const HookField = ({ hookField }: Props) => {
 
   const callPipedriveApi = useCallPipedriveApi()
 
+  const field = useMemo(() => hookField, [])
 
-  const selectedHook = hookStore.getHook(hookField.hookId)
+  const selectedHook = useMemo(() => hookStore.getHook(field.hookId), [field])
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
-    selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
+    selectedHook && hookStore.updateHookField(selectedHook, field.id, { [key]: value });
+  };
+
+  const updateOptionHookField = (key: keyof HookFieldType["condition"], value: any) => {
+    selectedHook && hookStore.updateHookField(selectedHook, field.id, { condition: { ...field.condition, [key]: value } });
   };
 
   const loadPipedriveUsers = (e: MouseEvent) => {
@@ -53,16 +58,16 @@ const HookField = ({ hookField }: Props) => {
   /** Select d'un seul choix */
   const selectOption = (id: number) => {
     if (
-      hookField.pipedrive.field_type === "enum" ||
-      hookField.pipedrive.field_type === "user" ||
-      hookField.pipedrive.field_type === "status" ||
-      hookField.pipedrive.field_type === "stage"
+      field.pipedrive.field_type === "enum" ||
+      field.pipedrive.field_type === "user" ||
+      field.pipedrive.field_type === "status" ||
+      field.pipedrive.field_type === "stage"
     ) {
       updateHookField('value', id)
-    } else if (hookField.pipedrive.field_type === "set" || hookField.pipedrive.field_type === "visible_to") {
-      if (Array.isArray(hookField.value)) {
-        isNumberArray(hookField.value) && hookField.value.includes(id)
-          ? updateHookField('value', Array.isArray(hookField.value) ? hookField.value.filter(val => val !== id) : [])
+    } else if (field.pipedrive.field_type === "set" || field.pipedrive.field_type === "visible_to") {
+      if (Array.isArray(field.value)) {
+        isNumberArray(field.value) && field.value.includes(id)
+          ? updateHookField('value', Array.isArray(field.value) ? field.value.filter(val => val !== id) : [])
           : updateHookField("value", id)
       } else {
         updateHookField("value", [id]); // or handle the case where it's not an array
@@ -98,7 +103,7 @@ const HookField = ({ hookField }: Props) => {
               <div
                 key={stage.id}
                 onClick={() => selectOption(stage.id)}
-                className={`pipedrive-option-field ${hookField.value === stage.id ? "selected" : ""}`}
+                className={`pipedrive-option-field ${field.value === stage.id ? "selected" : ""}`}
                 style={{ backgroundColor: "white" }}
               >
                 {stage.name}
@@ -275,13 +280,12 @@ const HookField = ({ hookField }: Props) => {
               {translate("Condition")}
             </h5>
             <div className='flex flex-col gap-2'>
-
               <div className='mb-2'>
                 {isLogicBlockField(hookField.pipedrive)
                   ? <>
                     <ConditionMaker
-                      condition={hookField.condition}
-                      setter={condition => updateHookField("condition", condition)}
+                      logicBlockCondition={hookField.condition.logicBlock}
+                      setter={condition => updateOptionHookField("logicBlock", condition)}
                     />
                   </>
                   : null
@@ -293,8 +297,8 @@ const HookField = ({ hookField }: Props) => {
                   type='checkbox'
                   // className='w2p-normal-checkbox'
                   // value={''}
-                  onChange={e => updateHookField("replaceIfExisting", e.target.checked)}
-                  checked={hookField.replaceIfExisting ?? false}
+                  onChange={e => updateOptionHookField("SkipOnExist", e.target.checked)}
+                  checked={hookField.condition.SkipOnExist ?? false}
                 />
                 {translate("Do not update if there is already a value for this field on Pipedrive")}
               </label>
@@ -307,8 +311,8 @@ const HookField = ({ hookField }: Props) => {
                         type='checkbox'
                         // className='w2p-normal-checkbox'
                         // value={''}
-                        onChange={e => updateHookField("findInPipedrive", e.target.checked)}
-                        checked={hookField.findInPipedrive ?? false}
+                        onChange={e => updateOptionHookField("findInPipedrive", e.target.checked)}
+                        checked={hookField.condition.findInPipedrive ?? false}
                       />
                       {selectedHook.category === "person"
                         ? translate(`If a person already has this value for this field in Pipedrive, 

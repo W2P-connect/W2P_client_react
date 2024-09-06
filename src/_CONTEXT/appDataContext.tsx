@@ -42,30 +42,41 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
 
     const saveParameters = async (e: React.FormEvent | null = null, notification = true) => {
         e && e.preventDefault();
-        const newParameters = { parameters: appDataStore.getAppData().parameters }
 
-        try {
-            const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, newParameters, e);
+        if (
+            JSON.stringify(appDataStore.initAppData.parameters) !==
+            JSON.stringify((appDataStore.getAppData().parameters))
+        ) {
+            const newParameters = { parameters: appDataStore.getAppData().parameters }
+
+            try {
+                const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, newParameters, e);
+                notification && addNotification({
+                    error: false,
+                    content: translate(res?.data.message),
+                });
+                res?.data.token && appDataStore.setAppData({ ...appDataStore.appData, token: res?.data.token })
+                appDataStore.setInitAppData(appDataStore.getAppData())
+            } catch (error: unknown) {
+                console.log(error);
+                if (isAxiosError(error)) {
+                    notification &&
+                        addNotification({
+                            error: true,
+                            content: translate(error.response?.data.message),
+                        });
+                } else {
+                    notification && addNotification({
+                        error: true,
+                        content: translate("An unknown error appeared"),
+                    });
+                }
+            }
+        } else {
             notification && addNotification({
                 error: false,
-                content: translate(res?.data.message),
+                content: translate("Settings already up to date"),
             });
-            res?.data.token && appDataStore.setAppData({ ...appDataStore.appData, token: res?.data.token })
-            appDataStore.setInitAppData(appDataStore.getAppData())
-        } catch (error: unknown) {
-            console.log(error);
-            if (isAxiosError(error)) {
-                notification &&
-                    addNotification({
-                        error: true,
-                        content: translate(error.response?.data.message),
-                    });
-            } else {
-                notification && addNotification({
-                    error: true,
-                    content: translate("An unknown error appeared"),
-                });
-            }
         }
     };
 

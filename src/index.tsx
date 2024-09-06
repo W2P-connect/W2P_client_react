@@ -11,6 +11,7 @@ import { appDataStore } from '_STORES/AppData';
 import { deepMerge } from 'helpers';
 import { hookStore } from '_STORES/Hooks';
 import { AppData as AppDataType } from 'Types';
+import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 
 // Render the app inside our shortcode's #app div
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,6 +24,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         appDataStore.setInitAppData(deepMerge(appDataStore.emptyAppData, appData));
 
         hookStore.updateHookList(appData.parameters.w2p.hookList);
+        pipedriveFieldsStore.setPipedriveFields(appData.parameters.pipedrive.fields)
+        console.log("--INIT-- : appData.parameters", appData.parameters);
+
 
         const element = document.getElementById('w2p-app');
         if (element !== null && appLocalizer.data?.data) {

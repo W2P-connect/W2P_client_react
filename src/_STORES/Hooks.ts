@@ -14,8 +14,10 @@ class HookStore {
         enabled: false,
         value: 0,
         condition: {
-            enabled: false,
-            fieldNumber: '1'
+            logicBlock: {
+                enabled: false,
+                fieldNumber: '1'
+            }
         },
         pipedriveFieldId: 0,
         hookId: ''

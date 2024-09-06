@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
 import { deepCopy } from 'helpers';
 import { hookStore } from './Hooks';
+import { pipedriveFieldsStore } from './PipedriveFields';
 
 class AppDataStore {
 
@@ -112,9 +113,10 @@ class AppDataStore {
     }
 
     getAppData(): AppData {
-        const formatedAppData = deepCopy(this.appData)
-        formatedAppData.parameters.w2p.hookList = hookStore.hooks
-        return formatedAppData 
+        const formatedAppData: AppData = deepCopy(this.appData)
+        formatedAppData.parameters.w2p.hookList = [...hookStore.hooks]
+        formatedAppData.parameters.pipedrive.fields = [...pipedriveFieldsStore.fields]
+        return formatedAppData
     }
 }
 

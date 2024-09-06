@@ -3,6 +3,7 @@ import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import { observer } from 'mobx-react-lite'
 import { appDataStore } from '_STORES/AppData'
+import { deepCopy } from 'helpers'
 
 const Organizations = () => {
 
@@ -13,7 +14,7 @@ const Organizations = () => {
   }, [])
 
   useEffect(() => {
-    const newAppData = appDataStore.appData
+    const newAppData = deepCopy(appDataStore.appData)
     newAppData.parameters.w2p.organizations = options
     appDataStore.setAppData(newAppData)
   }, [options])
