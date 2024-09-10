@@ -136,7 +136,7 @@ export type Block = {
 type DateTimeString = string;
 
 export interface Query {
-    additional_datas: {
+    additional_data: {
         created_at: DateTimeString;
         responded_at?: DateTimeString;
         last_error?: string | null;
@@ -149,23 +149,42 @@ export interface Query {
     is_valid: boolean;
     payload: {
         category: Category;
-        data: Record<string, any>
+        data: PayloadData[]
+        fields: PayloadField[]
+        key: string //Hook key - deprecated
+        label: string // Hook Label - deprecated
     }
     method: "POST" | "PUT";
     state: QueryState;
     source_id: number;  //wordpress source id
     target_id: number;  //Pipedrive target id
-    pipedrive_response: Record<string, any>
+    pipedrive_response: {
+        [key: string]: any;
+    }
+}
 
+export type PayloadData = {
+    condition: FieldCondition,
+    isLogicBlock: boolean,
+    key: string,
+    pipedriveFieldId: number,
+    value: any,
+}
+
+export type PayloadField = {
+    condition: FieldCondition,
+    isLogicBlock: boolean,
+    findInPipedrive: boolean,
+    key: string,
+    values: any[] | string,
 }
 
 interface QueryTraceback {
     date: DateTimeString;
-    time: string;
     step: string;
     success: boolean;
     message: string;
-    additional_datas: Record<string, any>;
+    additional_data: Record<string, any>;
     internal: boolean;
 }
 

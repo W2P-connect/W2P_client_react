@@ -96,67 +96,54 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
                 <div className='w2p-query-timelaps flex-1'>
                   <div>
                     <div className='strong-1'>{translate("Created at")}</div>
-                    <div>{new Date(query.additional_datas?.created_at).toLocaleString()}</div>
+                    <div>{new Date(query.additional_data?.created_at).toLocaleString()}</div>
                   </div>
-                  <RenderIf condition={!!query.additional_datas?.sended_at}>
+                  <RenderIf condition={!!query.additional_data?.sended_at}>
                     <div>
                       <div className='strong-1'>{translate("Sended at")}</div>
-                      <div>{new Date(query.additional_datas?.sended_at ?? '').toLocaleString()}</div>
+                      <div>{new Date(query.additional_data?.sended_at ?? '').toLocaleString()}</div>
                     </div>
                   </RenderIf>
-                  <RenderIf condition={!!query.additional_datas?.last_error}>
+                  <RenderIf condition={!!query.additional_data?.last_error}>
                     <div>
                       {/* <div className='strong-1'>{translate("Error occurred during the sending of the request")}</div> */}
-                      <div className='text-red-700'>{query.additional_datas.last_error}</div>
+                      <div className='text-red-700'>{query.additional_data.last_error}</div>
                     </div>
                   </RenderIf>
                 </div>
                 {/* <div className='w2p-query-origin flex-1' >
                 <div className='strong-1'>{translate("Data")}</div>
                 <div>
-                  {query.additional_datas.last_error}
+                  {query.additional_data.last_error}
                 </div>
               </div> */}
                 <div className='w2p-query-data flex-1' >
                   <div className='strong-1'>{translate("Data for Pipedrive")}</div>
                   {
-                    Object.entries(query.payload.data).length
-                      ? Object.entries(query.payload.data).map(([key, value]) => (
-                        <div key={key}>
-                          <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : value}
+                    query.payload.data.length
+                      ? query.payload.data.map(data => (
+                        <div key={data.key}>
+                          <strong>{data.key}:</strong> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
                         </div>
                       ))
                       : <div>{translate('No valid data to send.')}</div>
                   }
                   <div>
-                    {query.additional_datas.last_error}
+                    {query.additional_data.last_error}
                   </div>
                 </div>
               </div>
-              <RenderIf condition={!!query.additional_datas?.traceback && Array.isArray(query.additional_datas.traceback)}>
+              <RenderIf condition={!!query.additional_data?.traceback && Array.isArray(query.additional_data.traceback)}>
                 <div>
                   <div className='strong-1'>{translate("Trace back")}</div>
-                  {query.additional_datas.traceback
+                  {query.additional_data.traceback
                     ?.sort((a, b) => {
-                      const parseMicrotime = (time: string): number => {
-                        const parts = time.split(" ");
-                        const seconds = parseFloat(parts[1]);
-                        const microseconds = parseFloat(parts[0]);
-                        return seconds + microseconds;
-                      };
-
-                      const timeA = parseMicrotime(a.time);
-                      const timeB = parseMicrotime(b.time);
-
-                      return timeA - timeB;
+                      return new Date(a.date).getTime() - new Date(b.date).getTime()
                     })
                     .map((trace, index) => {
-                      var parts = trace.time?.split(" ") ?? null;
-                      var seconds = parts ? parseFloat(parts[1]) : null;
-
                       return <div key={index} className='m-b-10'>
-                        {seconds
-                          ? <div className='strong-1'>{new Date(seconds * 1000).toLocaleString()} : {translate(trace.step)}</div>
+                        {trace.date
+                          ? <div className='strong-1'>{new Date(trace.date).toLocaleString()} : {translate(trace.step)}</div>
                           : null
                         }
                         <div>
