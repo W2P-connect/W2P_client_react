@@ -35,7 +35,9 @@
 
 #wpcontent {
     padding-left: 0 !important;
+    overflow-x: hidden;
 }
+
 
 #w2p-app {
     width: 98%;
@@ -43,7 +45,6 @@
     margin: 30px auto;
     background-color: white;
     border-radius: var(--border-radius-1);
-    overflow: hidden;
     box-shadow: 0 0 20px 7px rgba(0, 0, 0, 0.2);
     transition: height 0.2s ease-in;
     min-height: 500px;
