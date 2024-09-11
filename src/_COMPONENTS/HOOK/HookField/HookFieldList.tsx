@@ -37,7 +37,8 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                 ? <div>
                     <h5 className='m-b-25'>{translate(`Parameter of the event : ${hook.label}`)}</h5>
 
-                    <label className='pointer flex items-center m-b-10'>
+                    {/* C'est clairement la V2/ */}
+                    {/* <label className='pointer flex items-center m-b-10'>
                         <input
                             type='checkbox'
                             className='m-r-10'
@@ -52,7 +53,7 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                                 )}
                             </div>
                         </div>
-                    </label>
+                    </label> */}
 
                     <div className='m-b-25'>
                         <Datalist
