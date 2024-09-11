@@ -32,9 +32,9 @@ export interface W2pParameters {
     domain: string;
     api_key: string;
     hookList: Hook[];
-    deals: DealsConfig;
-    organizations: OrganizationsConfig;
-    persons: PersonsConfig;
+    deal: DealsConfig;
+    organization: OrganizationsConfig;
+    person: PersonsConfig;
 }
 interface DealsConfig {
     amountsAre: string | null;

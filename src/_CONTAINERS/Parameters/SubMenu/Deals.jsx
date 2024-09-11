@@ -10,12 +10,12 @@ export default function Deals() {
   const [options, setOptions] = useState(null)
 
   useEffect(() => {
-    setOptions(appDataStore.appData.parameters.w2p.deals)
+    setOptions(appDataStore.appData.parameters.w2p.deal)
   }, [])
 
   useEffect(() => {
     const newAppData = appDataStore.appData
-    newAppData.parameters.w2p.deals = options
+    newAppData.parameters.w2p.deal = options
     appDataStore.setAppData(newAppData)
   }, [options])
 
@@ -65,7 +65,9 @@ export default function Deals() {
                   onChange={(e) => updateOption("createNew", e.target.checked)}
                   checked={options.createNew ?? false}
                 />
-                {translate("If the WooCommerce product does not exist on Pipedrive, create it (recommanded)")}
+                <div className='text-red-700'>
+                  {translate("If the WooCommerce product does not exist on Pipedrive, create it (recommanded)")}
+                </div>
               </label>
               <label className='pointer flex align-center m-b-10'>
                 <input
@@ -74,11 +76,13 @@ export default function Deals() {
                   onChange={(e) => updateOption("searchBeforeCreate", e.target.checked)}
                   checked={options.searchBeforeCreate ?? false}
                 />
-                {translate("If the WooCommerce product is not yet assigned to a Pipedrive product, avoid product duplicates by searching by name on Pipedrive (recommanded).")}
+                <div className='text-red-700'>
+                  {translate("If the WooCommerce product is not yet assigned to a Pipedrive product, avoid product duplicates by searching by name on Pipedrive (recommanded).")}
+                </div>
               </label>
             </div>
             <div className='m-b-10'>
-              <div className="block text-sm font-medium leading-6 text-gray-900 mb-1">{translate("Pipedrive product name")}</div>
+              <div className="block text-sm font-medium leading-6 text-gray-900 mb-1">{translate("Pipedrive product name (required)")}</div>
               <VariableBlock
                 defautBlock={options.productsName}
                 setter={(value) => updateOption("productsName", value)}

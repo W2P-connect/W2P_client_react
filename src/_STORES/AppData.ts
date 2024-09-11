@@ -18,17 +18,17 @@ class AppDataStore {
         domain: "",
         api_key: "",
         hookList: [],
-        deals: {
+        deal: {
             amountsAre: "Tax inclusive",
             createNew: true,
             searchBeforeCreate: true,
         },
-        organizations: {
+        organization: {
             autoCreate: false,
             searchBeforeCreate: true,
 
         },
-        persons: {
+        person: {
             linkToOrga: true,
             defaultEmailAsName: true,
         },

@@ -4,18 +4,20 @@ import { translate } from '../../../translation'
 import { observer } from 'mobx-react-lite'
 import { appDataStore } from '_STORES/AppData'
 import { deepCopy } from 'helpers'
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.'
 
 const Persons = () => {
 
     const [options, setOptions] = useState(null)
 
     useEffect(() => {
-        setOptions(appDataStore.appData.parameters.w2p.persons)
+        setOptions(appDataStore.appData.parameters.w2p.person)
     }, [])
 
     useEffect(() => {
         const newAppData = deepCopy(appDataStore.appData)
-        newAppData.parameters.w2p.persons = options
+        newAppData.parameters.w2p.person = options
         appDataStore.setAppData(newAppData)
     }, [options])
 
@@ -30,24 +32,30 @@ const Persons = () => {
                     <h2>{translate("General settings")}</h2>
 
                     <form>
-                        <label className='pointer flex align-center'>
+                        <label className='cursor-pointer flex align-center mb-1'>
                             <input
                                 type="checkbox"
                                 className='m-r-10'
                                 onChange={(e) => updateOption("linkToOrga", e.target.checked)}
                                 checked={options.linkToOrga ?? false}
                             />
-                            {translate("Link the user wordpress account to the Pipedrive Organization if it's already defined in Pipedrive (recommanded)")}
+                            <div className='text-red-700'>
+                                {translate("Link the WordPress user account to the Pipedrive organization if the Pipedrive person is already associated with one (recommended)")}
+                            </div>
                         </label>
 
-                        <label className='pointer flex align-center'>
+                        <label className='cursor-pointer flex align-center'>
                             <input
                                 type="checkbox"
                                 className='m-r-10'
                                 onChange={(e) => updateOption("defaultEmailAsName", e.target.checked)}
                                 checked={options.defaultEmailAsName ?? false}
                             />
-                            {translate("Use user wordpress Email as name if name is not defined during the event (recommanded)")}
+                            <Tooltip
+                                mainText={<span>{translate("Use the user's WordPress email as the name if no name is defined during the event (recommended).")}</span>}
+                                tooltipText={translate("The email will only be applied if necessary when creating a person in Pipedrive. If needed, it will also be used to search for an existing person in Pipedrive associated with this email.")}
+                            />
+
                         </label>
                     </form>
 
