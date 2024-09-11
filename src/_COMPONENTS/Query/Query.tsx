@@ -128,9 +128,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
                       ))
                       : <div>{translate('No valid data to send.')}</div>
                   }
-                  <div>
-                    {query.additional_data.last_error}
-                  </div>
+
                 </div>
               </div>
               <RenderIf condition={!!query.additional_data?.traceback && Array.isArray(query.additional_data.traceback)}>
