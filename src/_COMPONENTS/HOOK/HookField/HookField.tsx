@@ -33,7 +33,7 @@ const HookField = ({ hookField }: Props) => {
     selectedHook && hookStore.updateHookField(selectedHook, field.id, { condition: { ...field.condition, [key]: value } });
   };
 
-  const loadPipedriveUsers = (e: MouseEvent) => {
+  const loadPipedriveUsers = (e: React.FormEvent) => {
     callPipedriveApi("users", null, null, null, e)
       .then(res => {
         if (res) {
@@ -215,16 +215,16 @@ const HookField = ({ hookField }: Props) => {
                 )
               }
               </div>
-              : <button
-                type='button'
-                className='light-button'
-                onClick={e => loadPipedriveUsers(e)}
-              >
-                {appDataStore.appData.parameters.pipedrive.users.length
-                  ? translate("Reload pipedrive's users")
-                  : translate("Load pipedrive's users")
-                }
-              </button>
+              : <form onSubmit={e => loadPipedriveUsers(e)}>
+                <button
+                  className='light-button'
+                >
+                  {appDataStore.appData.parameters.pipedrive.users.length
+                    ? translate("Reload pipedrive's users")
+                    : translate("Load pipedrive's users")
+                  }
+                </button>
+              </form>
             : null
           }
 
@@ -242,15 +242,16 @@ const HookField = ({ hookField }: Props) => {
                 )
               }
               </div>
-              <button
-                type='button'
-                className='light-button'
-                onClick={e => loadPipedriveUsers(e)}
-              >
-                {appDataStore.appData.parameters.pipedrive.users.length
-                  ? translate("Reload pipedrive's users")
-                  : translate("Load pipedrive's users")}
-              </button>
+              <form onSubmit={e => loadPipedriveUsers(e)}>
+                <button
+                  className='light-button'
+                >
+                  {appDataStore.appData.parameters.pipedrive.users.length
+                    ? translate("Reload pipedrive's users")
+                    : translate("Load pipedrive's users")
+                  }
+                </button>
+              </form>
             </>
             : null
           }
