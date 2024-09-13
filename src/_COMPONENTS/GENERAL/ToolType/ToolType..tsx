@@ -37,12 +37,6 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
             if (tooltipRect.bottom > viewportHeight) {
                 newStyles.top = `-${tooltipHeight + 10}px`; // 10px is margin from the top
             }
-
-            console.log("----trigegred----");
-            console.log("window.scrollX", window.scrollX);
-            console.log("window.scrollY", window.scrollY);
-            console.log("tooltipRect", tooltipRect);
-            console.log("viewportWidth", viewportWidth);
             setTooltipStyles(newStyles);
         }
     };

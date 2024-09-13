@@ -89,17 +89,12 @@ class HookFieldStore {
             .filter((field): field is HookField => field !== null)
     }
 
-    isImportant(hookField: HookField | BaseHookField): boolean {
-        const hookFieldData = this.getData(hookField.id)
-        if (hookFieldData) {
-            const hook = hookStore.getHook(hookFieldData.hookId)
-            return (pipedriveFieldsStore.isFieldValid(hookFieldData.pipedrive)
-                && hook && priorityFieldsKey[hook.category]?.includes(hookFieldData.pipedrive.key))
-                ? true
-                : false
-        } else {
-            return false
-        }
+    isImportant(hookField: HookField): boolean {
+        const hook = hookStore.getHook(hookField.hookId)
+        return (pipedriveFieldsStore.isFieldValid(hookField.pipedrive)
+            && hook && priorityFieldsKey[hook.category]?.includes(hookField.pipedrive.key))
+            ? true
+            : false
     }
 
     isRequired(hookField: HookField): boolean {

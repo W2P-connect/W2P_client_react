@@ -6,7 +6,6 @@ import MetaKeysCategories from '../METAKEYS/MetaKeysCategories'
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Block, MetaKey, Variable as VariableType } from 'Types'
-import { forEach } from 'lodash'
 
 export const emptyBlock: Block = {
     variables: [],

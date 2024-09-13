@@ -123,7 +123,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
                     query.payload.data.length
                       ? query.payload.data.map(data => (
                         <div key={data.key}>
-                          <strong>{data.key}:</strong> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
+                          <strong>{data.name}:</strong> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
                         </div>
                       ))
                       : <div>{translate('No valid data to send.')}</div>

@@ -12,6 +12,8 @@ import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
 import { MouseEvent, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
+import { getBlockExemple } from '_COMPONENTS/LOGICBLOCK/VariableBlock'
+import { ArrowDownIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   hookField: HookFieldType
@@ -21,11 +23,20 @@ const HookField = ({ hookField }: Props) => {
 
   const callPipedriveApi = useCallPipedriveApi()
 
-  const field = useMemo(() => hookField, [])
+  const [open, setOpen] = useState<boolean>(true)
+
+  const field = useMemo(() => hookField, [open])
 
   const selectedHook = useMemo(() => hookStore.getHook(field.hookId), [field])
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
+    if (key === 'enabled') {
+      if (value === true) {
+        setOpen(_ => true)
+      } else {
+        setOpen(_ => false)
+      }
+    }
     selectedHook && hookStore.updateHookField(selectedHook, field.id, { [key]: value });
   };
 
@@ -117,7 +128,7 @@ const HookField = ({ hookField }: Props) => {
 
   return (
     <div className='pipedrive-field'>
-      <div className='space-between flex-center'>
+      <div className='flex justify-between items-center'>
         <div className='field-name'>
           <InputCheckbox
             checked={hookField.enabled}
@@ -131,27 +142,31 @@ const HookField = ({ hookField }: Props) => {
             {hookField.pipedrive.key} - {hookField.pipedrive.field_type}
           </span>)
         </div>
-        {/* <div className='italic'>
-              {field.enabled && field.value[0]
+        <div className='flex gap-5'>
+          <div className='italic'>
+            {!open && field.enabled
+              ? Array.isArray(field.value) && field.value.length && typeof field.value[0] !== "number"
                 ? getBlockExemple(field.value[0])
-                : null}
-            </div> */}
+                : JSON.parse(`${field.value}`)
+              : null}
+          </div>
+          {field.enabled
+            ? <div onClick={_ => setOpen(prv => !prv)} className={`${open ? "rotate-0" : "-rotate-90"} transition-transform`} >
+              <ChevronDownIcon width={15} />
+            </div>
+            : null}
+        </div>
       </div>
-      {selectedHook && hookField.enabled
+      {selectedHook && hookField.enabled && open
         ? <div>
-          {hookFieldStore.isRequired(hookField)
+          {/* {hookFieldStore.isRequired(hookField)
             ? <p>{translate(`This field is required for creating a ${selectedHook?.category}.
                 If the value is null, no call will be made to Pipedrive for creation`)}</p>
-            : null}
+            : null} */}
 
           {additionalFieldsData[selectedHook.category][hookField.pipedrive.key]?.info
             ? <p>{additionalFieldsData[selectedHook.category][hookField.pipedrive.key].info}</p>
             : null}
-
-          {/* <h5 className='strong-1 m-t-25 m-b-25'>
-                {translate("Value")}
-              </h5> */}
-          {/* <div className='strong-1 m-t-10 m-b-10'>Assigned value</div> */}
 
           {/* FIELDTYPE SET */}
           {hookField.pipedrive.field_type === "set"
@@ -293,16 +308,18 @@ const HookField = ({ hookField }: Props) => {
                 }
               </div>
 
-              <label className='flex gap-1 items-center cursor-pointer'>
-                <input
-                  type='checkbox'
-                  // className='w2p-normal-checkbox'
-                  // value={''}
-                  onChange={e => updateOptionHookField("SkipOnExist", e.target.checked)}
-                  checked={hookField.condition.SkipOnExist ?? false}
-                />
-                {translate("Do not update if there is already a value for this field on Pipedrive")}
-              </label>
+              <div>
+                <label className='flex gap-1 items-center cursor-pointer'>
+                  <input
+                    type='checkbox'
+                    // className='w2p-normal-checkbox'
+                    // value={''}
+                    onChange={e => updateOptionHookField("SkipOnExist", e.target.checked)}
+                    checked={hookField.condition.SkipOnExist ?? false}
+                  />
+                  {translate("Do not update if there is already a value for this field on Pipedrive")}
+                </label>
+              </div>
 
               <div>
                 {
@@ -329,14 +346,6 @@ const HookField = ({ hookField }: Props) => {
               </div>
             </div>
           </div>
-
-          {/* <ConditionMaker
-                  condition={field.condition}
-                  setter={(value) => updateField("condition", value)}
-                  type={field.field_type}
-                  option={field.options ?? []}
-                /> */}
-
         </div>
         : null}
     </div>

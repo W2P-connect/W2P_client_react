@@ -128,7 +128,6 @@ export type Block = {
     variables: Variable[],
     id: string,
     index: number,
-
 }
 
 
@@ -167,6 +166,7 @@ export type PayloadData = {
     condition: FieldCondition,
     isLogicBlock: boolean,
     key: string,
+    name: string,
     pipedriveFieldId: number,
     value: any,
 }

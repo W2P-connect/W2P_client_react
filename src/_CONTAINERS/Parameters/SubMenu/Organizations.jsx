@@ -35,7 +35,7 @@ const Organizations = () => {
               <div className='w2p-instructions'>
                 {translate("The 'billing_company' field is usually provided only when adding billing information when the user places their first order. If you want the organization to be created beforehand, you can use event parameters and other fields like the user's email, which is provided during registration.")}
               </div>
-              <label className='pointer flex items-center m-b-10'>
+              <label className='pointer flex items-center m-b-10 text-red-700'>
                 <input
                   type="checkbox"
                   className='m-r-10'

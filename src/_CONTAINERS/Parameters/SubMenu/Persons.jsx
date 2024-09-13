@@ -39,7 +39,7 @@ const Persons = () => {
                                 onChange={(e) => updateOption("linkToOrga", e.target.checked)}
                                 checked={options.linkToOrga ?? false}
                             />
-                            <div className='text-red-700'>
+                            <div>
                                 {translate("Link the WordPress user account to the Pipedrive organization if the Pipedrive person is already associated with one (recommended)")}
                             </div>
                         </label>
