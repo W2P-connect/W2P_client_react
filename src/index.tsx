@@ -20,11 +20,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const appData: AppDataType = appLocalizer.data.data;
 
-        appDataStore.setAppData(deepMerge(appDataStore.emptyAppData, appData));
-        appDataStore.setInitAppData(deepMerge(appDataStore.emptyAppData, appData));
+        const appDataInit = deepMerge(appDataStore.emptyAppData, appData)
 
-        hookStore.updateHookList(appData.parameters.w2p.hookList);
-        pipedriveFieldsStore.setPipedriveFields(appData.parameters.pipedrive.fields)
+        appDataStore.setAppData(appDataInit);
+        appDataStore.setInitAppData(appDataInit);
+
+        hookStore.updateHookList(appDataInit.parameters.w2p.hookList);
+        pipedriveFieldsStore.setPipedriveFields(appDataInit.parameters.pipedrive.fields)
         console.log("--INIT-- : appData.parameters", appData.parameters);
 
 

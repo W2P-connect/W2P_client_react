@@ -53,14 +53,18 @@ const HookSelector = ({ preHook, category }: Props) => {
                         />
                         <div className='hook-label'>{preHook.label}</div>
                     </div>
-                    {hook.fields
-                        .filter(field => field.enabled)
-                        .map((field: HookField) =>
-                            <li key={field.pipedriveFieldId} className='m-b-0'>
-                                {field.pipedrive.name}
-                            </li>
-                        )
-                    }
+                    <div className='flex flex-wrap gap-x-[3px] gap-y-[3px] my-1'>
+                        {hook.fields
+                            .filter(field => field.enabled)
+                            .map((field: HookField) =>
+                                <span
+                                    className='border py-[3px] px-1 rounded-sm'
+                                    key={field.id}>
+                                    {field.pipedrive.name}
+                                </span>
+                            )
+                        }
+                    </div>
                     <div className='subtext italic'>
                         {preHook.description}
                     </div>

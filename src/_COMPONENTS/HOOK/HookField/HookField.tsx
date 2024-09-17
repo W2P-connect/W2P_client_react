@@ -2,7 +2,7 @@ import './hookField.css'
 import { isLogicBlockField } from '../../../_CONTAINERS/Parameters/parametersHelpers'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox'
 import { translate } from '../../../translation'
-import { isNumberArray, useCallPipedriveApi } from '../../../helpers'
+import { isNumberArray, mayJsonParse, useCallPipedriveApi } from '../../../helpers'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
 import { additionalFieldsData, linkableFields } from '../../../appConstante'
@@ -10,10 +10,10 @@ import { HookField as HookFieldType, Block, GroupedStages } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
-import { MouseEvent, useMemo, useState } from 'react'
+import { MouseEvent, useMemo, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { getBlockExemple } from '_COMPONENTS/LOGICBLOCK/VariableBlock'
-import { ArrowDownIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   hookField: HookFieldType
@@ -23,11 +23,11 @@ const HookField = ({ hookField }: Props) => {
 
   const callPipedriveApi = useCallPipedriveApi()
 
-  const [open, setOpen] = useState<boolean>(true)
+  const [open, setOpen] = useState<boolean>(false)
 
-  const field = useMemo(() => hookField, [open])
+  // const field = useRef(hookField)
 
-  const selectedHook = useMemo(() => hookStore.getHook(field.hookId), [field])
+  const selectedHook = useMemo(() => hookStore.getHook(hookField.hookId), [hookField])
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
     if (key === 'enabled') {
@@ -37,11 +37,12 @@ const HookField = ({ hookField }: Props) => {
         setOpen(_ => false)
       }
     }
-    selectedHook && hookStore.updateHookField(selectedHook, field.id, { [key]: value });
+    // field.current = { ...field.current, [key]: value }
+    selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
   };
 
   const updateOptionHookField = (key: keyof HookFieldType["condition"], value: any) => {
-    selectedHook && hookStore.updateHookField(selectedHook, field.id, { condition: { ...field.condition, [key]: value } });
+    selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { condition: { ...hookField.condition, [key]: value } });
   };
 
   const loadPipedriveUsers = (e: React.FormEvent) => {
@@ -69,21 +70,22 @@ const HookField = ({ hookField }: Props) => {
   /** Select d'un seul choix */
   const selectOption = (id: number) => {
     if (
-      field.pipedrive.field_type === "enum" ||
-      field.pipedrive.field_type === "user" ||
-      field.pipedrive.field_type === "status" ||
-      field.pipedrive.field_type === "stage"
+      hookField.pipedrive.field_type === "enum" ||
+      hookField.pipedrive.field_type === "user" ||
+      hookField.pipedrive.field_type === "status" ||
+      hookField.pipedrive.field_type === "stage"
     ) {
       updateHookField('value', id)
-    } else if (field.pipedrive.field_type === "set" || field.pipedrive.field_type === "visible_to") {
-      if (Array.isArray(field.value)) {
-        isNumberArray(field.value) && field.value.includes(id)
-          ? updateHookField('value', Array.isArray(field.value) ? field.value.filter(val => val !== id) : [])
-          : updateHookField("value", id)
+    } else if (hookField.pipedrive.field_type === "set" || hookField.pipedrive.field_type === "visible_to") {
+      if (Array.isArray(hookField.value)) {
+        if (isNumberArray(hookField.value) && hookField.value.includes(id)) {
+          updateHookField('value', hookField.value.filter(val => val !== id));
+        } else {
+          updateHookField('value', [...hookField.value, id]);
+        }
       } else {
-        updateHookField("value", [id]); // or handle the case where it's not an array
+        updateHookField('value', [id]);
       }
-
     }
   }
 
@@ -114,7 +116,7 @@ const HookField = ({ hookField }: Props) => {
               <div
                 key={stage.id}
                 onClick={() => selectOption(stage.id)}
-                className={`pipedrive-option-field ${field.value === stage.id ? "selected" : ""}`}
+                className={`pipedrive-option-field ${hookField.value === stage.id ? "selected" : ""}`}
                 style={{ backgroundColor: "white" }}
               >
                 {stage.name}
@@ -144,14 +146,16 @@ const HookField = ({ hookField }: Props) => {
         </div>
         <div className='flex gap-5'>
           <div className='italic'>
-            {!open && field.enabled
-              ? Array.isArray(field.value) && field.value.length && typeof field.value[0] !== "number"
-                ? getBlockExemple(field.value[0])
-                : JSON.parse(`${field.value}`)
+            {!open && hookField.enabled
+              ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
+                ? getBlockExemple(hookField.value[0])
+                : mayJsonParse(`${hookField.value}`, hookField.value)
               : null}
           </div>
-          {field.enabled
-            ? <div onClick={_ => setOpen(prv => !prv)} className={`${open ? "rotate-0" : "-rotate-90"} transition-transform`} >
+          {hookField.enabled
+            ? <div
+              onClick={_ => setOpen(prv => !prv)}
+              className={`${open ? "rotate-0" : "-rotate-90"} transition-transform cursor-pointer`} >
               <ChevronDownIcon width={15} />
             </div>
             : null}

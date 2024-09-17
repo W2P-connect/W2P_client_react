@@ -187,3 +187,14 @@ export function updateNestedObject<T extends object>(
 
     return { ...obj }; // Retourne un nouvel objet avec les mises à jour
 }
+
+export function mayJsonParse(value: any, defaultValue: any = null): any {
+    if (typeof value === 'string') {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return defaultValue;
+        }
+    }
+    return value;
+}
