@@ -20,8 +20,9 @@ class AppDataStore {
         hookList: [],
         deal: {
             amountsAre: "Tax inclusive",
+            defaultOrderName: true,
             createNew: true,
-            searchBeforeCreate: true,
+            searchBeforeCreate: true,   
         },
         organization: {
             autoCreate: false,

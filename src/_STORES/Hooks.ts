@@ -28,6 +28,7 @@ class HookStore {
         id: "",
         label: "",
         key: "",
+        source: "user",
         disabledFor: [],
         description: "",
         show: false,

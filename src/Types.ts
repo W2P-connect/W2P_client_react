@@ -38,8 +38,9 @@ export interface W2pParameters {
 }
 interface DealsConfig {
     amountsAre: string | null;
-    createNew: boolean;
-    searchBeforeCreate: boolean;
+    defaultOrderName: boolean; //general
+    createNew: boolean; //product
+    searchBeforeCreate: boolean; //product
 }
 
 interface OrganizationsConfig {
@@ -51,6 +52,9 @@ interface PersonsConfig {
     linkToOrga: boolean;
     defaultEmailAsName: boolean;
 }
+
+type MetaKeySources = "order" | "user" | "product" | 'w2p'
+type HookSources = "order" | "user" | "product"
 
 export interface MetaKeyCategory {
     description: string | null
@@ -69,6 +73,7 @@ export interface MetaKey {
     exemple: string
     label: string
     value: string
+    source: MetaKeySources
 }
 
 export type Category = 'deal'
@@ -78,6 +83,7 @@ export type Category = 'deal'
 export interface PreHook {
     label: string
     key: string
+    source: HookSources
     description: string
     disabledFor: Category[]
 }
@@ -121,6 +127,7 @@ export type Variable = {
     id: string;
     exemple?: string;
     isFreeField: boolean;
+    source?: MetaKeySources
     value: string;
 }
 
