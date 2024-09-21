@@ -35,6 +35,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
 
 
   const getCategoryFields = (e: React.FormEvent) => {
+    e.preventDefault()
     if (hookStore.selectedHookId) {
       callPipedriveApi(`${category}Fields`, null, null, null, e)
         .then((res: AxiosResponse<any, any> | null) => {
@@ -81,13 +82,16 @@ const FieldCategory = ({ category }: { category: Category }) => {
         }
       </div>
 
-      <form onSubmit={e => getCategoryFields(e)}>
-        <button className='light-button m-t-25'>
-          {categoryFields?.length
-            ? translate('Reload custom fields')
-            : translate('Load custom fields')}
-        </button>
-      </form>
+      {selectedHook
+        ? <form onSubmit={e => getCategoryFields(e)}>
+          <button className='light-button m-t-25'>
+            {categoryFields?.length
+              ? translate('Reload custom fields')
+              : translate('Load custom fields')}
+          </button>
+        </form>
+        : null
+      }
 
     </div>
   );

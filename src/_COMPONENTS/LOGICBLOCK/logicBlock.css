@@ -61,7 +61,7 @@
 }
 
 .variable-container .w2p-input {
-    max-width: 130px !important;
+    /* max-width: 130px !important; */
 }
 
 .variable-container {
@@ -92,8 +92,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    color: var(--w2p-woo-main-color);
     right: 4px;
     cursor: pointer;
     font-size: 24px;

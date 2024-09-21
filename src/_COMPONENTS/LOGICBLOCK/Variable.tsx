@@ -46,6 +46,7 @@ export default function Variable({ defautVariable, setter, deleter }: Props) {
                     ? <Input
                         className='flat-input'
                         value={variable.value}
+                        widthFromValue={true}
                         onInput={(value: string) => setVariable(prv => ({ ...prv, value: value }))}
                     />
                     : <div className='flex column'>

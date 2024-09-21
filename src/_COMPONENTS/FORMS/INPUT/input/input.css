@@ -20,7 +20,7 @@
 }
 
 .w2p-input input[type=text] {
-    padding: 11px 10px !important;
+    padding: 11px 10px;
     font-size: 0.75rem;
     border: var(--border-1);
     border-radius: 5px;

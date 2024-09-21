@@ -124,7 +124,7 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
             <div className="flex">
                 {deleter
                     ? <div
-                        className='delete-block'
+                        className='delete-block text-red-700'
                         onClick={_ => deleteBlock()}
                     >×</div>
                     : null}

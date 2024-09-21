@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './input.css';
 
 interface InputProps {
@@ -17,6 +17,7 @@ interface InputProps {
     className?: string;
     placeholder?: string;
     onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    widthFromValue?: boolean
 }
 
 const Input: React.FC<InputProps> = ({
@@ -35,7 +36,20 @@ const Input: React.FC<InputProps> = ({
     className = '',
     placeholder = '',
     onKeyDown = null,
+    widthFromValue = false
 }) => {
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (inputRef.current && widthFromValue) {
+            const inputWidth = value ? `calc(${value.length}ch + 0px)` : 'auto';
+            inputRef.current.style.width = inputWidth;
+            inputRef.current.style.paddingLeft = '0px';
+            inputRef.current.style.paddingRight = '0px';
+        }
+    }, [value]);
+
     return (
         <div style={style} className={`w2p-input ${className} ${disabled && 'disabled'}`}>
             <label>
@@ -46,6 +60,7 @@ const Input: React.FC<InputProps> = ({
                     </div>
                 ) : null}
                 <input
+                    ref={inputRef}
                     className=""
                     value={value}
                     onInput={(e) =>
