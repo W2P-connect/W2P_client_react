@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './input.css';
+import { classNames } from 'helpers';
 
 interface InputProps {
     label?: string;
@@ -61,7 +62,7 @@ const Input: React.FC<InputProps> = ({
                 ) : null}
                 <input
                     ref={inputRef}
-                    className=""
+                    className={classNames(widthFromValue ? '' : "!w-full")}
                     value={value}
                     onInput={(e) =>
                         onInput ? onInput(e.currentTarget.value, ...customParameters) : null

@@ -38,7 +38,7 @@ export interface W2pParameters {
 }
 interface DealsConfig {
     amountsAre: string | null;
-    defaultOrderName: boolean; //general
+    defaultOrderName: Block
     createNew: boolean; //product
     searchBeforeCreate: boolean; //product
 }
@@ -53,7 +53,12 @@ interface PersonsConfig {
     defaultEmailAsName: boolean;
 }
 
-type MetaKeySources = "order" | "user" | "product" | 'w2p'
+type MetaKeySources =
+    "order"
+    | "user"
+    | "product"
+    | 'w2p'
+    
 type HookSources = "order" | "user" | "product"
 
 export interface MetaKeyCategory {

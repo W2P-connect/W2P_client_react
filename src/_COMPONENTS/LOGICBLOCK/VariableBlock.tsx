@@ -5,7 +5,8 @@ import { PopupContext } from '../../_CONTEXT/PopupContext'
 import MetaKeysCategories from '../METAKEYS/MetaKeysCategories'
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Block, MetaKey, Variable as VariableType } from 'Types'
+import { Block, Variable as VariableType } from 'Types'
+import VariableList from './VariableList'
 
 export const emptyBlock: Block = {
     variables: [],
@@ -25,10 +26,10 @@ interface Props {
     defautBlock: Block;
     setter: (block: Block) => void;
     deleter?: (id: Block['id']) => void;
+    showExemple?: boolean
 }
 
-export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
-
+export default function VariableBlock({ defautBlock, setter, deleter, showExemple = true }: Props) {
 
     const { addPopupContent, showPopup } = useContext(PopupContext)
     const [block, setBlock] = useState<Block>(emptyBlock)
@@ -41,30 +42,13 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
         setter && setter(block)
     }, [block])
 
-    const addElementToBlock = (metaKey?: MetaKey) => {
+    const addVariables = (variables: VariableType[]) => {
         showPopup(false);
-        const newVariable = metaKey
-            ? { ...metaKey, isFreeField: false, id: uuidv4() }
-            : { value: '', isFreeField: true, id: uuidv4() };
-
         setBlock(prvBlock => ({
             ...prvBlock,
-            variables: [...prvBlock.variables, newVariable]
+            variables: [...prvBlock.variables, ...variables]
         }));
-    }
-    const addMetaKeyElements = (metaKeys: MetaKey[]) => {
-        metaKeys.forEach(metaKey => {
-            addElementToBlock(metaKey)
-        })
     };
-    const addFreeTextElement = () => addElementToBlock();
-
-    const deleteVariable = (id: VariableType["id"]) => {
-        setBlock(prv => ({
-            ...prv,
-            variables: prv.variables.filter(variable => variable.id !== id)
-        }))
-    }
 
     const deleteBlock = () => {
         if (window.confirm(translate("Are you sure you want to delete this custom block ?"))) {
@@ -72,52 +56,16 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
         }
     }
 
-    const updateVariable = (updatedVariable: VariableType) => {
+    const updateVariables = (variables: VariableType[]) => {
         setBlock(prv => ({
             ...prv,
-            variables: prv.variables.map(variable =>
-                variable.id === updatedVariable.id ? updatedVariable : variable
-            )
+            variables: variables
         }));
     }
 
     const addElement = () => {
-        addPopupContent(
-            <div className='flex align-center justify-center gap-1'>
-                <button
-                    type='button'
-                    className='light-button'
-                    onClick={_ => addFreeTextElement()}
-                >
-                    {translate("Free text")}
-                </button>
-                <button
-                    type='button'
-                    className='light-button'
-                    onClick={_ => addPopupContent(<MetaKeysCategories onSelect={addMetaKeyElements} />)}
-                >
-                    {translate("variable field")}
-                </button>
-            </div>,
-            "550px"
-        )
+        addPopupContent(<MetaKeysCategories onSelect={addVariables} />)
     }
-
-    const handleDragEnd = (result: DropResult) => {
-        if (!result.destination) {
-            return;
-        }
-
-        const variables = Array.from(block.variables);
-        const [reorderedItem] = variables.splice(result.source.index, 1);
-        variables.splice(result.destination.index, 0, reorderedItem);
-
-        setBlock({
-            ...block,
-            variables: variables
-        });
-    };
-
 
     return (
         <div className='block-container'>
@@ -135,48 +83,21 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
                         : <span>{translate("Backup block")} {block.index}</span>
                     }
                     </div>
-                    <div className='fields-container'>
-                        <DragDropContext onDragEnd={handleDragEnd}>
-                            <Droppable droppableId="variableBlock" direction="horizontal">
-                                {(provided) => (
-                                    <div
-                                        className='block-fields'
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                    >
-                                        {block.variables.map((variable, index) => (
-                                            <Draggable key={variable.id} draggableId={variable.id} index={index}>
-                                                {(provided) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        <Variable
-                                                            defautVariable={variable}
-                                                            setter={updateVariable}
-                                                            deleter={deleteVariable}
-                                                        />
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-
-                                        {block.variables.length
-                                            ? <div
-                                                className='add-new-field'
-                                                onClick={_ => addElement()}
-                                            >
-                                                {translate("Add new field")}
-                                            </div>
-                                            : null}
-                                    </div>
-                                )}
-                            </Droppable>
-                        </DragDropContext>
+                    <div className='flex gap-1 items-center'>
+                        <VariableList
+                            variableArray={block.variables}
+                            onUpdate={updateVariables}
+                        />
+                        {block.variables?.length
+                            ? <div
+                                className='add-new-field'
+                                onClick={_ => addElement()}
+                            >
+                                {translate("Add new field")}
+                            </div>
+                            : null}
                     </div>
-                    {block.variables.length
+                    {block.variables?.length
                         ? null
                         : <div
                             className='center underline w-100-p pointer'
@@ -186,10 +107,14 @@ export default function VariableBlock({ defautBlock, setter, deleter }: Props) {
                         </div>}
                 </div>
             </div>
-            <div className='italic'>
-                {getBlockExemple(block)}
-            </div>
-        </div>
+            {
+                showExemple ?
+                    <div className='italic flex justify-end mt-1 text-xs text-gray-700'>
+                        {getBlockExemple(block)}
+                    </div>
+                    : null
+            }
+        </div >
     );
 
 }

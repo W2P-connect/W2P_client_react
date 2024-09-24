@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'
-import VariableBlock from '../../../_COMPONENTS/LOGICBLOCK/VariableBlock'
+import VariableBlock, { getBlockExemple } from '../../../_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { appDataStore } from '_STORES/AppData'
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.'
 
@@ -33,19 +33,20 @@ export default function Deals() {
           <h2>{translate("General settings")}</h2>
 
           <form>
-            <label className='cursor-pointer gap-1 flex items-center'>
-              <input
-                type="checkbox"
-                onChange={(e) => updateOption("defaultOrderName", e.target.checked)}
-                checked={options.defaultOrderName ?? false}
-              />
-              <div>
-                <Tooltip
-                  mainText={<span>{translate("When creating a deal in Pipedrive, if the name is not defined in the event, assign it the order name by default (recommended)")}</span>}
-                  tooltipText={translate("The default order name will be: Woocommerce order {order id}.")}
-                />
-              </div>
-            </label>
+            <div className="text-sm font-medium leading-6 text-gray-900 mb-1 ">
+              {translate("Default deal name (if not defined in the event) : ")}
+              <span className='italic text-xs text-gray-700 mb-1'>
+                {options.defaultOrderName
+                  ? getBlockExemple(options.defaultOrderName)
+                  : null
+                }
+              </span>
+            </div>
+            <VariableBlock
+              defautBlock={options.defaultOrderName}
+              setter={(value) => updateOption("defaultOrderName", value)}
+              showExemple={false}
+            />
           </form>
 
           <h2 className='m-t-50 m-b-10'>{translate("Products settings")}</h2>

@@ -4,24 +4,27 @@ import NavBar from '../NAVIGATION/NavBar/NavBar';
 import MetaKeysCategory from './MetaKeysCategory';
 import CustomMetakeys from './CustomMetakeys';
 import { appDataStore } from '_STORES/AppData';
-import { MetaKey as MetaKeyType } from 'Types';
+import { Variable as VariableType } from 'Types';
 import { translate } from 'translation';
-import MetaKey from './MetaKey';
+import AddFreeField from './AddFreeField';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import Variable from '_COMPONENTS/LOGICBLOCK/Variable';
+import VariableList from '_COMPONENTS/LOGICBLOCK/VariableList';
 
-export default function MetaKeysCategories({ onSelect }: { onSelect: (metaKeys: MetaKeyType[]) => void }) {
+export default function MetaKeysCategories({ onSelect }: { onSelect: (variables: VariableType[]) => void }) {
 
 
     const [currentCategory, setCurrentCategory] = useState<ReactNode | null>(null)
-    const [metaKeys, setMetaKeys] = useState<MetaKeyType[]>([])
+    const [variables, setVariables] = useState<VariableType[]>([])
 
-    const selectMetaKeys = () => {
-        onSelect && onSelect(metaKeys)
+    const selectVariables = () => {
+        onSelect && onSelect(variables)
     }
 
-    const addMetaKey = (metaKey: MetaKeyType) => {
-        setMetaKeys(prv => {
-            if (metaKey.label !== prv[prv.length - 1]?.label) {
-                return [...prv, metaKey]
+    const addVariable = (variable: VariableType) => {
+        setVariables(prv => {
+            if (variable.value !== prv[prv.length - 1]?.value) {
+                return [...prv, variable]
             } else {
                 return prv
             }
@@ -29,20 +32,51 @@ export default function MetaKeysCategories({ onSelect }: { onSelect: (metaKeys: 
     }
 
     const navBar = [
+        {
+            label: "Free text",
+            onClick: setCurrentCategory,
+            active: false,
+            value: <AddFreeField onSelect={addVariable} />
+        },
         ...appDataStore.appData.CONSTANTES.W2P_META_KEYS
             .map((category, index) => ({
                 label: category.label,
                 active: index === 0,
                 onClick: setCurrentCategory,
-                value: <MetaKeysCategory category={category} onSelect={addMetaKey} />
+                value: <MetaKeysCategory category={category} onSelect={addVariable} />
             })),
         {
             label: "Custom meta_key",
             onClick: setCurrentCategory,
             active: false,
-            value: <CustomMetakeys onSelect={addMetaKey} />
+            value: <CustomMetakeys onSelect={addVariable} />
         }
     ]
+
+
+    const deleteVariable = (id: VariableType["id"]) => {
+        console.log(id, variables);
+
+        setVariables(prv => prv.filter(variable => variable.id !== id))
+    }
+
+    const updateVariable = (updatedVariable: VariableType) => {
+        setVariables(prv => (prv.map(variable =>
+            variable.id === updatedVariable.id ? updatedVariable : variable
+        )));
+    }
+
+    const handleDragEnd = (result: DropResult) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const newVariables = Array.from(variables);
+        const [reorderedItem] = newVariables.splice(result.source.index, 1);
+        newVariables.splice(result.destination.index, 0, reorderedItem);
+
+        setVariables(prv => newVariables);
+    };
 
     return (
         <div className='meta-keys-container relative flex flex-col h-full'>
@@ -53,19 +87,14 @@ export default function MetaKeysCategories({ onSelect }: { onSelect: (metaKeys: 
                 {currentCategory}
             </div>
 
-            {metaKeys.length
+            {variables.length
                 ? <div className='mt-4 flex justify-between relative border-t border-gray-300 pt-3'>
-                    <div className='flex gap-1 flex-wrap'>
-                        {metaKeys.map((metaKey, index) =>
-                            <div key={index}>
-                                <div className='meta-key' >
-                                    <div className='meta-key-value'>{metaKey.label}</div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    <VariableList
+                        variableArray={variables}
+                        onUpdate={setVariables}
+                    />
                     <button
-                        onClick={selectMetaKeys}
+                        onClick={selectVariables}
                         className='strong-button m-l-10 self-center'
                     >
                         {translate("Add")}
