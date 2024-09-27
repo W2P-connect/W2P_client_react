@@ -8,6 +8,8 @@ import { observer } from 'mobx-react-lite';
 import { runInAction, toJS } from 'mobx';
 import { hookStore } from '_STORES/Hooks';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
+import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
+import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 
 const Connexion = () => {
 
@@ -93,10 +95,10 @@ const Connexion = () => {
             value={appDataStore.appData.parameters.w2p.api_key}
             className='flex-1 min-w-300'
           />
-          <button
-            className='strong-button'>
+          <MainButton
+            style={2}>
             {translate("Check connexion")}
-          </button>
+          </MainButton>
         </div>
       </form>
       <form className='m-t-100' onSubmit={e => checkPipedriveApi(e)}>
@@ -108,9 +110,11 @@ const Connexion = () => {
             you need for settings`)}
           </p>
         </div>
-        <p>{translate("To synchronize your Woocommerce data with Pipedrive, please provide the Pipedrive domain of your organization and an API key. For more information, follow this link : ")}
-          <a href='https://developers.pipedrive.com/docs/api/v1'>https://developers.pipedrive.com/docs/api/v1</a>
-        </p>
+        <Tooltip
+          mainText={translate("To synchronize your Woocommerce data with Pipedrive, please provide the Pipedrive domain of your organization and an API key")}
+          tooltipText={<>{translate("For more information, follow this link")}: <a target="blank" href='https://pipedrive.readme.io/docs/how-to-find-the-api-token'>https://pipedrive.readme.io/docs/how-to-find-the-api-token</a></>}
+        />
+
         <div className='flex w2p-wrap flex-end gap-1'>
           <Input
             className='flex-1 min-w-300'
@@ -124,10 +128,10 @@ const Connexion = () => {
             value={appDataStore.appData.parameters.pipedrive.api_key}
             className='flex-1 min-w-300'
           />
-          <button
-            className='strong-button'>
+          <MainButton
+            style={2}>
             {translate("Check connexion")}
-          </button>
+          </MainButton>
         </div>
       </form >
       <div className='m-t-100'>

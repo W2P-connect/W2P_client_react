@@ -1,5 +1,7 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline'; // Assurez-vous d'importer votre icône correctement
+import { classNames } from 'helpers';
+import { InformationCircleIcon as InformationCircleIconSolid } from '@heroicons/react/20/solid';
 
 interface TooltipProps {
     tooltipText: ReactNode;
@@ -8,8 +10,9 @@ interface TooltipProps {
 
 const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
     const tooltipRef = useRef<HTMLDivElement>(null);
+    const iconRef = useRef<HTMLDivElement>(null); // Référence pour l'icône
     const [tooltipStyles, setTooltipStyles] = useState<React.CSSProperties>({});
-
+    const [show, setShow] = useState<boolean>(false);
 
     const updateTooltipPosition = () => {
         const tooltipElement = tooltipRef.current;
@@ -30,7 +33,7 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
                 newStyles.left = '0';
                 newStyles.transform = 'translateX(0)';
             } else if (tooltipRect.right + (tooltipWidth / 2) > viewportWidth - 10) {
-                newStyles.left = `calc(100% - ${tooltipWidth}px)`; //centre le tooltype
+                newStyles.left = `calc(100% - ${tooltipWidth}px)`; //centre le tooltip
                 newStyles.transform = 'translateX(0)';
             }
 
@@ -40,6 +43,26 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
             setTooltipStyles(newStyles);
         }
     };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            tooltipRef.current &&
+            !tooltipRef.current.contains(event.target as Node) && // Si le clic n'est pas sur le tooltip
+            iconRef.current &&
+            !iconRef.current.contains(event.target as Node) // Si le clic n'est pas sur l'icône
+        ) {
+            setShow(false); // Masquer le tooltip
+        }
+    };
+
+    useEffect(() => {
+        // Ajouter l'event listener au montage
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            // Retirer l'event listener au démontage
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         // Update tooltip position on component mount and window resize
@@ -58,16 +81,23 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
     return (
         <div className="relative flex items-center space-x-2">
             <span>{mainText}</span>
-            <div className="relative group">
-                <InformationCircleIcon className="text-gray-600" width={22} />
+            <div className="relative" ref={iconRef}> {/* Ajout de la référence à l'icône */}
+                <div onClick={() => setShow((prv) => !prv)}>
+                    {show ? (
+                        <InformationCircleIconSolid className="text-secondary" width={22} />
+                    ) : (
+                        <InformationCircleIcon className="text-gray-600" width={22} />
+                    )}
+                </div>
                 <div
                     ref={tooltipRef}
-                    className="pointer-events-none absolute mt-2 w-64 bg-black text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50"
+                    className={classNames(
+                        "absolute mt-2 maw-w-96 bg-black text-white text-sm rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50",
+                        show ? "opacity-100 z-10" : "opacity-0 -z-10"
+                    )}
                     style={tooltipStyles}
                 >
-                    <div className="px-3 py-2 text-xs">
-                        {tooltipText}
-                    </div>
+                    <div className="px-3 py-2 text-xs">{tooltipText}</div>
                 </div>
             </div>
         </div>

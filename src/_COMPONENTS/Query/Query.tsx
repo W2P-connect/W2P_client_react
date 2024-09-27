@@ -78,7 +78,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
             <div>{query.hook}</div>
             <div>{query.method}</div>
             <div>{query.category}</div>
-            <div>{query.source_id}</div>
+            <div>{`${query.source} (${query.source_id})`}</div>
             <div>{query.target_id}</div>
             <div className={`w2p-query-label
                 ${query.state === "DONE" ? 'success-label' : ''} 

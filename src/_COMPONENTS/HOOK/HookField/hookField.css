@@ -11,15 +11,6 @@
     border-top: var(--border-1);
 }
 
-.field-name {
-    font-weight: 500;
-    font-size: 16px;
-    background-color: white;
-    display: inline;
-    display: flex;
-    align-items: center;
-}
-
 .pipedrive-option-field-container {
     margin: 25px 0;
     display: flex;

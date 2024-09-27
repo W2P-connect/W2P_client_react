@@ -62,7 +62,7 @@ export const additionalFieldsData: AdditionalFieldsData = {
     'deal': {
         "status": {
             "info": <>
-                <div>
+                <div className="text-red-700">
                     By default, the deal status will be<strong>'Open'</ strong > as long as the payment for the order has not been received.
                     < br /> The status will be<strong>'Won'</ strong > when the order is confirmed(Order processing or Order completed) and<strong>'Lost'</ strong > when the order is lost (Order refunded, Order canceled).</div>
                 < div className="m-t-10" >

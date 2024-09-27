@@ -68,12 +68,13 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                     {filteredHookFieldsList.length ?
                         <div className='flex column m-t-25 gap-1'>
                             {/* Priority fields */}
+                            {/* TODO  ici ce serait plus pertinent de filtrer au chargement des fields et de les triers dans le bon ordre ! */}
                             {filteredHookFieldsList
-                                .filter(hookfield => hookFieldStore.isImportant(hookfield))
+                                .filter(hookfield => hookFieldStore.isImportant(hookfield) || hookfield.enabled)
                                 .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
                             {/* other fields */}
                             {filteredHookFieldsList
-                                .filter(hookfield => !hookFieldStore.isImportant(hookfield))
+                                .filter(hookfield => !hookFieldStore.isImportant(hookfield) && !hookfield.enabled)
                                 .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
                         </div>
                         : <p>

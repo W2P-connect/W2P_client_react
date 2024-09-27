@@ -94,7 +94,7 @@ export default function History() {
                   <div className='strong-1'>{translate("Hook")}</div>
                   <div className='strong-1'>{translate("Method")}</div>
                   <div className='strong-1'>{translate("Category")}</div>
-                  <div className='strong-1'>{translate("Source id")}</div>
+                  <div className='strong-1'>{translate("Source")}</div>
                   <div className='strong-1'>{translate("Pipedrive id")}</div>
                   <div className='strong-1'>{translate("State")}</div>
                 </div>

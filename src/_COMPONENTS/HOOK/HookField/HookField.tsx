@@ -2,7 +2,7 @@ import './hookField.css'
 import { isLogicBlockField } from '../../../_CONTAINERS/Parameters/parametersHelpers'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox'
 import { translate } from '../../../translation'
-import { isNumberArray, mayJsonParse, useCallPipedriveApi } from '../../../helpers'
+import { classNames, isNumberArray, mayJsonParse, useCallPipedriveApi } from '../../../helpers'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
 import { additionalFieldsData, linkableFields } from '../../../appConstante'
@@ -130,35 +130,48 @@ const HookField = ({ hookField }: Props) => {
 
   return (
     <div className='pipedrive-field'>
-      <div className='flex justify-between items-center'>
-        <div className='field-name'>
-          <InputCheckbox
-            checked={hookField.enabled}
-            onChange={(value) => updateHookField("enabled", value)}
-          />
-          {hookFieldStore.isImportant(hookField)
-            ? <span>🚨</span>
-            : null}
-          {`${hookField.pipedrive.name} `}
-          (<span className='subtext'>
-            {hookField.pipedrive.key} - {hookField.pipedrive.field_type}
-          </span>)
-        </div>
-        <div className='flex gap-5'>
-          <div className='italic'>
-            {!open && hookField.enabled
-              ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
-                ? getBlockExemple(hookField.value[0])
-                : mayJsonParse(`${hookField.value}`, hookField.value)
+      <div className='flex items-center'>
+        <InputCheckbox
+          checked={hookField.enabled}
+          onChange={(value) => updateHookField("enabled", value)}
+        />
+
+        <div
+          onClick={_ => setOpen(prv => !prv)}
+          className='w-full flex justify-between items-center cursor-pointer' >
+          <div className='text-base font-medium'>
+            {hookFieldStore.isImportant(hookField)
+              ? <span>🚨</span>
+              : null}
+            {`${hookField.pipedrive.name} `}
+            {/* (<span className='subtext'>
+              {hookField.pipedrive.key} - {hookField.pipedrive.field_type}
+            </span>) */}
+          </div>
+
+          <div className='flex gap-5'>
+            {hookField.enabled
+              ? <div className='italic'>
+                <div className={
+                  classNames(
+                    !open ? "opacity-100" : "opacity-0",
+                    "transition-opacity"
+                  )}>
+                  {Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
+                    ? getBlockExemple(hookField.value[0])
+                    : mayJsonParse(`${hookField.value}`, hookField.value)
+                  }
+                </div>
+
+              </div>
+              : null}
+            {hookField.enabled
+              ? <div
+                className={`${open ? "rotate-0" : "-rotate-90"} transition-transform cursor-pointer`} >
+                <ChevronDownIcon width={15} />
+              </div>
               : null}
           </div>
-          {hookField.enabled
-            ? <div
-              onClick={_ => setOpen(prv => !prv)}
-              className={`${open ? "rotate-0" : "-rotate-90"} transition-transform cursor-pointer`} >
-              <ChevronDownIcon width={15} />
-            </div>
-            : null}
         </div>
       </div>
       {selectedHook && hookField.enabled && open

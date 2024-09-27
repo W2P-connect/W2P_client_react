@@ -169,10 +169,13 @@ export interface Query {
     state: QueryState;
     source_id: number;  //wordpress source id
     target_id: number;  //Pipedrive target id
+    source: QuerySource;  //Hook source
     pipedrive_response: {
         [key: string]: any;
     }
 }
+
+export type QuerySource = "user" | "order" | "product"
 
 export type PayloadData = {
     condition: FieldCondition,
