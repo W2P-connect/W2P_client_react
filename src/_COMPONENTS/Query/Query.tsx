@@ -118,17 +118,43 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
                 </div>
               </div> */}
                 <div className='w2p-query-data flex-1' >
-                  <div className='strong-1'>{translate("Data for Pipedrive")}</div>
+                  <div className='font-semibold mb-1'>{translate("Data for Pipedrive")}</div>
                   {
                     query.payload.data.length
                       ? query.payload.data.map(data => (
                         <div key={data.key}>
-                          <strong>{data.name}:</strong> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
+                          <span className='font-medium'>{data.name}:</span> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
                         </div>
                       ))
                       : <div>{translate('No valid data to send.')}</div>
                   }
-
+                  <RenderIf condition={!!query.payload.products?.length} >
+                    <div className='mb-1 mt-1 pt-1 border-t'>
+                      {/* {translate("Products")} */}
+                      {
+                        query.payload.products?.length
+                          ? query.payload.products.map((product, idx) => (
+                            <div key={idx} className="mb-1">
+                              <strong className="font-semibold">{product.name}:</strong>
+                              <div>
+                                <span className="text-gray-600">
+                                  Quantity: <span className="font-semibold">{product.quantity}</span>
+                                </span>
+                                <span className="ml-4 text-gray-600">
+                                  Price: <span className="font-semibold">{(product.item_price * (1 - ((product.discount ?? 0) / 100))).toFixed(2)}<span dangerouslySetInnerHTML={{ __html: product.currency_symbol }} /></span>
+                                </span>
+                              </div>
+                              <RenderIf condition={!!product.comments}>
+                                <div className="italic text-gray-500">
+                                  Commentaires: {product.comments}
+                                </div>
+                              </RenderIf>
+                            </div>
+                          ))
+                          : <div>{translate('No products to send.')}</div>
+                      }
+                    </div>
+                  </RenderIf>
                 </div>
               </div>
               <RenderIf condition={!!query.additional_data?.traceback && Array.isArray(query.additional_data.traceback)}>

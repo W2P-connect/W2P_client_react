@@ -19,13 +19,13 @@ class AppDataStore {
         api_key: "",
         hookList: [],
         deal: {
-            amountsAre: "Tax inclusive",
+            amountsAre: "Tax exclusive",
             defaultOrderName: {
                 variables: [],
                 id: '',
                 index: 0,
             },
-            createNew: true,
+            sendProducts: true,
             searchBeforeCreate: true,
         },
         organization: {

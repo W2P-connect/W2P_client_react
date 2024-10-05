@@ -39,7 +39,7 @@ export interface W2pParameters {
 interface DealsConfig {
     amountsAre: string | null;
     defaultOrderName: Block
-    createNew: boolean; //product
+    sendProducts: boolean; //product
     searchBeforeCreate: boolean; //product
 }
 
@@ -58,7 +58,7 @@ type MetaKeySources =
     | "user"
     | "product"
     | 'w2p'
-    
+
 type HookSources = "order" | "user" | "product"
 
 export interface MetaKeyCategory {
@@ -161,6 +161,7 @@ export interface Query {
     payload: {
         category: Category;
         data: PayloadData[]
+        products?: ProductData[] | null
         fields: PayloadField[]
         key: string //Hook key - deprecated
         label: string // Hook Label - deprecated
@@ -172,6 +173,25 @@ export interface Query {
     source: QuerySource;  //Hook source
     pipedrive_response: {
         [key: string]: any;
+    }
+}
+
+export type ProductData = {
+    comments: string | null
+    discount: number | null
+    discount_type: "percentage"
+    item_price: number
+    name: string | null
+    quantity: number
+    tax: number | null
+    currency_symbol: string
+    currency: string
+    tax_method: "exclusive" | "none" | "inclusive"
+    prices: {
+        regular_price: number;
+        sale_price: number;
+        price_excluding_tax: number;
+        price_including_tax: number;
     }
 }
 

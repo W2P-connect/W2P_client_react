@@ -6,7 +6,7 @@
     /* background: #f0f0f1; */
     /* color: #3c434a; */
     font-family: Inter var, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.4em;
     min-width: 600px;
 }
@@ -305,9 +305,30 @@ input.flat-input:focus-visible {
 .w2p-instructions:before {
     content: '🔍';
     position: absolute;
+    font-style: normal;
     top: calc(50% - 13px);
     left: 0px;
+    line-height: 26px;
     font-size: 26px;
+}
+
+.w2p-warning {
+    font-style: italic;
+    background-color: rgba(255, 193, 7, 0.2);
+    padding: 7px 15px 7px 35px;
+    border-radius: var(--border-radius-1);
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.w2p-warning:before {
+    content: "❗️";
+    font-style: normal;
+    position: absolute;
+    top: calc(50% - 13px);
+    left: 7px;
+    line-height: 26px;
+    font-size: 20px;
 }
 
 #w2p-app .error-label {
@@ -332,21 +353,16 @@ input.flat-input:focus-visible {
 }
 
 @media screen and (max-width: 782px) {
-    .w2p-instructions {
+
+    .w2p-instructions,
+    .w2p-warning {
         padding: 7px 15px;
     }
 
-    .w2p-instructions:before {
+    .w2p-instructions:before,
+    .w2p-warning:before {
         display: none;
     }
-}
-
-.w2p-instructions:before {
-    content: '🔍';
-    position: absolute;
-    top: calc(50% - 13px);
-    left: 0px;
-    font-size: 26px;
 }
 
 /***************** FLEX  ***************/

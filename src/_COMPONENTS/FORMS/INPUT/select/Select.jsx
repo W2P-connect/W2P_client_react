@@ -9,7 +9,7 @@ function classNames(...classes) {
 
 /**
  * 
- * @param {Array} options array like [{id: number, value: string, description: string}]  description is optionnal
+ * @param {Array} options array like [{id: number, value: string, label: string, description: string}]  description is optionnal
  * @returns {Component} react component 
  */
 
@@ -48,7 +48,7 @@ export default function Select({
                     }
                     <div className="relative mt-2">
                         <ListboxButton className="pointer relative w-full bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6">
-                            {selected?.value}
+                            {selected?.label ?? selected?.value}
                             <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                             </span>
@@ -79,7 +79,7 @@ export default function Select({
                                                                     : 'font-semibold', 'block truncate'
                                                             )}
                                                         >
-                                                            {option.value}
+                                                            {option.label ?? option.value}
                                                         </span>
                                                     </div>
 
