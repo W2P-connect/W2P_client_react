@@ -225,6 +225,100 @@ interface QueryTraceback {
 
 export type QueryState = ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")
 
+
+export interface Order {
+    id: number;
+    parent_id: number;
+    status: string;
+    currency: string;
+    version: string;
+    prices_include_tax: boolean;
+    date_created: DateObject;
+    date_modified: DateObject;
+    deal_id: number | null;
+    discount_total: string;
+    discount_tax: string;
+    shipping_total: string;
+    shipping_tax: string;
+    cart_tax: string;
+    total: string;
+    total_tax: string;
+    customer_id: number;
+    order_key: string;
+    billing: Address;
+    shipping: Address;
+    payment_method: string;
+    payment_method_title: string;
+    transaction_id: string;
+    customer: Customer;
+    customer_ip_address: string;
+    customer_user_agent: string;
+    created_via: string;
+    customer_note: string;
+    date_completed: DateObject | null;
+    date_paid: DateObject | null;
+    cart_hash: string;
+    order_stock_reduced: boolean;
+    download_permissions_granted: boolean;
+    new_order_email_sent: boolean;
+    recorded_sales: boolean;
+    recorded_coupon_usage_counts: boolean;
+    number: string;
+    meta_data: MetaData[];
+    line_items: Record<number, LineItem>;
+    tax_lines: Record<number, TaxLine>;
+    shipping_lines: any[];
+    state: OrderState;
+    fee_lines: any[];
+    coupon_lines: any[];
+}
+
+interface Customer {
+    ID: number;
+    user_login: string;
+    user_email: string;
+    first_name: string;
+    last_name: string;
+}
+
+
+export type OrderState = "SYNCED" | "NOT SYNCED" | "ERROR"
+
+interface DateObject {
+    date: string;
+    timezone_type: number;
+    timezone: string;
+}
+
+interface Address {
+    first_name: string;
+    last_name: string;
+    company: string;
+    address_1: string;
+    address_2: string;
+    city: string;
+    state: string;
+    postcode: string;
+    country: string;
+    email?: string;
+    phone?: string;
+}
+
+interface MetaData {
+    id: number;
+    key: string;
+    value: string;
+}
+
+interface LineItem {
+    // Add specific fields for line items if needed
+}
+
+interface TaxLine {
+    // Add specific fields for tax lines if needed
+}
+
+
 /*************************************************************************/
 /******************************* PIPEDRIVE *******************************/
 /*************************************************************************/

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useState } from 'react'
 import './query.css'
 import OpenableComponent from '../GENERAL/OpenableComponent/OpenableComponent'
 import { translate } from '../../translation'
@@ -121,8 +121,8 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
                   <div className='font-semibold mb-1'>{translate("Data for Pipedrive")}</div>
                   {
                     query.payload.data.length
-                      ? query.payload.data.map(data => (
-                        <div key={data.key}>
+                      ? query.payload.data.map((data, index) => (
+                        <div key={index}>
                           <span className='font-medium'>{data.name}:</span> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
                         </div>
                       ))

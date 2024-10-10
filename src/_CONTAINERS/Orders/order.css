@@ -1,0 +1,17 @@
+.w2p-order-main-datas {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr 1fr 1fr; /* Définit les largeurs de colonnes spécifiques */
+    white-space: nowrap;
+    grid-auto-flow: column;
+    min-height: 45px;
+    align-items: center;
+}
+
+.w2p-order-main-datas>div {
+    padding: 0 5px;
+}
+
+.w2p-order {
+    padding: 15px;
+    border-bottom: var(--border-1);
+}
