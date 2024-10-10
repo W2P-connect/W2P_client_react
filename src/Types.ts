@@ -250,7 +250,7 @@ export interface Order {
     payment_method: string;
     payment_method_title: string;
     transaction_id: string;
-    customer: Customer;
+    customer: Customer | null;
     customer_ip_address: string;
     customer_user_agent: string;
     created_via: string;
