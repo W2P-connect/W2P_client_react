@@ -4,7 +4,6 @@ import { translate } from 'translation';
 import { Hook, HookField, Parameters } from 'Types';
 import { useNotification } from './hook/contextHook';
 import { appDataStore } from '_STORES/AppData';
-import { hookStore } from '_STORES/Hooks';
 import { isAxiosError } from 'axios';
 
 export interface AppDataContextType {

@@ -1,4 +1,6 @@
 import OpenableComponent from '_COMPONENTS/GENERAL/OpenableComponent/OpenableComponent'
+import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
+import QueryDetails from '_COMPONENTS/Query/QueryDetails'
 import { useNotification } from '_CONTEXT/hook/contextHook'
 import { appDataStore } from '_STORES/AppData'
 import { useCallApi } from 'helpers'
@@ -56,6 +58,10 @@ export default function Order({ order }: { order: OrderType }) {
             })
     }
 
+    const query = orderState.queries.length
+        ? orderState.queries[0]
+        : null
+
     return (
         <form onSubmit={e => sendOrder(e)}>
             {orderState ? (
@@ -88,8 +94,90 @@ export default function Order({ order }: { order: OrderType }) {
                         </div>
                     </div>
                     <OpenableComponent stateOpen={open} label={false}>
-                        <>
-                        </>
+                        <RenderIf condition={!!query}>
+                            <div className='py-2 px-3 bg-gray-100 rounded-md mt-2'>
+                                <div className='text-center pb-2 font-semibold border-b border-gray-200'>
+                                    {orderState.state === "SYNCED"
+                                        ? "Last synced data"
+                                        : "Data to sync"
+                                    }
+                                </div>
+                                <div className='flex'>
+                                    <div className='flex-1'>
+                                        <div className='font-semibold mb-1'>{translate("Data for Pipedrive")}</div>
+                                        {
+                                            query && query.payload.data.length
+                                                ? query.payload.data.map((data, index) => (
+                                                    <div key={index}>
+                                                        <span className='font-medium'>{data.name}:</span> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
+                                                    </div>
+                                                ))
+                                                : <div>{translate('No valid data to send.')}</div>
+                                        }
+                                    </div>
+                                    <div className='flex-1'>
+                                        <div className='mb-1 mt-1 pl-2 border-l'>
+                                            {query?.payload.products?.length
+                                                ? query.payload.products.map((product, idx) => (
+
+                                                    <div key={idx} className="mb-1">
+                                                        <strong className="font-semibold">{product.name}:</strong>
+                                                        <div>
+                                                            <span className="text-gray-600">
+                                                                Quantity: <span className="font-semibold">{product.quantity}</span>
+                                                            </span>
+                                                            <span className="ml-4 text-gray-600">
+                                                                Price: <span className="font-semibold">{(product.item_price * (1 - ((product.discount ?? 0) / 100))).toFixed(2)}<span dangerouslySetInnerHTML={{ __html: product.currency_symbol }} /></span>
+                                                            </span>
+                                                        </div>
+                                                        <RenderIf condition={!!product.comments}>
+                                                            <div className="italic text-gray-500">
+                                                                Commentaires: {product.comments}
+                                                            </div>
+                                                        </RenderIf>
+                                                    </div>
+                                                ))
+                                                : <div>{translate('No products to send.')}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </RenderIf>
+
+                        {/* <div className="flex bg-gray-100 rounded-md py-2 px-3">
+                            <div className='flex-1'>
+                                <div className='font-semibold text-center mb-2'>
+                                    Woocomerce data
+                                </div>
+                                {orderState.products.map((product, idx) =>
+                                    <div key={idx} className="mb-1">
+                                        <strong className="font-semibold">{product.product_name}:</strong>
+                                        <div>
+                                            <span className="text-gray-600">
+                                                Quantity: <span className="">{product.quantity}</span>
+                                            </span>
+                                            <span className="ml-4 text-gray-600">
+                                                Price: <span className="">{product.total}<span dangerouslySetInnerHTML={{ __html: orderState.currency_symbol }} /></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className='flex-1'>
+                                <div className='font-semibold text-center mb-2'>
+                                    {orderState.state === "SYNCED"
+                                        ? "Last synced data"
+                                        : "Data to sync"
+                                    }
+
+                                    <RenderIf condition={!!orderState.queries.length}>
+                                        <QueryDetails query={orderState.queries[0]} />
+                                    </RenderIf>
+                                </div>
+                            </div>
+                        </div> */}
                     </OpenableComponent>
                 </div>
             ) : null}

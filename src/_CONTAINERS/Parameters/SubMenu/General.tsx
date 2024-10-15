@@ -73,6 +73,13 @@ const Connexion = () => {
     }
   }
 
+  const handleCompanyDomain = (value: string) => {
+    const fomatedValue = value
+      .replace(/^https:\/\//, '')
+      .replace(/\.pipedrive\.com.*$/, '');
+    appDataStore.setPipedriveParameter("company_domain", fomatedValue)
+  }
+
   return (
     <>
       <form onSubmit={e => checkW2pAPI(e)}>
@@ -112,14 +119,22 @@ const Connexion = () => {
         </div>
         <Tooltip
           mainText={translate("To synchronize your Woocommerce data with Pipedrive, please provide the Pipedrive domain of your organization and an API key")}
-          tooltipText={<>{translate("For more information, follow this link")}: <a target="blank" href='https://pipedrive.readme.io/docs/how-to-find-the-api-token'>https://pipedrive.readme.io/docs/how-to-find-the-api-token</a></>}
+          tooltipText={<>{translate("For more information, follow these links")}:
+            <li>
+              <a target="blank" href='https://pipedrive.readme.io/docs/how-to-find-the-api-token'>https://pipedrive.readme.io/docs/how-to-find-the-api-token</a>
+            </li>
+            <li>
+              <a target="blank" href='https://pipedrive.readme.io/docs/how-to-get-the-company-domain'>https://pipedrive.readme.io/docs/how-to-get-the-company-domain</a>
+            </li>
+          </>
+          }
         />
 
         <div className='flex w2p-wrap flex-end gap-1'>
           <Input
             className='flex-1 min-w-300'
             label={translate("Company domain")}
-            onInput={(value) => appDataStore.setPipedriveParameter("company_domain", value)}
+            onInput={(value) => handleCompanyDomain(value)}
             value={appDataStore.appData.parameters.pipedrive.company_domain}
           />
           <Input

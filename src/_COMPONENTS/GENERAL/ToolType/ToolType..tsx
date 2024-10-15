@@ -56,16 +56,13 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
     };
 
     useEffect(() => {
-        // Ajouter l'event listener au montage
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            // Retirer l'event listener au démontage
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
     useEffect(() => {
-        // Update tooltip position on component mount and window resize
         updateTooltipPosition();
         window.addEventListener('resize', updateTooltipPosition);
         return () => {
@@ -73,26 +70,29 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
         };
     }, []);
 
-    // Re-calculate tooltip position if tooltipRef changes
     useEffect(() => {
         updateTooltipPosition();
     }, [tooltipRef.current]);
 
+    const handleToolTypeClick = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        e.preventDefault()
+        setShow((prv) => !prv)
+    }
     return (
         <div className="relative flex items-center space-x-2">
             <span>{mainText}</span>
             <div className="relative" ref={iconRef}> {/* Ajout de la référence à l'icône */}
-                <div onClick={() => setShow((prv) => !prv)}>
-                    {show ? (
-                        <InformationCircleIconSolid className="text-secondary" width={22} />
-                    ) : (
-                        <InformationCircleIcon className="text-gray-600" width={22} />
-                    )}
+                <div onClick={(e) => handleToolTypeClick(e)}>
+                    {show
+                        ? <InformationCircleIconSolid className="text-secondary" width={22} />
+                        : <InformationCircleIcon className="text-gray-600" width={22} />
+                    }
                 </div>
                 <div
                     ref={tooltipRef}
                     className={classNames(
-                        "absolute mt-2 maw-w-96 bg-black text-white text-sm rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50",
+                        "absolute mt-2 max-w-96 !min-w-72 bg-black text-white text-sm rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50",
                         show ? "opacity-100 z-10" : "opacity-0 -z-10"
                     )}
                     style={tooltipStyles}

@@ -32,7 +32,7 @@ export default function VariableList({ variableArray, onUpdate }: Props) {
 
     return (
         <div>
-            {variableArray.length
+            {variableArray?.length
                 ? <div className='flex relative'>
                     <div className='fields-container'>
                         <DragDropContext onDragEnd={handleDragEnd}>

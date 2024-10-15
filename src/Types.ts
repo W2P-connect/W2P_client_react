@@ -161,7 +161,7 @@ export interface Query {
     payload: {
         category: Category;
         data: PayloadData[]
-        products?: ProductData[] | null
+        products?: PipedriveProductData[] | null
         fields: PayloadField[]
         key: string //Hook key - deprecated
         label: string // Hook Label - deprecated
@@ -176,7 +176,7 @@ export interface Query {
     }
 }
 
-export type ProductData = {
+export type PipedriveProductData = {
     comments: string | null
     discount: number | null
     discount_type: "percentage"
@@ -193,6 +193,19 @@ export type ProductData = {
         price_excluding_tax: number;
         price_including_tax: number;
     }
+}
+
+export type WoocomerceProductData = {
+    product_id: number;
+    variation_id: number | null;
+    product_name: string;
+    quantity: number;
+    subtotal: string;
+    total: string;
+    tax: string;
+    tax_class: string;
+    tax_status: string;
+    item_type: string;
 }
 
 export type QuerySource = "user" | "order" | "product"
@@ -225,7 +238,6 @@ interface QueryTraceback {
 
 export type QueryState = ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")
 
-
 export interface Order {
     id: number;
     parent_id: number;
@@ -249,7 +261,9 @@ export interface Order {
     shipping: Address;
     payment_method: string;
     payment_method_title: string;
+    products: WoocomerceProductData[];
     transaction_id: string;
+    currency_symbol: string;
     customer: Customer | null;
     customer_ip_address: string;
     customer_user_agent: string;
@@ -271,6 +285,7 @@ export interface Order {
     state: OrderState;
     fee_lines: any[];
     coupon_lines: any[];
+    queries: Query[];
 }
 
 interface Customer {
@@ -282,7 +297,7 @@ interface Customer {
 }
 
 
-export type OrderState = "SYNCED" | "NOT SYNCED" | "ERROR"
+export type OrderState = "NOT READY" | "SYNCED" | "NOT SYNCED" | "ERROR" | "INVALID"
 
 interface DateObject {
     date: string;
