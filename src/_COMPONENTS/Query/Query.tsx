@@ -87,13 +87,18 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
                 ${query.state === "TODO" ? 'warning-label' : ''} 
                 ${query.state === "ERROR" ? 'error-label' : ''} 
                 ${query.state === "INVALID" ? 'error-label' : ''} 
+                ${query.state === "CANCELED" ? 'error-label' : ''} 
             `}>
               <div>{query.state}</div>
             </div>
           </div>
           <OpenableComponent stateOpen={open} label={false}>
-            <div className="py-2 px-3 bg-gray-100 rounded-md">
-              <QueryDetails query={query} />
+            <div className='mt-2 p-2'>
+              <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
+                style={{ backgroundImage: "url('/images/bg-grey.jpg')" }}
+              >
+                <QueryDetails query={query} />
+              </div>
             </div>
           </OpenableComponent>
         </div>

@@ -236,7 +236,7 @@ interface QueryTraceback {
     internal: boolean;
 }
 
-export type QueryState = ("ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")
+export type QueryState = ("CANCELED" | "ERROR" | "DONE" | "SENDED" | "INVALID" | "TODO")
 
 export interface Order {
     id: number;

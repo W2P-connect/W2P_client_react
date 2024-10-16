@@ -11,6 +11,9 @@ module.exports = {
       //     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       // },
       important: true,
+      backgroundImage: {
+        'custom-linear-grey': 'linear-gradient(101deg, #F3F1F1 -2.44%, #FFF 56.06%, #C5C4C4 114.55%)',
+      },
       colors: {
         primary: {
           DEFAULT: 'rgb(15 42 23)',

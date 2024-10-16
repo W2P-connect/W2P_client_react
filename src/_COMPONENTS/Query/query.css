@@ -46,16 +46,9 @@
     border-radius: var(--border-radius-1);
 }
 
-.w2p-query-timelaps {
-    display: flex;
-    gap: 10px;
-    flex-direction: column;
-    max-width: 70%;
-}
 
 .w2p-query-data {
-    border-left: var(--border-1);
-    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .w2p-query-label {
