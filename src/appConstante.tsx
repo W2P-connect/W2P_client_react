@@ -60,16 +60,16 @@ interface FieldData {
 
 export const additionalFieldsData: AdditionalFieldsData = {
     'deal': {
-        "status": {
-            "info": <>
-                <div className="text-red-700">
-                    By default, the deal status will be<strong>'Open'</ strong > as long as the payment for the order has not been received.
-                    < br /> The status will be<strong>'Won'</ strong > when the order is confirmed(Order processing or Order completed) and<strong>'Lost'</ strong > when the order is lost (Order refunded, Order canceled).</div>
-                < div className="m-t-10" >
-                    Of course, you can set custom values by enabling this field.
-                </div>
-            </>
-        }
+        // "status": {
+        //     "info": <>
+        //         <div className="text-red-700">
+        //             By default, the deal status will be<strong>'Open'</ strong > as long as the payment for the order has not been received.
+        //             < br /> The status will be<strong>'Won'</ strong > when the order is confirmed(Order processing or Order completed) and<strong>'Lost'</ strong > when the order is lost (Order refunded, Order canceled).</div>
+        //         < div className="m-t-10" >
+        //             Of course, you can set custom values by enabling this field.
+        //         </div>
+        //     </>
+        // }
     },
     'organization': {},
     'person': {},

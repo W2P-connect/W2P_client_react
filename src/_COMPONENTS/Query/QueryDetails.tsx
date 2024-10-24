@@ -39,7 +39,7 @@ export default function QueryDetails({ query }: { query: Query }) {
                                         </div>
                                         <RenderIf condition={!!product.comments}>
                                             <div className="italic text-gray-500">
-                                                Commentaires: {product.comments}
+                                                Comments: {product.comments}
                                             </div>
                                         </RenderIf>
                                     </div>
@@ -75,7 +75,7 @@ export default function QueryDetails({ query }: { query: Query }) {
                         <div>
                             <div className='font-semibold mb-4 pt-6 border-t'>{translate("Traceback")}</div>
                             {query.additional_data.traceback
-                                ?.sort((a, b) => {
+                                ?.sort((a, b) => {''
                                     return new Date(a.date).getTime() - new Date(b.date).getTime()
                                 })
                                 .map((trace, index) => {

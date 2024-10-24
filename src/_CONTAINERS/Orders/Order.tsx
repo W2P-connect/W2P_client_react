@@ -1,3 +1,4 @@
+import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton'
 import OpenableComponent from '_COMPONENTS/GENERAL/OpenableComponent/OpenableComponent'
 import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
 import { useNotification } from '_CONTEXT/hook/contextHook'
@@ -28,12 +29,23 @@ export default function Order({ order }: { order: OrderType }) {
     }
 
     const sendOrder = (e: React.FormEvent) => {
-        callApi(`
-      ${appDataStore.appData.w2p_client_rest_url}/order/${orderState.id}/send`,
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget as HTMLFormElement);
+
+        // Convertir FormData en objet
+        const formValues: { [key: string]: any } = {};
+        formData.forEach((value, key) => {
+            formValues[key] = value;
+        });
+        formValues.direct_to_pipedrive = true;
+
+        callApi(
+            `${appDataStore.appData.w2p_client_rest_url}/order/${orderState.id}/send`,
             { method: "PUT" },
             null,
-            { direct_to_pipedrive: true },
-            e)
+            formValues,
+            e
+        )
             .then(res => {
                 if (res?.data.data) {
                     setOrderState(_ => res.data.data)
@@ -87,7 +99,9 @@ export default function Order({ order }: { order: OrderType }) {
                         <div>{`${orderState.deal_id}`}</div>
                         <div className={`w2p-query-label
                             ${orderState.state === "SYNCED" ? 'success-label' : ''} 
+                            ${orderState.state === "SENDED" ? 'warning-label' : ''} 
                             ${orderState.state === "NOT SYNCED" ? 'warning-label' : ''} 
+                            ${orderState.state === "NOT READY" ? 'warning-label' : ''} 
                             ${orderState.state === "ERROR" ? 'error-label' : ''} 
                         `}>
                             <div>{orderState.state}</div>
@@ -136,7 +150,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                                 </div>
                                                                 <RenderIf condition={!!product.comments}>
                                                                     <div className="italic text-gray-500">
-                                                                        Commentaires: {product.comments}
+                                                                        Comments: {product.comments}
                                                                     </div>
                                                                 </RenderIf>
                                                             </div>
@@ -166,7 +180,6 @@ export default function Order({ order }: { order: OrderType }) {
                                                         <div className='mb-1 mt-1 pl-2 border-l'>
                                                             {lastDoneQuery?.payload.products?.length
                                                                 ? lastDoneQuery.payload.products.map((product, idx) => (
-
                                                                     <div key={idx} className="mb-1">
                                                                         <strong className="font-semibold">{product.name}:</strong>
                                                                         <div>
@@ -179,7 +192,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                                         </div>
                                                                         <RenderIf condition={!!product.comments}>
                                                                             <div className="italic text-gray-500">
-                                                                                Commentaires: {product.comments}
+                                                                                Comments: {product.comments}
                                                                             </div>
                                                                         </RenderIf>
                                                                     </div>
@@ -192,9 +205,20 @@ export default function Order({ order }: { order: OrderType }) {
                                             </>
                                         </RenderIf>
                                     </>
-                                    : <div className='text-center font-semibold'>
-                                        None of the events you've set up for the deals have been triggered for this order yet. Therefore, no data can be sent to Pipedrive.
-                                    </div>
+                                    : <>
+                                        <div className='text-center font-semibold'>
+                                            None of the events you've set up for the deals have been triggered for this order yet. Therefore, no data can be sent to Pipedrive.
+                                        </div>
+                                        <div className='flex justify-center mt-3'>
+                                            <input name='create-query' value={"1"} hidden />
+                                            <button
+                                                className='bg-white'
+                                                onClick={e => e.stopPropagation()} // Stop propagation here
+                                            >
+                                                {translate("Send based on current state")}
+                                            </button>
+                                        </div>
+                                    </>
                                 }
                             </div>
                         </div>
