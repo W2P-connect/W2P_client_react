@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { Category } from "Types"
+import { BaseHookField, Category } from "Types"
 
 export const linkableFields: {
     person: string[],

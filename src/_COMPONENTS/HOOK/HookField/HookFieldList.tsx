@@ -1,6 +1,5 @@
 import { hookStore } from '_STORES/Hooks';
-import { updateNestedObject } from 'helpers';
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { translate } from 'translation'
 import { Hook, HookField as HookFieldType } from 'Types';
 import HookField from './HookField';
@@ -15,14 +14,16 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
 
     const [searchField, setSearchField] = useState<string>("")
 
-    const filteredHookFieldsList: HookFieldType[] = hook
-        ? categoryFields
-            .filter(field => searchField
-                ? field.name.includes(searchField)
-                : true)
-            .map(field => hookStore.getHookFieldFromPipedrive(hook.id, field.id))
-            .filter((hookfield): hookfield is HookFieldType => hookfield !== null)
-        : []
+    const filteredHookFieldsList: HookFieldType[] = useMemo(() =>
+        hook
+            ? categoryFields
+                .filter(field => searchField
+                    ? field.name.includes(searchField)
+                    : true)
+                .map(field => hookStore.getHookFieldFromPipedrive(hook.id, field.id))
+                .filter((hookfield): hookfield is HookFieldType => hookfield !== null)
+            : []
+        , [hook, categoryFields, searchField])
 
     return (
         <div key={hook.id}>
@@ -44,13 +45,12 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                     {filteredHookFieldsList.length ?
                         <div className='flex column m-t-25 gap-1'>
                             {/* Priority fields */}
-                            {/* TODO  ici ce serait plus pertinent de filtrer au chargement des fields et de les triers dans le bon ordre ! */}
                             {filteredHookFieldsList
-                                .filter(hookfield => hookFieldStore.isImportant(hookfield) || hookfield.enabled)
+                                .filter(hookfield => hookFieldStore.isImportant(hookfield))
                                 .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
                             {/* other fields */}
                             {filteredHookFieldsList
-                                .filter(hookfield => !hookFieldStore.isImportant(hookfield) && !hookfield.enabled)
+                                .filter(hookfield => !hookFieldStore.isImportant(hookfield))
                                 .map(hookfield => <HookField key={hookfield?.id} hookField={hookfield} />)}
                         </div>
                         : <p>

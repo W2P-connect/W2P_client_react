@@ -27,7 +27,7 @@ const Organizations = () => {
 
   return (
     <>
-      {options
+      {/* {options
         ? <>
           <h2 className='m-t-50 m-b-10'>{translate("General settings")}</h2>
           <form>
@@ -35,6 +35,7 @@ const Organizations = () => {
               <div className='w2p-instructions'>
                 {translate("The 'billing_company' field is usually provided only when adding billing information when the user places their first order. If you want the organization to be created beforehand, you can use event parameters and other fields like the user's email, which is provided during registration.")}
               </div>
+
               <label className='pointer flex items-center m-b-10 text-red-700'>
                 <input
                   type="checkbox"
@@ -52,10 +53,9 @@ const Organizations = () => {
                     </>
                   }
                 />
-                <div className='text-red-700'>
-                </div>
               </label>
-              {/* <label className='pointer flex items-center m-b-10'>
+
+              <label className='pointer flex items-center m-b-10'>
                 <input
                   type="checkbox"
                   className='m-r-10'
@@ -66,12 +66,12 @@ const Organizations = () => {
                   (en vrai je me demande si on le met pas quoi qu'il arrive, personne dira non)
                   {translate("Before creating the organization, search by its name on Pipedrive to avoid duplicates. (recommanded).")}
                 </div>
-              </label> */}
+              </label>
             </div>
           </form>
         </>
         : null
-      }
+      } */}
 
       <h2 className='m-t-50'>{translate("Events settings")}</h2>
       <FieldCategory category={'organization'} />

@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
+import { AppData, Category, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
 import { deepCopy } from 'helpers';
 import { hookStore } from './Hooks';
 import { pipedriveFieldsStore } from './PipedriveFields';
@@ -12,6 +12,77 @@ class AppDataStore {
         users: [],
         stages: [],
         fields: [],
+    }
+
+    defaultW2Pparameters: Omit<W2pParameters, 'domain' | 'api_key' | 'hookList'> = {
+        deal: {
+            amountsAre: "exclusive",
+            defaultOrderName: {
+                variables: [
+                    {
+                        id: "d7778f5b-910c-44f9-8c69-099bcb50fedc",
+                        exemple: "Woocomerce order n°",
+                        isFreeField: true,
+                        value: "Woocomerce order n°"
+                    },
+                    {
+                        // label: "id",
+                        value: "id",
+                        source: "order",
+                        // description: "Order Id.",
+                        exemple: "6452",
+                        isFreeField: false,
+                        id: "4e5e6f70-e922-41dd-b354-66c338e64343"
+                    }
+                ],
+                id: "",
+                index: 0
+            },
+            sendProducts: true,
+            searchBeforeCreate: true,
+            // createNew: true,
+            productsName: {
+                variables: [
+                    {
+                        // label: "name",
+                        value: "name",
+                        source: "product",
+                        // recommanded: true,
+                        // description: "Product name.",
+                        exemple: "T-Shirt",
+                        isFreeField: false,
+                        id: "e9f54c61-462d-4491-8fd1-e3797b7a9079"
+                    }
+                ],
+                id: "",
+                index: 0
+            },
+            productsComment: {
+                variables: [
+                    {
+                        // label: "attribute_summary",
+                        // recommanded: true,
+                        value: "attribute_summary",
+                        source: "product",
+                        // description: "Summary of attributes for variations of variable products.",
+                        exemple: "Size: S, M, L - Color: Red, Blue, Green",
+                        isFreeField: false,
+                        id: "6a5c4310-11d9-49b2-b437-ab177ba56b8b"
+                    }
+                ],
+                id: "",
+                index: 0
+            }
+        },
+        organization: {
+            autoCreate: false,
+            searchBeforeCreate: true,
+
+        },
+        person: {
+            linkToOrga: true,
+            defaultEmailAsName: true,
+        },
     }
 
     emptyW2Pparameters: W2pParameters = {
@@ -27,6 +98,8 @@ class AppDataStore {
             },
             sendProducts: true,
             searchBeforeCreate: true,
+            productsName: null,
+            productsComment: null,
         },
         organization: {
             autoCreate: false,
@@ -122,6 +195,11 @@ class AppDataStore {
         formatedAppData.parameters.w2p.hookList = [...hookStore.hooks]
         formatedAppData.parameters.pipedrive.fields = [...pipedriveFieldsStore.fields]
         return formatedAppData
+    }
+
+    getParentHookFromKey(key: string) {
+        return this.appData.CONSTANTES.W2P_HOOK_LIST
+            .find(hook => hook.key === key && hook)
     }
 }
 

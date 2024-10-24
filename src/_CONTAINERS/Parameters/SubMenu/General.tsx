@@ -1,7 +1,7 @@
 import React, { FormEvent } from 'react'
 import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../translation';
-import { useCallApi, useCallPipedriveApi } from '../../../helpers';
+import { deepMerge, useCallApi, useCallPipedriveApi } from '../../../helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
@@ -10,6 +10,7 @@ import { hookStore } from '_STORES/Hooks';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
+import { Category, HookField, PipedriveField } from 'Types';
 
 const Connexion = () => {
 
@@ -50,6 +51,106 @@ const Connexion = () => {
       }
       )
   }
+
+  const loadDefaultSettings = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!appDataStore.appData.parameters.pipedrive.api_key || !appDataStore.appData.parameters.pipedrive.company_domain) {
+      addNotification({ error: true, content: translate("To load the default settings, you need to provide your Pipedrive API key and your company domain.") })
+      return
+    }
+
+    if (window.confirm(
+      translate("Loading the default settings will overwrite some of your parameters. Do you wish to continue ?")
+    )) {
+
+      await loadAllPipedriveFields(e)
+
+      setupHooks();
+
+      const newAppDataStore = appDataStore.appData
+      newAppDataStore.parameters.w2p.deal = appDataStore.defaultW2Pparameters.deal
+
+      appDataStore.setAppData(newAppDataStore)
+      saveParameters(e, false)
+        .then(_ => addNotification({ error: false, content: translate("Default parameters loaded.") }))
+    }
+  }
+
+  const loadAllPipedriveFields = async (e: FormEvent) => {
+    try {
+      const categories: Category[] = ["deal", "organization", "person"]
+      const results = await Promise.all(categories.map(async (category) => {
+        const res = await callPipedriveApi(`${category}Fields`, null, null, null);
+        console.log(res?.data);
+
+        if (!res?.data?.data) {
+          throw new Error(`No data in Pipedrive response for category: ${category}`);
+        }
+        return res.data.data.map((field: PipedriveField) => ({
+          ...field,
+          category: category
+        }));
+      }));
+
+      // Accumulez tous les champs retournés
+      const allFields: PipedriveField[] = results.flat();
+
+      // Injectez tous les champs accumulés dans le store
+      pipedriveFieldsStore.addPipedriveFields(allFields);
+
+      const defaultParametersCategories: Category[] = Object.keys(hookStore.defaultHookSettings) as Category[];
+      const preHooks = appDataStore.appData.CONSTANTES.W2P_HOOK_LIST;
+
+      // Si les hooks n'ont jamais été crée les fields ne seront jamais ajouté aux hooks (qui n'existent pas...)
+      defaultParametersCategories.forEach(category => {
+        preHooks.forEach(preHook => {
+          hookStore.getHookFromPreHook(preHook, category); //création éventuelle du hook
+        });
+      });
+
+      hookStore.updateHookFieldsFromPipedriveFields(allFields);
+
+      return allFields;
+    } catch (error) {
+      console.log(error);
+      addNotification({
+        error: true,
+        content: translate("Pipedrive has encountered an error, make sure you have configured it correctly")
+      });
+    }
+  };
+
+  const setupHooks = () => {
+    const categories: Category[] = Object.keys(hookStore.defaultHookSettings) as Category[];
+    const preHooks = appDataStore.appData.CONSTANTES.W2P_HOOK_LIST;
+
+    categories.forEach(category => {
+      preHooks.forEach(preHook => {
+        const hookKey = preHook.key;
+
+        const defaultValues = hookStore.defaultHookSettings[category][hookKey];
+
+        if (defaultValues) {
+          const hook = hookStore.getHookFromPreHook(preHook, category);
+          hookStore.updateHook(hook.id, { "enabled": true });
+          for (const fieldKey in defaultValues) {
+            const fieldValue = defaultValues[fieldKey];
+            const fields = hookStore.getFields(hook.id)
+            fields.forEach((field: HookField) => {
+              console.log("field.pipedrive.category", field.pipedrive.category);
+              if (field.pipedrive.key === fieldKey && field.pipedrive.category === category) {
+                hookStore.updateHookField(hook, field.id, {
+                  value: fieldValue.value,
+                  condition: { ...field.condition, ...fieldValue.condition },
+                  enabled: true,
+                });
+              }
+            });
+          }
+        }
+      });
+    })
+  };
 
   const restoreSettings = () => {
     if (window.confirm(
@@ -150,16 +251,25 @@ const Connexion = () => {
         </div>
       </form >
       <div className='m-t-100'>
-        <h2>Settings</h2>
-        <p className='m-b-10'>{translate(`If you encounter problems with your settings 
-        - especially if your API key no longer targets the same company 
-        - we recommend that you reset your settings`)}</p>
+        <form onSubmit={e => loadDefaultSettings(e)}>
+          <h2>Load default settings</h2>
+          <p className='m-b-10'>{translate(`This option allows you to load the plugin's default settings to start with a functional configuration.`)}</p>
+          <div className='flex gap-1'>
+            <button className='light-button'>
+              {translate("Load default settings")}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div className='m-t-100'>
+        <h2>Restore settings</h2>
+        <p className='m-b-10'>{translate(`If you experience issues with your settings—particularly if your API key no longer points to the correct company—we recommend resetting your settings.`)}</p>
         <div className='flex gap-1'>
           <button className='light-button' onClick={_ => restoreSettings()}>
             {translate("Restore settings")}
           </button>
           <button className='light-button' onClick={_ => restorePipedriveData()}>
-            {translate("Remove all pipedrive data")}
+            {translate("Remove and restore all pipedrive data")}
           </button>
         </div>
       </div>

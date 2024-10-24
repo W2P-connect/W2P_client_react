@@ -1,3 +1,5 @@
+import { StringChain } from "lodash"
+
 export interface AppData {
     CONSTANTES: {
         W2P_AVAIBLE_STATES: QueryState[]
@@ -41,6 +43,8 @@ interface DealsConfig {
     defaultOrderName: Block
     sendProducts: boolean; //product
     searchBeforeCreate: boolean; //product
+    productsName: Block | null;
+    productsComment: Block | null;
 }
 
 interface OrganizationsConfig {
@@ -115,7 +119,7 @@ export type FieldCondition = {
 export type BaseHookField = {
     enabled: boolean;
     id: string;
-    value: number | Array<number> | Block[];
+    value: number | Array<number> | Block[] | string;
     condition: FieldCondition;
     pipedriveFieldId: number;
     hookId: string;
@@ -133,6 +137,8 @@ export type Variable = {
     exemple?: string;
     isFreeField: boolean;
     source?: MetaKeySources
+    label?: string
+    description?: string
     value: string;
 }
 
