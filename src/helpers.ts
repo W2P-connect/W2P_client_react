@@ -126,6 +126,11 @@ export const useCallPipedriveApi = () => {
     return callPipedriveApi;
 };
 
+export const isLocal = () => {
+    const hostname = window.location.hostname;
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+};
+
 
 export function deepMerge<T extends Record<string, any>>(obj1: T, obj2: T): T {
     for (const key in obj2) {

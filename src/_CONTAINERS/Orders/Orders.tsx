@@ -28,7 +28,7 @@ export default function Orders() {
       `${appDataStore.appData.w2p_client_rest_url}/orders`,
       { method: "get" },
       controller.signal,
-      pagination,
+      { ...pagination, time: new Date().getTime() },
     )
       .then(res => {
         if (res) {

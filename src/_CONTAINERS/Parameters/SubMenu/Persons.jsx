@@ -32,7 +32,7 @@ const Persons = () => {
                     <h2>{translate("General settings")}</h2>
 
                     <form>
-                        <label className='cursor-pointer flex align-center mb-1'>
+                        <label className='cursor-pointer flex align-center items-center mb-1'>
                             <input
                                 type="checkbox"
                                 className='m-r-10'
@@ -44,7 +44,7 @@ const Persons = () => {
                             </div>
                         </label>
 
-                        <label className='cursor-pointer flex align-center'>
+                        <label className='cursor-pointer flex align-center items-center'>
                             <input
                                 type="checkbox"
                                 className='m-r-10'

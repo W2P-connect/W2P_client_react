@@ -95,7 +95,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
           <OpenableComponent stateOpen={open} label={false}>
             <div className='mt-2 p-2'>
               <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
-                style={{ backgroundImage: "url('/images/bg-grey.jpg')" }}
+                style={{ backgroundImage: `url('${appDataStore.appData.build_url}/images/bg-grey.jpg')` }}
               >
                 <QueryDetails query={query} />
               </div>

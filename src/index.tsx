@@ -8,17 +8,24 @@ import AppDataContextProvider from './_CONTEXT/appDataContext';
 import { AppLocalizerProvider } from './_CONTEXT/AppLocalizerContext';
 import axios from 'axios';
 import { appDataStore } from '_STORES/AppData';
-import { deepMerge } from 'helpers';
+import { deepMerge, isLocal } from 'helpers';
 import { hookStore } from '_STORES/Hooks';
 import { AppData as AppDataType } from 'Types';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
+import { env } from 'process';
 
 // Render the app inside our shortcode's #app div
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const appLocalizer = await axios.get(`http://w2p-bis.local/wp-json/w2p/v1/applocalizer`);
+        let appData: AppDataType = appDataStore.emptyAppData
 
-        const appData: AppDataType = appLocalizer.data.data;
+        if (isLocal()) {
+            const appLocalizer = await axios.get(`http://w2p-bis.local/wp-json/w2p/v1/applocalizer`);
+            appData = appLocalizer.data.data;
+        } else {
+            //@ts-ignore
+            appData = appGlobalData
+        }
 
         const appDataInit = deepMerge(appDataStore.emptyAppData, appData)
 
@@ -27,11 +34,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         hookStore.updateHookList(appDataInit.parameters.w2p.hookList);
         pipedriveFieldsStore.setPipedriveFields(appDataInit.parameters.pipedrive.fields)
-        console.log("--INIT-- : appData.parameters", appData.parameters);
+        console.log("--INIT-- :", appData);
+        isLocal() && console.log("Running in local");
 
+
+        const w2pbg = document.getElementById("w2p-background");
+        if (w2pbg) {
+            w2pbg.style.backgroundImage = `url('${appDataStore.appData.build_url}/images/bg-main-colors.jpg')`
+        }
 
         const element = document.getElementById('w2p-app');
-        if (element !== null && appLocalizer.data?.data) {
+        if (element !== null && appData) {
             const root = ReactDOM.createRoot(element);
             root.render(<div>
                 <AppLocalizerProvider value={appData}>
@@ -47,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </AppLocalizerProvider>
             </div>
             );
+
         }
     } catch (error) {
         console.error('Error loading app data:', error);

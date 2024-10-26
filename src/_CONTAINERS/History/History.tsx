@@ -38,7 +38,7 @@ export default function History() {
       `${appDataStore.appData.w2p_client_rest_url}/queries`,
       { method: "get" },
       controller.signal,
-      { ...removeEmptyProperties(parameters), ...pagination },
+      { ...removeEmptyProperties(parameters), ...pagination, time: new Date().getTime() },
     )
       .then(res => {
         if (res) {

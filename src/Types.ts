@@ -1,5 +1,3 @@
-import { StringChain } from "lodash"
-
 export interface AppData {
     CONSTANTES: {
         W2P_AVAIBLE_STATES: QueryState[]
@@ -12,6 +10,7 @@ export interface AppData {
         }
     },
     parameters: Parameters,
+    build_url: string,
     w2p_client_rest_url: string,
     w2p_distant_rest_url: string,
     token: string,

@@ -110,7 +110,7 @@ export default function Order({ order }: { order: OrderType }) {
                     <OpenableComponent stateOpen={open} label={false}>
                         <div className='mt-2 p-2'>
                             <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
-                                style={{ backgroundImage: "url('/images/bg-grey.jpg')" }}
+                                style={{ backgroundImage: `url('${appDataStore.appData.build_url}/images/bg-grey.jpg')` }}
                             >
                                 {query
                                     ? <>
@@ -210,7 +210,7 @@ export default function Order({ order }: { order: OrderType }) {
                                             None of the events you've set up for the deals have been triggered for this order yet. Therefore, no data can be sent to Pipedrive.
                                         </div>
                                         <div className='flex justify-center mt-3'>
-                                            <input name='create-query' value={"1"} hidden />
+                                            <input name='create-query' defaultValue={"1"} hidden />
                                             <button
                                                 className='bg-white'
                                                 onClick={e => e.stopPropagation()} // Stop propagation here

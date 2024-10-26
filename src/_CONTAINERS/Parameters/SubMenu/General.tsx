@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../translation';
 import { deepMerge, useCallApi, useCallPipedriveApi } from '../../../helpers';
@@ -11,13 +11,32 @@ import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 import { Category, HookField, PipedriveField } from 'Types';
+import { error } from 'console';
+
+interface SyncData {
+  running: boolean;
+  sync_progress_users: number;
+  sync_progress_orders: number;
+}
 
 const Connexion = () => {
 
   const callPipedriveApi = useCallPipedriveApi()
   const callApi = useCallApi()
 
-  console.log('appDataStore.appData', toJS(appDataStore.appData));
+  const [syncData, setSyncData] = useState<SyncData>({
+    running: false,
+    sync_progress_users: 0,
+    sync_progress_orders: 0,
+  })
+
+  useEffect(() => {
+    callApi(`${appDataStore.appData.w2p_client_rest_url}/sync-progress`)
+      .then(async res => {
+        setSyncData(res?.data)
+      })
+  }, [])
+
 
   const { saveParameters } = useAppDataContext()
   const { addNotification } = useNotification()
@@ -137,7 +156,6 @@ const Connexion = () => {
             const fieldValue = defaultValues[fieldKey];
             const fields = hookStore.getFields(hook.id)
             fields.forEach((field: HookField) => {
-              console.log("field.pipedrive.category", field.pipedrive.category);
               if (field.pipedrive.key === fieldKey && field.pipedrive.category === category) {
                 hookStore.updateHookField(hook, field.id, {
                   value: fieldValue.value,
@@ -179,6 +197,24 @@ const Connexion = () => {
       .replace(/^https:\/\//, '')
       .replace(/\.pipedrive\.com.*$/, '');
     appDataStore.setPipedriveParameter("company_domain", fomatedValue)
+  }
+
+  const syncroniseAll = () => {
+    callApi(`${appDataStore.appData.w2p_client_rest_url}/start-sync`, { method: "GET" }, null, { "re-sync": true })
+      .then(async res => {
+        addNotification({
+          "error": !res?.data?.success,
+          "content": res?.data?.message
+            ? res.data.message
+            : res?.data?.success ? "Synchronization done" : "Error during synchronization"
+        })
+      })
+      .catch(error => {
+        addNotification({
+          "error": true,
+          "content": translate("Wa have encountered an error, try again later")
+        })
+      })
   }
 
   return (
@@ -270,6 +306,20 @@ const Connexion = () => {
           </button>
           <button className='light-button' onClick={_ => restorePipedriveData()}>
             {translate("Remove and restore all pipedrive data")}
+          </button>
+        </div>
+      </div>
+      <div className='m-t-100'>
+        <h2>Synchronize all existing data with Pipedrive</h2>
+        <p className='m-b-10'>{translate(`This action will synchronize all orders and users from your site with Pipedrive. To prevent system overload, the synchronization process may take several hours depending on the number of items being sent to Pipedrive.`)}</p>
+        <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
+        <div className='flex gap-1'>
+          <button
+            className='light-button'
+            onClick={_ => !syncData.running && syncroniseAll()}
+            disabled={syncData.running}
+          >
+            {translate("Synchronize all")}
           </button>
         </div>
       </div>

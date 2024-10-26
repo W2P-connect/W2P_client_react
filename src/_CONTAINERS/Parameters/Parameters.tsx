@@ -49,16 +49,7 @@ export default function Parameters() {
       {currentSubMenu && <NavBar items={parametersItems} />}
       {currentSubMenuContent}
 
-      <div className='nav-bottom-section'>
-        <form onSubmit={e =>
-          apiTest(e)
-        }>
-          <button
-            className='strong-button m-r-10'
-          >
-            {translate("API Test")}
-          </button>
-        </form>
+      <div className='fixed bottom-0 right-0 p-5'>
         <form onSubmit={e =>
           saveParameters(e, true)
         }>
