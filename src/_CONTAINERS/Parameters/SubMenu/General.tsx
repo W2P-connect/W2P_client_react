@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../translation';
-import { deepMerge, useCallApi, useCallPipedriveApi } from '../../../helpers';
+import { classNames, deepMerge, useCallApi, useCallPipedriveApi } from '../../../helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
@@ -12,11 +12,13 @@ import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 import { Category, HookField, PipedriveField } from 'Types';
 import { error } from 'console';
+import ProgressBar from '_COMPONENTS/GENERAL/ProgressBar/ProgressBar';
 
 interface SyncData {
   running: boolean;
   sync_progress_users: number;
   sync_progress_orders: number;
+  last_sinced_date: Date | null
 }
 
 const Connexion = () => {
@@ -28,14 +30,39 @@ const Connexion = () => {
     running: false,
     sync_progress_users: 0,
     sync_progress_orders: 0,
+    last_sinced_date: null,
   })
 
   useEffect(() => {
-    callApi(`${appDataStore.appData.w2p_client_rest_url}/sync-progress`)
-      .then(async res => {
-        setSyncData(res?.data)
-      })
-  }, [])
+    const fetchSyncProgress = async () => {
+      try {
+        const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/sync-progress`);
+        res?.data && setSyncData({
+          ...res.data,
+          last_sinced_date: res.data?.last_sinced_date ? new Date(res.data?.last_sinced_date) : null
+        });
+      } catch (error) {
+        console.error("Error fetching sync progress:", error);
+      }
+    };
+
+    fetchSyncProgress();
+
+    let intervalId: NodeJS.Timeout;
+
+    if (syncData.running) {
+      intervalId = setInterval(() => {
+        fetchSyncProgress();
+      }, 5000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [syncData.running]);
+
 
 
   const { saveParameters } = useAppDataContext()
@@ -200,21 +227,22 @@ const Connexion = () => {
   }
 
   const syncroniseAll = () => {
-    callApi(`${appDataStore.appData.w2p_client_rest_url}/start-sync`, { method: "GET" }, null, { "re-sync": true })
-      .then(async res => {
-        addNotification({
-          "error": !res?.data?.success,
-          "content": res?.data?.message
-            ? res.data.message
-            : res?.data?.success ? "Synchronization done" : "Error during synchronization"
+    if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started"))
+      callApi(`${appDataStore.appData.w2p_client_rest_url}/start-sync`, { method: "GET" }, null, { "re-sync": true })
+        .then(async res => {
+          addNotification({
+            "error": !res?.data?.success,
+            "content": res?.data?.message
+              ? res.data.message
+              : res?.data?.success ? "Synchronization done" : "Error during synchronization"
+          })
         })
-      })
-      .catch(error => {
-        addNotification({
-          "error": true,
-          "content": translate("Wa have encountered an error, try again later")
+        .catch(error => {
+          addNotification({
+            "error": true,
+            "content": translate("Wa have encountered an error, try again later")
+          })
         })
-      })
   }
 
   return (
@@ -315,13 +343,40 @@ const Connexion = () => {
         <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
         <div className='flex gap-1'>
           <button
-            className='light-button'
+            className={classNames(
+              syncData.running ? "opacity-65 cursor-wait" : "",
+              "mt-2"
+            )}
             onClick={_ => !syncData.running && syncroniseAll()}
             disabled={syncData.running}
           >
             {translate("Synchronize all")}
           </button>
         </div>
+
+        {
+          syncData.running
+            ? <div className='mt-4'>
+              <div>
+                <div>Users synchronization progress</div>
+                <ProgressBar completed={syncData.sync_progress_users} />
+              </div>
+              <div className='mt-2'>
+                <div>Orders synchronization progress</div>
+                <ProgressBar completed={syncData.sync_progress_orders} />
+              </div>
+            </div>
+            : null
+        }
+
+        {
+          syncData.last_sinced_date
+            ? <div className='mt-4'>
+              <span className='font-semibold'>Last syncronisation : </span>
+              {syncData.last_sinced_date.toLocaleString()}
+            </div>
+            : null
+        }
       </div>
     </>
   )
