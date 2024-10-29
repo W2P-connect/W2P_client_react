@@ -14,7 +14,7 @@ function App() {
       <div className='w2p-app-content'>
         {menuContent}
       </div>
-      {/* <Popup /> */}
+      <Popup />
       <Notifications />
     </div >
   );

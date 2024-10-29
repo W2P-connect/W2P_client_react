@@ -10,7 +10,7 @@ import './navBar.css'
  * @returns 
  */
 
-interface Item {
+export interface Item {
     label: string;
     onClick: (value: any) => void;
     active: boolean;
@@ -37,14 +37,14 @@ export default function NavBar({ items }: Props) {
     }, [items, activeIndex])
 
     const navigate = (item: Item, index: number) => {
-        item.onClick(item.value)
+        item.onClick(item)
         setActiveIndex(index)
     }
 
     useEffect(() => {
         const defaultActiveItem = items.find(p => p.active)
         defaultActiveItem
-            && defaultActiveItem.onClick(defaultActiveItem.value)
+            && defaultActiveItem.onClick(defaultActiveItem)
     }, [])
 
     return (

@@ -1,10 +1,22 @@
 import { Component, useEffect, useState } from 'react'
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { classNames } from 'helpers'
 
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
+interface Option {
+    id: number
+    value: string
+    label: string
+    description?: string
+}
+
+interface SelectProps {
+    options: Option[]
+    onSelect?: (value: string) => void
+    label?: string
+    value?: string | null
+    className?: string
 }
 
 /**
@@ -19,10 +31,8 @@ export default function Select({
     label = '',
     value = null,
     className = "",
-    // required = false,
-}) {
-    const [selected, setSelected] = useState(null)
-
+}: SelectProps) {
+    const [selected, setSelected] = useState<Option | null>(null)
 
     useEffect(() => {
         if (value) {
@@ -31,12 +41,15 @@ export default function Select({
         } else {
             selectOption(options[0])
         }
-    }, [])
+    }, [value, options])
 
-    const selectOption = (option) => {
-        setSelected(option)
-        onSelect && onSelect(option.value)
+    const selectOption = (option: Option | undefined) => {
+        if (option) {
+            setSelected(option)
+            onSelect && onSelect(option.value)
+        }
     }
+
 
     return (
         <Listbox value={selected} onChange={selectOption}>

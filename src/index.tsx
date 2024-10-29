@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         let appData: AppDataType = appDataStore.emptyAppData
 
+        isLocal() && console.log("Running in local");
         if (isLocal()) {
             const appLocalizer = await axios.get(`http://w2p-bis.local/wp-json/w2p/v1/applocalizer`);
             appData = appLocalizer.data.data;
@@ -35,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         hookStore.updateHookList(appDataInit.parameters.w2p.hookList);
         pipedriveFieldsStore.setPipedriveFields(appDataInit.parameters.pipedrive.fields)
         console.log("--INIT-- :", appData);
-        isLocal() && console.log("Running in local");
 
 
         const w2pbg = document.getElementById("w2p-background");

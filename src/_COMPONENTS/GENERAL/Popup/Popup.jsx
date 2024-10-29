@@ -14,14 +14,17 @@ export default function Popup(props) {
 
   return (
     <>
-      <div
-        className={`overlay ${togglePopup ? "" : "hidden-overlapping-element"}`}
-        onClick={e => hidePopup(e)}
-      >
-        <div className="popup" style={{ maxWidth: popupContent.maxWidth }}>
-          {popupContent.content}
-        </div>
-      </div >
+      {togglePopup
+        ? <div
+          className={`overlay ${togglePopup ? "" : "hidden-overlapping-element"}`}
+          onClick={e => hidePopup(e)}
+        >
+          <div className="popup" style={{ maxWidth: popupContent.maxWidth }}>
+            {popupContent.content}
+          </div>
+        </div >
+        : null
+      }
     </>
   )
 }

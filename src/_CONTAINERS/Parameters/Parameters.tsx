@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { translate } from '../../translation'
-import NavBar from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
+import NavBar, { Item } from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { MenuContext } from '../../_CONTEXT/MenuContext'
 import { useAppDataContext } from '_CONTEXT/hook/contextHook'
 
@@ -11,6 +11,8 @@ export default function Parameters() {
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
 
   useEffect(() => {
+    console.log(currentSubMenu);
+
     if (!currentSubMenu) {
       setCurrentSubMenuPage('general') //Page par défaut
     }
@@ -19,25 +21,25 @@ export default function Parameters() {
   const parametersItems = [
     {
       label: translate("General"),
-      onClick: setCurrentSubMenuPage,
+      onClick: (item: Item) => setCurrentSubMenuPage(item.value),
       active: currentSubMenu === "general",
       value: "general",
     },
     {
       label: translate("Persons"),
-      onClick: setCurrentSubMenuPage,
+      onClick: (item: Item) => setCurrentSubMenuPage(item.value),
       active: currentSubMenu === "persons",
       value: "persons",
     },
     {
       label: translate("Organizations"),
-      onClick: setCurrentSubMenuPage,
+      onClick: (item: Item) => setCurrentSubMenuPage(item.value),
       active: currentSubMenu === "organizations",
       value: "organizations",
     },
     {
       label: translate("Deals"),
-      onClick: setCurrentSubMenuPage,
+      onClick: (item: Item) => setCurrentSubMenuPage(item.value),
       active: currentSubMenu === "deals",
       value: "deals",
     },

@@ -75,6 +75,8 @@ function MenuContextProvider(props) {
     };
 
     const setCurrentSubMenuPage = (subMenu) => {
+        console.log(subMenu);
+
         const url = new URL(window.location.href);
         if (subMenu) {
             url.searchParams.set('submenu', subMenu);

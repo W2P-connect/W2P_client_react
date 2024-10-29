@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Block, Variable as VariableType } from 'Types'
 import VariableList from './VariableList'
+import { hookStore } from '_STORES/Hooks'
 
 export const emptyBlock: Block = {
     variables: [],
@@ -33,6 +34,10 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
 
     const { addPopupContent, showPopup } = useContext(PopupContext)
     const [block, setBlock] = useState<Block>(emptyBlock)
+
+    const selectedHook = hookStore.selectedHookId
+    ? hookStore.getHook(hookStore.selectedHookId)
+    : null
 
     useEffect(() => {
         defautBlock && setBlock(defautBlock)
@@ -64,7 +69,7 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
     }
 
     const addElement = () => {
-        addPopupContent(<MetaKeysCategories onSelect={addVariables} />)
+        addPopupContent(<MetaKeysCategories onSelect={addVariables} source={selectedHook?.source} />)
     }
 
     return (

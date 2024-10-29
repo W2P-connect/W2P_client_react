@@ -56,7 +56,7 @@ interface PersonsConfig {
     defaultEmailAsName: boolean;
 }
 
-type MetaKeySources =
+export type MetaKeySources =
     "order"
     | "user"
     | "product"
@@ -69,6 +69,7 @@ export interface MetaKeyCategory {
     label: string
     subcategories: Subcategories[]
     toolTip: string | null
+    allowedSource: string[]
 }
 
 export interface Subcategories {
@@ -135,10 +136,11 @@ export type Variable = {
     id: string;
     exemple?: string;
     isFreeField: boolean;
-    source?: MetaKeySources
+    source?: MetaKeySources | null
     label?: string
     description?: string
     value: string;
+    isCustomMetaKey?: boolean
 }
 
 export type Block = {

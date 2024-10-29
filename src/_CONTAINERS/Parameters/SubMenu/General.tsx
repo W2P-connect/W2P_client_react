@@ -18,7 +18,15 @@ interface SyncData {
   running: boolean;
   sync_progress_users: number;
   sync_progress_orders: number;
-  last_sinced_date: Date | null
+  last_sinced_date: Date | null;
+  sync_additional_datas: {
+    total_users: number;
+    current_user: number;
+    current_user_index: number;
+    total_orders: number;
+    current_order: number;
+    current_order_index: number;
+  }
 }
 
 const Connexion = () => {
@@ -30,17 +38,39 @@ const Connexion = () => {
     running: false,
     sync_progress_users: 0,
     sync_progress_orders: 0,
+    sync_additional_datas: {
+      total_users: 0,
+      current_user: 0,
+      current_user_index: 0,
+      total_orders: 0,
+      current_order: 0,
+      current_order_index: 0,
+    },
     last_sinced_date: null,
   })
+
+  const [endedNow, setEndedNow] = useState(false)
 
   useEffect(() => {
     const fetchSyncProgress = async () => {
       try {
-        const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/sync-progress`);
-        res?.data && setSyncData({
-          ...res.data,
-          last_sinced_date: res.data?.last_sinced_date ? new Date(res.data?.last_sinced_date) : null
-        });
+        const res = await callApi(
+          `${appDataStore.appData.w2p_client_rest_url}/sync-progress`,
+          { method: "GET" },
+          null,
+          { time: new Date().getTime() }
+        );
+        if (res?.data) {
+
+          if (!res.data.running && syncData.running) {
+            setEndedNow(true)
+          }
+          setSyncData(prv => ({
+            ...prv,
+            ...res.data,
+            last_sinced_date: res.data?.last_sinced_date ? new Date(res.data?.last_sinced_date) : null,
+          }));
+        }
       } catch (error) {
         console.error("Error fetching sync progress:", error);
       }
@@ -53,7 +83,7 @@ const Connexion = () => {
     if (syncData.running) {
       intervalId = setInterval(() => {
         fetchSyncProgress();
-      }, 5000);
+      }, 8000);
     }
 
     return () => {
@@ -226,9 +256,21 @@ const Connexion = () => {
     appDataStore.setPipedriveParameter("company_domain", fomatedValue)
   }
 
-  const syncroniseAll = () => {
-    if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started"))
-      callApi(`${appDataStore.appData.w2p_client_rest_url}/start-sync`, { method: "GET" }, null, { "re-sync": true })
+  const syncroniseAll = (retry: boolean) => {
+    if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started")) {
+
+      setTimeout(() => {
+        setSyncData(prv => ({
+          ...prv, running: true,
+        }))
+      }, 1000)
+
+      callApi(
+        `${appDataStore.appData.w2p_client_rest_url}/start-sync`,
+        { method: "GET" },
+        null,
+        { "re-sync": true, "retry": retry, time: new Date().getTime() }
+      )
         .then(async res => {
           addNotification({
             "error": !res?.data?.success,
@@ -243,6 +285,7 @@ const Connexion = () => {
             "content": translate("Wa have encountered an error, try again later")
           })
         })
+    }
   }
 
   return (
@@ -347,7 +390,7 @@ const Connexion = () => {
               syncData.running ? "opacity-65 cursor-wait" : "",
               "mt-2"
             )}
-            onClick={_ => !syncData.running && syncroniseAll()}
+            onClick={_ => !syncData.running && syncroniseAll(false)}
             disabled={syncData.running}
           >
             {translate("Synchronize all")}
@@ -355,16 +398,29 @@ const Connexion = () => {
         </div>
 
         {
-          syncData.running
+          syncData.running || endedNow
             ? <div className='mt-4'>
               <div>
-                <div>Users synchronization progress</div>
-                <ProgressBar completed={syncData.sync_progress_users} />
+                <div>Users synchronization progress {`${syncData.sync_additional_datas.current_user_index} / ${syncData.sync_additional_datas.total_users}`}</div>
+                <ProgressBar completed={parseInt(((syncData.sync_additional_datas.current_user_index / syncData.sync_additional_datas.total_users) * 100).toFixed(0))} />
               </div>
               <div className='mt-2'>
-                <div>Orders synchronization progress</div>
-                <ProgressBar completed={syncData.sync_progress_orders} />
+                <div>Orders synchronization progress {`${syncData.sync_additional_datas.current_order_index} / ${syncData.sync_additional_datas.total_orders}`}</div>
+                <ProgressBar completed={parseInt(((syncData.sync_additional_datas.current_order_index / syncData.sync_additional_datas.total_orders) * 100).toFixed(0))} />
               </div>
+
+              {syncData.running
+                ? <div className='mt-4'>
+                  <p>{translate("If the synchronization appears to be stuck for several minutes, you can try restarting it")}</p>
+                  <button
+                    onClick={_ => syncroniseAll(true)}
+                    className='mt-2'
+                  >
+                    {translate("Restart Synchronization")}
+                  </button>
+                </div>
+                : null
+              }
             </div>
             : null
         }
