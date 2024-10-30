@@ -18,6 +18,7 @@ interface SyncData {
   running: boolean;
   sync_progress_users: number;
   sync_progress_orders: number;
+  last_heartbeat: string;
   last_sinced_date: Date | null;
   sync_additional_datas: {
     total_users: number;
@@ -44,6 +45,7 @@ const Connexion = () => {
     running: false,
     sync_progress_users: 0,
     sync_progress_orders: 0,
+    last_heartbeat: "",
     sync_additional_datas: {
       total_users: 0,
       current_user: 0,
@@ -404,7 +406,7 @@ const Connexion = () => {
         </div>
 
         {
-          syncData.running || syncData.sync_progress_users === 100 || syncData.sync_progress_orders === 100
+          syncData.running || syncData.last_heartbeat
             ? <div className='mt-4'>
               <div >
                 <div className='mb-2'>
