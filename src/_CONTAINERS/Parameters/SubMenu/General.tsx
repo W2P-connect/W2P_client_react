@@ -22,10 +22,16 @@ interface SyncData {
   sync_additional_datas: {
     total_users: number;
     current_user: number;
-    current_user_index: number;
     total_orders: number;
     current_order: number;
+    current_user_index: number;
     current_order_index: number;
+    total_person_errors: number;
+    total_person_uptodate: number;
+    total_person_done: number;
+    total_order_errors: number;
+    total_order_uptodate: number;
+    total_order_done: number;
   }
 }
 
@@ -41,15 +47,19 @@ const Connexion = () => {
     sync_additional_datas: {
       total_users: 0,
       current_user: 0,
-      current_user_index: 0,
       total_orders: 0,
       current_order: 0,
+      current_user_index: 0,
       current_order_index: 0,
+      total_person_errors: 0,
+      total_person_uptodate: 0,
+      total_person_done: 0,
+      total_order_errors: 0,
+      total_order_uptodate: 0,
+      total_order_done: 0,
     },
     last_sinced_date: null,
   })
-
-  const [endedNow, setEndedNow] = useState(false)
 
   useEffect(() => {
     const fetchSyncProgress = async () => {
@@ -61,10 +71,6 @@ const Connexion = () => {
           { time: new Date().getTime() }
         );
         if (res?.data) {
-
-          if (!res.data.running && syncData.running) {
-            setEndedNow(true)
-          }
           setSyncData(prv => ({
             ...prv,
             ...res.data,
@@ -398,14 +404,34 @@ const Connexion = () => {
         </div>
 
         {
-          syncData.running || endedNow
+          syncData.running || syncData.sync_progress_users === 100 || syncData.sync_progress_orders === 100
             ? <div className='mt-4'>
-              <div>
-                <div>Users synchronization progress {`${syncData.sync_additional_datas.current_user_index} / ${syncData.sync_additional_datas.total_users}`}</div>
+              <div >
+                <div className='mb-2'>
+                  <Tooltip
+                    tooltipText={
+                      <div className='text-center'>
+                        {`Errors during sync: ${syncData.sync_additional_datas.total_person_errors}`}
+                      </div>
+                    }
+                    mainText={<div>Users synchronization progress {`${syncData.sync_additional_datas.current_user_index} / ${syncData.sync_additional_datas.total_users}`}</div>
+                    }
+                  />
+                </div>
                 <ProgressBar completed={parseInt(((syncData.sync_additional_datas.current_user_index / syncData.sync_additional_datas.total_users) * 100).toFixed(0))} />
               </div>
-              <div className='mt-2'>
-                <div>Orders synchronization progress {`${syncData.sync_additional_datas.current_order_index} / ${syncData.sync_additional_datas.total_orders}`}</div>
+              <div className='mt-4'>
+                <div className='mb-2'>
+                  <Tooltip
+                    tooltipText={
+                      <div className='text-center'>
+                        {`Errors during sync: ${syncData.sync_additional_datas.total_order_errors}`}
+                      </div>
+                    }
+                    mainText={<div>Users synchronization progress {`${syncData.sync_additional_datas.current_order_index} / ${syncData.sync_additional_datas.total_orders}`}</div>
+                    }
+                  />
+                </div>
                 <ProgressBar completed={parseInt(((syncData.sync_additional_datas.current_order_index / syncData.sync_additional_datas.total_orders) * 100).toFixed(0))} />
               </div>
 

@@ -28,16 +28,17 @@ interface Props {
     setter: (block: Block) => void;
     deleter?: (id: Block['id']) => void;
     showExemple?: boolean
+    source?: null
 }
 
-export default function VariableBlock({ defautBlock, setter, deleter, showExemple = true }: Props) {
+export default function VariableBlock({ defautBlock, setter, deleter, showExemple = true, source = null }: Props) {
 
     const { addPopupContent, showPopup } = useContext(PopupContext)
     const [block, setBlock] = useState<Block>(emptyBlock)
 
     const selectedHook = hookStore.selectedHookId
-    ? hookStore.getHook(hookStore.selectedHookId)
-    : null
+        ? hookStore.getHook(hookStore.selectedHookId)
+        : null
 
     useEffect(() => {
         defautBlock && setBlock(defautBlock)
@@ -69,7 +70,7 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
     }
 
     const addElement = () => {
-        addPopupContent(<MetaKeysCategories onSelect={addVariables} source={selectedHook?.source} />)
+        addPopupContent(<MetaKeysCategories onSelect={addVariables} source={source || selectedHook?.source} />)
     }
 
     return (

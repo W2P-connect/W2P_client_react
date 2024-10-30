@@ -46,15 +46,28 @@ export default function CustomMetakeys({ onSelect, source }: Props) {
                                 id: 1,
                                 value: "user",
                                 label: "User",
-                                description: "Select this if your custom meta is saved in user_meta table"
+                                description: "Select this option if your custom meta is stored in the user_meta table, associated with individual users."
                             },
                             {
                                 id: 2,
                                 value: "order",
-                                label: "Post",
-                                description: "Select this if your custom meta is saved in post_meta table"
+                                label: "Order",
+                                description: "Select this option if your custom meta is stored in the wc_orders_meta or post_meta table, linked specifically to customer orders."
                             },
-                        ]}
+                            {
+                                id: 3,
+                                value: "product",
+                                label: "Product",
+                                description: "Select this option if your custom meta is stored in the post_meta table, linked specifically to WooCommerce products."
+                            },
+                        ]
+                            .filter(option => {
+                                if (source === option.value) {
+                                    return true
+                                }
+                                return false
+                            })
+                        }
                         value={sourceState}
                         label='Metakey location'
                         onSelect={value => setSourceState(value as MetaKeySources)}

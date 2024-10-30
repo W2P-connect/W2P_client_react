@@ -47,6 +47,7 @@ export default function Deals() {
               defautBlock={options.defaultOrderName}
               setter={(value) => updateOption("defaultOrderName", value)}
               showExemple={false}
+              source={"order"}
             />
           </form>
 
@@ -112,6 +113,7 @@ export default function Deals() {
                 <VariableBlock
                   defautBlock={options.productsName}
                   setter={(value) => updateOption("productsName", value)}
+                  source={"product"}
                 />
               </div>
               <div>
@@ -119,6 +121,7 @@ export default function Deals() {
                 <VariableBlock
                   defautBlock={options.productsComment}
                   setter={(value) => updateOption("productsComment", value)}
+                  source={"product"}
                 />
               </div>
             </div>
