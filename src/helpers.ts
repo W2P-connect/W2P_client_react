@@ -19,6 +19,7 @@ export const useCallApi = () => {
      * @param {AbortSignal | null} abortSignal - AbortController's signal to cancel the request (optional)
      * @param {Object} data - Data to send in the request body (optional)
      * @param {React.FormEvent | null} e - Form event (optional)
+     * @param {boolean | null} toW2pPlugin - Is to w2p plugin ? default true (optional)
      * @returns {Promise<AxiosResponse<any>> | null}
      */
     const callApi = async (
@@ -26,7 +27,8 @@ export const useCallApi = () => {
         options: AxiosRequestConfig = { method: 'get' },
         abortSignal: AbortSignal | null = null,
         data: Record<string, any> | null = {},
-        e: React.FormEvent | null = null
+        e: React.FormEvent | null = null,
+        toW2pPlugin: boolean = true
     ): Promise<AxiosResponse<any> | null> => {
         e && e.preventDefault()
         const submitter = (e?.nativeEvent as SubmitEvent)?.submitter as HTMLElement | null;
@@ -37,12 +39,17 @@ export const useCallApi = () => {
                 const APIoptions: AxiosRequestConfig = {
                     ...options,
                     headers: {
-                        Authorization: `Bearer ${appData.token}`,
                         ...options.headers,
                     },
                     signal: abortSignal ?? undefined,
                     url: url,
                 };
+
+                if (isLocal()) {
+                    APIoptions.headers && (APIoptions.headers.Authorization = `Bearer ${appData.token}`)
+                } else {
+                    APIoptions.headers && toW2pPlugin && (APIoptions.headers['X-WP-Nonce'] = appData.nonce)
+                }
 
                 if (options.method?.toLowerCase() === "get") {
                     APIoptions.params = data;
@@ -81,8 +88,6 @@ export const useCallApi = () => {
 export const useCallPipedriveApi = () => {
     const callApi = useCallApi();
     const appData = appDataStore.appData
-    const { addNotification } = useNotification();
-
 
     // Define the function with proper TypeScript types
     const callPipedriveApi = (

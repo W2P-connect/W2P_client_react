@@ -14,6 +14,7 @@ export interface AppData {
     w2p_client_rest_url: string,
     w2p_distant_rest_url: string,
     token: string,
+    nonce: string,
 }
 
 export interface Parameters {

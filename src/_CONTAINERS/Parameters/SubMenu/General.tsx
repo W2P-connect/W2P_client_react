@@ -88,11 +88,9 @@ const Connexion = () => {
 
     let intervalId: NodeJS.Timeout;
 
-    if (syncData.running) {
-      intervalId = setInterval(() => {
-        fetchSyncProgress();
-      }, 8000);
-    }
+    intervalId = setInterval(() => {
+      fetchSyncProgress();
+    }, syncData.running ? 8000 : 20 * 1000);
 
     return () => {
       if (intervalId) {
@@ -100,8 +98,6 @@ const Connexion = () => {
       }
     };
   }, [syncData.running]);
-
-
 
   const { saveParameters } = useAppDataContext()
   const { addNotification } = useNotification()
@@ -121,7 +117,7 @@ const Connexion = () => {
     callApi(`${appDataStore.appData.w2p_distant_rest_url}/authentification`, { method: 'get' }, null, {
       domain: appDataStore.appData.parameters.w2p.domain,
       api_key: appDataStore.appData.parameters.w2p.api_key,
-    }, e)
+    }, e, false)
       .then(async res => {
         addNotification({ error: false, content: translate(res?.data?.message) })
         await saveParameters(e, false)
@@ -267,11 +263,27 @@ const Connexion = () => {
   const syncroniseAll = (retry: boolean) => {
     if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started")) {
 
-      setTimeout(() => {
-        setSyncData(prv => ({
-          ...prv, running: true,
-        }))
-      }, 1000)
+      setSyncData(prv => ({
+        ...prv,
+        running: true,
+        sync_progress_users: 0,
+        sync_progress_orders: 0,
+        last_heartbeat: "",
+        sync_additional_datas: {
+          total_users: 0,
+          current_user: 0,
+          total_orders: 0,
+          current_order: 0,
+          current_user_index: 0,
+          current_order_index: 0,
+          total_person_errors: 0,
+          total_person_uptodate: 0,
+          total_person_done: 0,
+          total_order_errors: 0,
+          total_order_uptodate: 0,
+          total_order_done: 0,
+        },
+      }))
 
       callApi(
         `${appDataStore.appData.w2p_client_rest_url}/start-sync`,
@@ -430,7 +442,7 @@ const Connexion = () => {
                         {`Errors during sync: ${syncData.sync_additional_datas.total_order_errors}`}
                       </div>
                     }
-                    mainText={<div>Users synchronization progress {`${syncData.sync_additional_datas.current_order_index} / ${syncData.sync_additional_datas.total_orders}`}</div>
+                    mainText={<div>Orders synchronization progress {`${syncData.sync_additional_datas.current_order_index} / ${syncData.sync_additional_datas.total_orders}`}</div>
                     }
                   />
                 </div>

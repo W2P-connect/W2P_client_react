@@ -136,6 +136,7 @@ class AppDataStore {
         w2p_client_rest_url: '',
         w2p_distant_rest_url: '',
         token: '',
+        nonce: '',
     }
 
     initAppData: AppData = deepCopy(this.emptyAppData)

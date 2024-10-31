@@ -23,6 +23,7 @@
 
 .w2p-query-main-datas>div {
     padding: 0 5px;
+    white-space: normal !important;
 }
 
 
