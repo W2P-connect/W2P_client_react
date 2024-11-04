@@ -77,6 +77,8 @@ const Connexion = () => {
             ...prv,
             ...res.data,
             last_sinced_date: res.data?.last_sinced_date ? new Date(res.data?.last_sinced_date) : null,
+            running: 1
+
           }));
         }
       } catch (error) {
@@ -102,25 +104,30 @@ const Connexion = () => {
   const { saveParameters } = useAppDataContext()
   const { addNotification } = useNotification()
 
-  const checkPipedriveApi = (e: FormEvent) => {
+  const checkPipedriveApi = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {
     e.preventDefault()
-    callPipedriveApi("dealFields", null, null, null, e)
+    return callPipedriveApi("dealFields", null, null, null, e)
       .then(async _ => {
-        addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
+        notification && addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
         await saveParameters(e, false)
+        return true  // Ajoute un return ici pour garantir un type de retour boolean
       })
-      .catch(_ => addNotification({ error: true, content: translate("Connection failed. Please check the API key or company domain.") }))
+      .catch(_ => {
+        addNotification({ error: true, content: translate("Connection to Pipedrive failed. Please check the API key or company domain.") })
+        return false
+      })
   }
 
-  const checkW2pAPI = (e: FormEvent) => {
+  const checkW2pAPI = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {
     e.preventDefault()
-    callApi(`${appDataStore.appData.w2p_distant_rest_url}/authentification`, { method: 'get' }, null, {
+    return callApi(`${appDataStore.appData.w2p_distant_rest_url}/authentification`, { method: 'get' }, null, {
       domain: appDataStore.appData.parameters.w2p.domain,
       api_key: appDataStore.appData.parameters.w2p.api_key,
     }, e, false)
       .then(async res => {
-        addNotification({ error: false, content: translate(res?.data?.message) })
+        notification && addNotification({ error: false, content: translate(res?.data?.message) })
         await saveParameters(e, false)
+        return true
       })
       .catch(res => {
         if (res?.response?.request?.status === 500) {
@@ -128,6 +135,7 @@ const Connexion = () => {
         } else {
           addNotification({ error: true, content: translate(res?.response?.data?.message ?? 'An error occured') })
         }
+        return false
       }
       )
   }
@@ -143,16 +151,19 @@ const Connexion = () => {
       translate("Loading the default settings will overwrite some of your parameters. Do you wish to continue ?")
     )) {
 
-      await loadAllPipedriveFields(e)
+      const pipeOk = await checkPipedriveApi(e, false)
+      if (pipeOk) {
+        await loadAllPipedriveFields(e)
 
-      setupHooks();
+        setupHooks();
 
-      const newAppDataStore = appDataStore.appData
-      newAppDataStore.parameters.w2p.deal = appDataStore.defaultW2Pparameters.deal
+        const newAppDataStore = appDataStore.appData
+        newAppDataStore.parameters.w2p.deal = appDataStore.defaultW2Pparameters.deal
 
-      appDataStore.setAppData(newAppDataStore)
-      saveParameters(e, false)
-        .then(_ => addNotification({ error: false, content: translate("Default parameters loaded.") }))
+        appDataStore.setAppData(newAppDataStore)
+        saveParameters(e, false)
+          .then(_ => addNotification({ error: false, content: translate("Default parameters loaded.") }))
+      }
     }
   }
 
@@ -260,51 +271,55 @@ const Connexion = () => {
     appDataStore.setPipedriveParameter("company_domain", fomatedValue)
   }
 
-  const syncroniseAll = (retry: boolean) => {
+  const syncroniseAll = async (e: FormEvent, retry: boolean) => {
     if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started")) {
 
-      setSyncData(prv => ({
-        ...prv,
-        running: true,
-        sync_progress_users: 0,
-        sync_progress_orders: 0,
-        last_heartbeat: "",
-        sync_additional_datas: {
-          total_users: 0,
-          current_user: 0,
-          total_orders: 0,
-          current_order: 0,
-          current_user_index: 0,
-          current_order_index: 0,
-          total_person_errors: 0,
-          total_person_uptodate: 0,
-          total_person_done: 0,
-          total_order_errors: 0,
-          total_order_uptodate: 0,
-          total_order_done: 0,
-        },
-      }))
+      const w2pOk = await checkW2pAPI(e, false)
+      const pipeOk = await checkPipedriveApi(e, false)
 
-      callApi(
-        `${appDataStore.appData.w2p_client_rest_url}/start-sync`,
-        { method: "GET" },
-        null,
-        { "re-sync": true, "retry": retry, time: new Date().getTime() }
-      )
-        .then(async res => {
-          addNotification({
-            "error": !res?.data?.success,
-            "content": res?.data?.message
-              ? res.data.message
-              : res?.data?.success ? "Synchronization done" : "Error during synchronization"
+      if (w2pOk && pipeOk) {
+        callApi(
+          `${appDataStore.appData.w2p_client_rest_url}/start-sync`,
+          { method: "GET" },
+          null,
+          { "re-sync": true, "retry": retry, time: new Date().getTime() }
+        )
+          .then(async res => {
+            setSyncData(prv => ({
+              ...prv,
+              running: true,
+              sync_progress_users: 0,
+              sync_progress_orders: 0,
+              last_heartbeat: "",
+              sync_additional_datas: {
+                total_users: 0,
+                current_user: 0,
+                total_orders: 0,
+                current_order: 0,
+                current_user_index: 0,
+                current_order_index: 0,
+                total_person_errors: 0,
+                total_person_uptodate: 0,
+                total_person_done: 0,
+                total_order_errors: 0,
+                total_order_uptodate: 0,
+                total_order_done: 0,
+              },
+            }))
+            addNotification({
+              "error": !res?.data?.success,
+              "content": res?.data?.message
+                ? res.data.message
+                : res?.data?.success ? "Synchronization has started" : "Failed to start synchronization"
+            })
           })
-        })
-        .catch(error => {
-          addNotification({
-            "error": true,
-            "content": translate("Wa have encountered an error, try again later")
+          .catch(error => {
+            addNotification({
+              "error": true,
+              "content": translate("Wa have encountered an error, try again later")
+            })
           })
-        })
+      }
     }
   }
 
@@ -403,19 +418,31 @@ const Connexion = () => {
       <div className='m-t-100'>
         <h2>Synchronize all existing data with Pipedrive</h2>
         <p className='m-b-10'>{translate(`This action will synchronize all orders and users from your site with Pipedrive. To prevent system overload, the synchronization process may take several hours depending on the number of items being sent to Pipedrive.`)}</p>
-        <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
-        <div className='flex gap-1'>
-          <button
-            className={classNames(
-              syncData.running ? "opacity-65 cursor-wait" : "",
-              "mt-2"
-            )}
-            onClick={_ => !syncData.running && syncroniseAll(false)}
-            disabled={syncData.running}
-          >
-            {translate("Synchronize all")}
-          </button>
-        </div>
+        {syncData.running
+          ? <div className='mt-4'>
+            <p>{translate("If the synchronization appears to be stuck for several minutes, you can try restarting it")}</p>
+            <form onSubmit={e => !syncData.running && syncroniseAll(e, true)}>
+              <button className='mt-2'>
+                {translate("Restart Synchronization")}
+              </button>
+            </form>
+          </div>
+          : <>
+            <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
+            <div className='flex gap-1'>
+              <form onSubmit={e => !syncData.running && syncroniseAll(e, false)}>
+                <button
+                  className={classNames(
+                    syncData.running ? "opacity-65 cursor-wait" : "",
+                    "mt-2"
+                  )}
+                >
+                  {translate("Synchronize all")}
+                </button>
+              </form>
+            </div>
+          </>
+        }
 
         {
           syncData.running || syncData.last_heartbeat
@@ -432,7 +459,7 @@ const Connexion = () => {
                     }
                   />
                 </div>
-                <ProgressBar completed={parseInt(((syncData.sync_additional_datas.current_user_index / syncData.sync_additional_datas.total_users) * 100).toFixed(0))} />
+                <ProgressBar completed={syncData.sync_progress_users} />
               </div>
               <div className='mt-4'>
                 <div className='mb-2'>
@@ -446,21 +473,8 @@ const Connexion = () => {
                     }
                   />
                 </div>
-                <ProgressBar completed={parseInt(((syncData.sync_additional_datas.current_order_index / syncData.sync_additional_datas.total_orders) * 100).toFixed(0))} />
+                <ProgressBar completed={syncData.sync_progress_orders} />
               </div>
-
-              {syncData.running
-                ? <div className='mt-4'>
-                  <p>{translate("If the synchronization appears to be stuck for several minutes, you can try restarting it")}</p>
-                  <button
-                    onClick={_ => syncroniseAll(true)}
-                    className='mt-2'
-                  >
-                    {translate("Restart Synchronization")}
-                  </button>
-                </div>
-                : null
-              }
             </div>
             : null
         }

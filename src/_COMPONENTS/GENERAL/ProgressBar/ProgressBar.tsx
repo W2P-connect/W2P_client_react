@@ -12,7 +12,7 @@ export default function ProgressBar({ completed }: ProgressBarProps) {
                     className="progress-fill"
                     style={{ width: `${completed}%` }}
                 >
-                    <span className="progress-text px-4">{`${completed}%`}</span>
+                    <span className="progress-text px-2">{`${completed}%`}</span>
                     {completed < 100 ? <div className="highlight"></div> : null}
                 </div>
             </div>

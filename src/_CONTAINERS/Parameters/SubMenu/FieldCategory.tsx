@@ -50,8 +50,6 @@ const FieldCategory = ({ category }: { category: Category }) => {
         })
 
         .catch(error => {
-          console.log(error);
-
           addNotification({
             error: true,
             content: translate("Pipedrive has encountered an error, make sure you have configured it correctly")

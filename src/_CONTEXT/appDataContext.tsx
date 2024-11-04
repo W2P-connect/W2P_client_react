@@ -1,14 +1,13 @@
 import React, { createContext } from 'react';
 import { useCallApi } from '../helpers';
 import { translate } from 'translation';
-import { Hook, HookField, Parameters } from 'Types';
+import { Hook, HookField, Parameters, ParametersForBackend } from 'Types';
 import { useNotification } from './hook/contextHook';
 import { appDataStore } from '_STORES/AppData';
 import { isAxiosError } from 'axios';
 
 export interface AppDataContextType {
     saveParameters: (e?: React.FormEvent, notification?: boolean) => Promise<void>;
-    apiTest: (e?: React.FormEvent) => void;
 }
 
 
@@ -46,16 +45,30 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
             JSON.stringify(appDataStore.initAppData.parameters) !==
             JSON.stringify((appDataStore.getAppData().parameters))
         ) {
-            const newParameters = { parameters: appDataStore.getAppData().parameters }
 
-            newParameters.parameters.w2p.hookList = newParameters.parameters.w2p.hookList.filter(hook => hook.enabled)
-            newParameters.parameters.w2p.hookList = newParameters.parameters.w2p.hookList.map(hook => ({
+            const newParameters: ParametersForBackend = {
+                ...appDataStore.getAppData().parameters,
+                w2p: {
+                    ...appDataStore.getAppData().parameters.w2p,
+                    hookList: appDataStore.getAppData().parameters.w2p.hookList.map(hook => ({
+                        ...hook,
+                        fields: hook.fields.map(field => ({
+                            ...field,
+                            pipedrive: undefined // ou simplement ne pas inclure `pipedrive`
+                        }))
+                    }))
+                }
+            };
+
+            newParameters.w2p.hookList = newParameters.w2p.hookList.map(hook => ({
                 ...hook,
-                fields: hook.fields.filter(field => field.enabled || field.value)
+                fields: hook.fields
+                    .filter(field => field.enabled || field.value)
             }))
+            newParameters.w2p.hookList = newParameters.w2p.hookList.filter(hook => hook.enabled || (hook.fields && hook.fields.length))
 
             try {
-                const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, newParameters, e);
+                const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: newParameters }, e);
                 notification && addNotification({
                     error: false,
                     content: translate(res?.data.message),
@@ -85,15 +98,9 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
         }
     };
 
-    const apiTest = (e: React.FormEvent | null = null) => {
-        e && e.preventDefault();
-        callApi(`${appDataStore.appData.w2p_client_rest_url}/tests`, { method: "get" }, null, null, e);
-    };
-
     return (
         <AppDataContext.Provider value={{
             saveParameters,
-            apiTest,
         }}>
             {props.children}
         </AppDataContext.Provider>

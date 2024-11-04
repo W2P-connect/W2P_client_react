@@ -30,6 +30,7 @@
 
 .progress-text {
     z-index: 2;
+    line-height: 20px;
 }
 
 .highlight {

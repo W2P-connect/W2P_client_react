@@ -22,6 +22,15 @@ export interface Parameters {
     w2p: W2pParameters
 }
 
+export interface W2pParametersForBackend extends Omit<W2pParameters, 'hookList'> {
+    hookList: Array<Omit<Hook, 'fields'> & { fields: BaseHookField[] }>
+}
+
+export interface ParametersForBackend extends Omit<Parameters, 'w2p'> {
+    w2p: W2pParametersForBackend;
+    pipedrive: PipedriveParameters;
+}
+
 export interface PipedriveParameters {
     api_key: string
     company_domain: string

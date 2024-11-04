@@ -7,7 +7,7 @@ import { useAppDataContext } from '_CONTEXT/hook/contextHook'
 
 export default function Parameters() {
 
-  const { saveParameters, apiTest } = useAppDataContext()
+  const { saveParameters } = useAppDataContext()
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
 
   useEffect(() => {

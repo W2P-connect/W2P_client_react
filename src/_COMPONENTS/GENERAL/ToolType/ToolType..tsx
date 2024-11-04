@@ -92,9 +92,10 @@ const Tooltip: React.FC<TooltipProps> = ({ tooltipText, mainText }) => {
                 <div
                     ref={tooltipRef}
                     className={classNames(
-                        "absolute mt-2 max-w-96 !min-w-72 bg-black text-white text-sm rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50",
-                        show ? "opacity-100 z-10" : "opacity-0 -z-10"
+                        "absolute mt-2 max-w-96 !min-w-72 bg-black text-white text-sm rounded-lg shadow-lg transition-opacity duration-300 z-50",
+                        show ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 invisible pointer-events-none"
                     )}
+
                     style={tooltipStyles}
                 >
                     <div className="px-3 py-2 text-xs">{tooltipText}</div>

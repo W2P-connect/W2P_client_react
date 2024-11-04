@@ -28,16 +28,18 @@ class PipedriveFieldStore {
     }
 
     addPipedriveFields(PipedriveFields: PipedriveField[]) {
-        const fields = PipedriveFields.filter(field =>
-            this.isFieldValid(field) && !this.getPiepdriveField(field.id)
-        )
+        this.fields = this.fields.filter(existingField =>
+            !PipedriveFields.some(newField => newField.id === existingField.id)
+        );
+        const fieldsToAdd = PipedriveFields.filter(field => this.isFieldValid(field));
 
         runInAction(() => {
-            this.fields = [...this.fields, ...fields]
-        })
+            this.fields = [...this.fields, ...fieldsToAdd];
+        });
 
-        return fields
+        return fieldsToAdd;
     }
+
 
     addPipedriveField(pipedriveField: PipedriveField) {
         if (!this.getPiepdriveField(pipedriveField.id)) {

@@ -23,7 +23,7 @@ class HookStore {
                 "status": {
                     value: "open",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -31,7 +31,7 @@ class HookStore {
                 "status": {
                     value: "open",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -39,7 +39,7 @@ class HookStore {
                 "status": {
                     value: "open",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -47,7 +47,7 @@ class HookStore {
                 "status": {
                     value: "open",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -55,7 +55,7 @@ class HookStore {
                 "status": {
                     value: "won",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -63,7 +63,7 @@ class HookStore {
                 "status": {
                     value: "won",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -71,7 +71,7 @@ class HookStore {
                 "status": {
                     value: "lost",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -79,7 +79,7 @@ class HookStore {
                 "status": {
                     value: "lost",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -87,7 +87,7 @@ class HookStore {
                 "status": {
                     value: "lost",
                     condition: {
-                        SkipOnExist: true
+                        SkipOnExist: false
                     }
                 },
             },
@@ -460,8 +460,6 @@ class HookStore {
     /********** HOOK FIELDS ***********/
 
     updateHookFieldsFromPipedriveFields(pipedriveFields: PipedriveField[]): void {
-        console.log("this.hooks", toJS(this.hooks));
-
         this.hooks.forEach((hook, idx) => {
             this.addHookFieldsFromPipedrive(hook.id, pipedriveFields, idx)
         })
@@ -483,9 +481,9 @@ class HookStore {
         if (pipedriveFieldsStore.isFieldValid(pipedriveField)) {
             const hIdx = hookIndex ?? hookStore.getHookIndex(hookId);
 
-            const isExistingField = this.hooks[hIdx].fields.find(field => field.pipedriveFieldId === pipedriveField.id)
+            const existingField = this.hooks[hIdx].fields.find(field => field.pipedriveFieldId === pipedriveField.id)
 
-            if (!isExistingField) {
+            if (!existingField) {
                 const newHookField: HookField = {
                     ...this.emptyHookField,
                     id: uuidv4(),
@@ -495,11 +493,20 @@ class HookStore {
                 };
 
                 runInAction(() => {
-                    this.hooks[hIdx].fields.push(deepCopy(newHookField)); // Ajouter une copie du nouveau champ
+                    this.hooks[hIdx].fields.push(deepCopy(newHookField));
                     return newHookField;
                 })
             } else {
-                return null;
+                runInAction(() => {
+                    this.hooks[hIdx].fields = this.hooks[hIdx].fields.map(field =>
+                        field.pipedriveFieldId === pipedriveField.id
+                            ? { ...field, pipedrive: deepCopy(pipedriveField) }
+                            : field
+                    );
+                });
+
+                return existingField;
+
             }
         }
         return null;
