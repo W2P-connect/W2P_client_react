@@ -209,14 +209,14 @@ class HookStore {
                             "variables": [
                                 {
                                     "value": "billing_first_name",
-                                    "source": "order",
+                                    "source": "user",
                                     "exemple": "John",
                                     "isFreeField": false,
                                     "id": "51aff9bd-d8d0-4eb8-906d-c9252f69f75b"
                                 },
                                 {
                                     "value": "billing_last_name",
-                                    "source": "order",
+                                    "source": "user",
                                     "exemple": "Doe",
                                     "isFreeField": false,
                                     "id": "f8c6de80-9964-46bd-b88a-c70e306b457b"
@@ -288,14 +288,14 @@ class HookStore {
                             "variables": [
                                 {
                                     "value": "billing_first_name",
-                                    "source": "order",
+                                    "source": "user",
                                     "exemple": "John",
                                     "isFreeField": false,
                                     "id": "51aff9bd-d8d0-4eb8-906d-c9252f69f75b"
                                 },
                                 {
                                     "value": "billing_last_name",
-                                    "source": "order",
+                                    "source": "user",
                                     "exemple": "Doe",
                                     "isFreeField": false,
                                     "id": "f8c6de80-9964-46bd-b88a-c70e306b457b"
