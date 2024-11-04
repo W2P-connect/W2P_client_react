@@ -7,7 +7,7 @@ import { appDataStore } from '_STORES/AppData';
 import { isAxiosError } from 'axios';
 
 export interface AppDataContextType {
-    saveParameters: (e?: React.FormEvent, notification?: boolean) => Promise<void>;
+    saveParameters: (e?: React.FormEvent | null, notification?: boolean) => Promise<void>;
 }
 
 

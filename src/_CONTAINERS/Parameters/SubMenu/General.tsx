@@ -77,8 +77,6 @@ const Connexion = () => {
             ...prv,
             ...res.data,
             last_sinced_date: res.data?.last_sinced_date ? new Date(res.data?.last_sinced_date) : null,
-            running: 1
-
           }));
         }
       } catch (error) {
@@ -250,6 +248,11 @@ const Connexion = () => {
       newAppDataStore.parameters.w2p = appDataStore.emptyW2Pparameters
       hookStore.updateHookList([])
       appDataStore.setAppData(newAppDataStore)
+
+      saveParameters(null, false)
+      addNotification({
+        content: "Settigns restored !"
+      })
     }
   }
 
@@ -261,6 +264,12 @@ const Connexion = () => {
       newAppData.parameters.pipedrive = appDataStore.emptyPipedriveParameters
       appDataStore.setAppData(newAppData)
       pipedriveFieldsStore.ressetPipedriveFields()
+
+      saveParameters(null, false)
+      
+      addNotification({
+        content: "Settigns restored !"
+      })
     }
   }
 

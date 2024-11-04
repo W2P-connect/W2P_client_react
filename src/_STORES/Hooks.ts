@@ -100,7 +100,7 @@ class HookStore {
                             variables: [
                                 {
                                     value: "billing_company",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "ABC Corp",
                                     isFreeField: false,
                                     id: "3e59362e-3cd3-4c6c-8aec-a0d350b6ab8f"
@@ -125,42 +125,42 @@ class HookStore {
                             variables: [
                                 {
                                     value: "billing_address_1",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "123 Main Street",
                                     isFreeField: false,
                                     id: "991e0668-a0ad-4b36-9070-3bed461e1bb3"
                                 },
                                 {
                                     value: "billing_address_2",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "Apt 4B",
                                     isFreeField: false,
                                     id: "8bd80dba-d034-480a-bcf8-fbbaf2dd275d"
                                 },
                                 {
                                     value: "billing_city",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "Cityville",
                                     isFreeField: false,
                                     id: "47971b56-754b-4cf9-a7a0-b26282b21f96"
                                 },
                                 {
                                     value: "billing_postcode",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "12345",
                                     isFreeField: false,
                                     id: "16092e20-e7a5-4edf-8aef-56a7eca84045"
                                 },
                                 {
                                     value: "billing_country",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "US",
                                     isFreeField: false,
                                     id: "26d81d32-0b07-4f86-af59-d075ae949d22"
                                 },
                                 {
                                     value: "billing_state",
-                                    source: "order",
+                                    source: "user",
                                     exemple: "CA",
                                     isFreeField: false,
                                     id: "6a7394b0-078c-4031-87f6-d9d5762e9cd0"
