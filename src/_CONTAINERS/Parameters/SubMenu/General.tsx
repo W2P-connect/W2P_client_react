@@ -266,7 +266,7 @@ const Connexion = () => {
       pipedriveFieldsStore.ressetPipedriveFields()
 
       saveParameters(null, false)
-      
+
       addNotification({
         content: "Settigns restored !"
       })
@@ -281,6 +281,7 @@ const Connexion = () => {
   }
 
   const syncroniseAll = async (e: FormEvent, retry: boolean) => {
+    e.preventDefault()
     if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started")) {
 
       const w2pOk = await checkW2pAPI(e, false)
@@ -464,7 +465,7 @@ const Connexion = () => {
                         {`Errors during sync: ${syncData.sync_additional_datas.total_person_errors}`}
                       </div>
                     }
-                    mainText={<div>Users synchronization progress {`${syncData.sync_additional_datas.current_user_index} / ${syncData.sync_additional_datas.total_users}`}</div>
+                    mainText={<div>Users and organizations synchronization progress {`${syncData.sync_additional_datas.current_user_index} / ${syncData.sync_additional_datas.total_users}`}</div>
                     }
                   />
                 </div>

@@ -182,7 +182,7 @@ class HookStore {
 
         },
         person: {
-            "new_user": {
+            "user_register": {
                 "name": {
                     value: [
                         {
