@@ -3,6 +3,7 @@ export interface AppData {
         W2P_AVAIBLE_STATES: QueryState[]
         W2P_HOOK_LIST: PreHook[]
         W2P_META_KEYS: MetaKeyCategory[]
+        W2P_HOOK_SOURCES: ('order' | 'user' | 'product')[]
         W2P_REQUIRED_FIELDS: {
             deal: string[]
             organization: string[]

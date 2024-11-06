@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import './input.css';
 import { classNames } from 'helpers';
 
@@ -19,6 +19,7 @@ interface InputProps {
     placeholder?: string;
     onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     widthFromValue?: boolean
+    children?: ReactNode
 }
 
 const Input: React.FC<InputProps> = ({

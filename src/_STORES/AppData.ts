@@ -125,6 +125,7 @@ class AppDataStore {
         CONSTANTES: {
             W2P_AVAIBLE_STATES: [],
             W2P_HOOK_LIST: [],
+            W2P_HOOK_SOURCES: [],
             W2P_META_KEYS: [],
             W2P_REQUIRED_FIELDS: {
                 deal: [],

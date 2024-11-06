@@ -7,8 +7,9 @@ import { translate } from '../../translation'
 import Pagination from '../../_COMPONENTS/NAVIGATION/Pagination/Pagination'
 import { appDataStore } from '_STORES/AppData'
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields'
-import { Category, Query as QueryType } from 'Types'
+import { Category, Query as QueryType, MetaKeySources } from 'Types'
 import { Axios } from 'axios'
+import Input from '_COMPONENTS/FORMS/INPUT/input/Input'
 
 export default function History() {
 
@@ -21,6 +22,8 @@ export default function History() {
     category: "" as Category | "",
     method: "",
     hook: "",
+    source: "",
+    source_id: ""
   })
 
   const [pagination, setPagination] = useState({
@@ -58,31 +61,48 @@ export default function History() {
 
   return (
     <div>
-      <div className='flex gap-1 m-b-25'>
-        <select
-          value={parameters.hook}
-          onChange={e => setParameters(prv => ({ ...prv, hook: e.target.value }))}>
-          <option value={""}>{translate("All hooks")}</option>
-          {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST.map(hook =>
-            <option key={hook.key} value={hook.label}>{hook.label}</option>
-          )}
-        </select>
-        <select
-          value={parameters.category}
-          onChange={e => setParameters(prv => ({ ...prv, category: e.target.value as Category }))}>
-          <option value={""}>{translate("All categories")}</option>
-          {fieldsCategory.map(category =>
-            <option key={category} value={category}>{category}</option>
-          )}
-        </select>
-        <select
-          value={parameters.state}
-          onChange={e => setParameters(prv => ({ ...prv, state: e.target.value }))}>
-          <option value={""}>{translate("All states")}</option>
-          {appDataStore.appData.CONSTANTES.W2P_AVAIBLE_STATES.map(state =>
-            <option key={state} value={state}>{state}</option>
-          )}
-        </select>
+      <div className='flex gap-2 justify-between mb-8'>
+        <div className='flex gap-1'>
+          <select
+            value={parameters.hook}
+            onChange={e => setParameters(prv => ({ ...prv, hook: e.target.value }))}>
+            <option value={""}>{translate("All hooks")}</option>
+            {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST.map(hook =>
+              <option key={hook.key} value={hook.label}>{hook.label}</option>
+            )}
+          </select>
+          <select
+            value={parameters.category}
+            onChange={e => setParameters(prv => ({ ...prv, category: e.target.value as Category }))}>
+            <option value={""}>{translate("All categories")}</option>
+            {fieldsCategory.map(category =>
+              <option key={category} value={category}>{category}</option>
+            )}
+          </select>
+          <select
+            value={parameters.state}
+            onChange={e => setParameters(prv => ({ ...prv, state: e.target.value }))}>
+            <option value={""}>{translate("All states")}</option>
+            {appDataStore.appData.CONSTANTES.W2P_AVAIBLE_STATES.map(state =>
+              <option key={state} value={state}>{state}</option>
+            )}
+          </select>
+        </div>
+        <div className='flex gap-1'>
+          <select
+            value={parameters.source}
+            onChange={e => setParameters(prv => ({ ...prv, source: e.target.value }))}>
+            <option value={""}>{translate("All sources")}</option>
+            {appDataStore.appData.CONSTANTES.W2P_HOOK_SOURCES.map(source =>
+              <option key={source} value={source}>{source}</option>
+            )}
+          </select>
+          <Input
+            value={parameters.source_id}
+            placeholder={`${parameters.source || 'user, order or product'} id`}
+            onInput={(value: string) => setParameters(prv => ({ ...prv, source_id: value }))}>
+          </Input>
+        </div>
       </div>
       {queries
         ? <div style={{ overflowX: 'auto' }}>
