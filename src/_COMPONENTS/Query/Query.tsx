@@ -2,12 +2,13 @@ import { useState } from 'react'
 import './query.css'
 import OpenableComponent from '../GENERAL/OpenableComponent/OpenableComponent'
 import { translate } from '../../translation'
-import { useCallApi } from '../../helpers'
+import { classNames, useCallApi } from '../../helpers'
 import RenderIf from '../GENERAL/RenderIf'
 import { Query as QueryType, QueryState } from 'Types'
 import { useNotification } from '_CONTEXT/hook/contextHook'
 import { appDataStore } from '_STORES/AppData'
 import QueryDetails from './QueryDetails'
+import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
@@ -16,11 +17,6 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
   const [query, setQuery] = useState<QueryType>(parentQuery)
   const [open, setOpen] = useState<boolean>(false)
-
-  // useEffect(() => {
-  //   setQuery(_ => parentQuery)
-  // }, [])
-
 
   const getActionButton = (state: QueryState) => {
     if (state === "TODO" || state === 'ERROR') {
@@ -80,20 +76,37 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
             <div>{query.method}</div>
             <div>{query.category}</div>
             <div>{`${query.source} (${query.source_id})`}</div>
-            <div>{query.target_id}</div>
-            <div className={`w2p-query-label
-                ${query.state === "DONE" ? 'success-label' : ''} 
-                ${query.state === "SENDED" ? 'warning-label' : ''} 
-                ${query.state === "TODO" ? 'warning-label' : ''} 
-                ${query.state === "ERROR" ? 'error-label' : ''} 
-                ${query.state === "INVALID" ? 'error-label' : ''} 
-                ${query.state === "CANCELED" ? 'error-label' : ''} 
+            <div onClick={(e) => e.stopPropagation()}>
+              {query.target_id
+                ? <a
+                  target='_blanck'
+                  className='underline flex gap-[5px]'
+                  href={`https://${appDataStore.appData.parameters.pipedrive.company_domain}.pipedrive.com/${query.category}/${query.target_id}`}
+                >
+                  {query.target_id}
+                  <ArrowTopRightOnSquareIcon width={'15'} />
+                </a>
+                : null
+              }
+            </div>
+            <div className='flex justify-between'>
+              <div>
+                <div className={`w2p-query-label
+                  ${query.state === "DONE" ? 'success-label' : ''} 
+                  ${query.state === "SENDED" ? 'warning-label' : ''} 
+                  ${query.state === "TODO" ? 'warning-label' : ''} 
+                  ${query.state === "ERROR" ? 'error-label' : ''} 
+                  ${query.state === "INVALID" ? 'error-label' : ''} 
+                  ${query.state === "CANCELED" ? 'error-label' : ''} 
             `}>
-              <div>{query.state}</div>
+                  <div>{query.state}</div>
+                </div>
+              </div>
+              <div className={classNames(open ? "rotate-90" : "rotate-0", 'transition')}><ChevronRightIcon width={'18px'} /></div>
             </div>
           </div>
           <OpenableComponent stateOpen={open} label={false}>
-            <div className='mt-2 p-2'>
+            <div className='mt-2 p-2 cursor-auto' onClick={(e) => e.stopPropagation()}>
               <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
                 style={{ backgroundImage: `url('${appDataStore.appData.build_url}/images/bg-grey.jpg')` }}
               >

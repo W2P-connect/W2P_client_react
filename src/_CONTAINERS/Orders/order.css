@@ -1,6 +1,6 @@
 .w2p-order-main-datas {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 2fr 1fr 1fr; /* Définit les largeurs de colonnes spécifiques */
+    grid-template-columns: 1fr 2fr 2fr 3fr 2fr 2fr; /* Définit les largeurs de colonnes spécifiques */
     white-space: nowrap;
     grid-auto-flow: column;
     min-height: 45px;

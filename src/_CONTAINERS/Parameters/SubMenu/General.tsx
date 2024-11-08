@@ -19,6 +19,7 @@ interface SyncData {
   sync_progress_users: number;
   sync_progress_orders: number;
   last_heartbeat: string;
+  last_error: string;
   last_sinced_date: Date | null;
   sync_additional_datas: {
     total_users: number;
@@ -46,6 +47,7 @@ const Connexion = () => {
     sync_progress_users: 0,
     sync_progress_orders: 0,
     last_heartbeat: "",
+    last_error: "",
     sync_additional_datas: {
       total_users: 0,
       current_user: 0,
@@ -301,6 +303,7 @@ const Connexion = () => {
               sync_progress_users: 0,
               sync_progress_orders: 0,
               last_heartbeat: "",
+              last_error: "",
               sync_additional_datas: {
                 total_users: 0,
                 current_user: 0,
@@ -421,7 +424,7 @@ const Connexion = () => {
             {translate("Restore settings")}
           </button>
           <button className='light-button' onClick={_ => restorePipedriveData()}>
-            {translate("Remove and restore all pipedrive data")}
+            {translate("Remove all pipedrive data")}
           </button>
         </div>
       </div>
@@ -439,6 +442,11 @@ const Connexion = () => {
           </div>
           : <>
             <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
+            {
+              syncData.last_error
+                ? <p className='text-red-700'>Error during sync: {syncData.last_error}</p>
+                : null
+            }
             <div className='flex gap-1'>
               <form onSubmit={e => !syncData.running && syncroniseAll(e, false)}>
                 <button

@@ -7,13 +7,14 @@ import Order from './Order';
 import { Order as OrderType } from 'Types'
 import { translate } from 'translation';
 import './order.css'
+import Input from '_COMPONENTS/FORMS/INPUT/input/Input';
 
 export default function Orders() {
 
   const callApi = useCallApi()
+  
   const [orders, setOrders] = useState<OrderType[] | null>(null);
-
-
+  const [orderId, setOrderId] = useState<string>("");
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 10,
@@ -28,7 +29,7 @@ export default function Orders() {
       `${appDataStore.appData.w2p_client_rest_url}/orders`,
       { method: "get" },
       controller.signal,
-      { ...pagination, time: new Date().getTime() },
+      { ...pagination, orderId: orderId, time: new Date().getTime() },
     )
       .then(res => {
         if (res) {
@@ -42,7 +43,7 @@ export default function Orders() {
       controller.abort()
     }
 
-  }, [pagination.page])
+  }, [pagination.page, orderId])
 
   useEffect(() => {
     console.log(orders);
@@ -50,7 +51,13 @@ export default function Orders() {
 
   return (
     <>
-
+      <div className='mb-2'>
+        <Input
+          value={orderId}
+          placeholder={`Order id`}
+          onInput={(value: string) => setOrderId(_ => (value))}>
+        </Input>
+      </div>
       {orders
         ? <div style={{ overflowX: 'auto' }}>
           {orders.length

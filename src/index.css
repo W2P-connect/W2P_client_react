@@ -43,6 +43,7 @@
     transition: height 0.2s ease-in;
     min-height: 500px;
     z-index: 1;
+    overflow: hidden;
 }
 
 .w2p-app-content {

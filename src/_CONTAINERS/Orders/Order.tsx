@@ -1,9 +1,10 @@
+import { ArrowTopRightOnSquareIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton'
 import OpenableComponent from '_COMPONENTS/GENERAL/OpenableComponent/OpenableComponent'
 import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
 import { useNotification } from '_CONTEXT/hook/contextHook'
 import { appDataStore } from '_STORES/AppData'
-import { useCallApi } from 'helpers'
+import { classNames, useCallApi } from 'helpers'
 import React, { useState } from 'react'
 import { translate } from 'translation'
 import { OrderState, Order as OrderType } from 'Types'
@@ -96,19 +97,34 @@ export default function Order({ order }: { order: OrderType }) {
                             <div>{orderState.customer?.first_name} {orderState.customer?.last_name}</div>
                             <div className='text-sm text-gray-600'>{orderState.customer?.user_email}</div>
                         </div>
-                        <div>{`${orderState.deal_id}`}</div>
-                        <div className={`w2p-query-label
+
+                        {orderState.deal_id
+                            ? <a
+                                target='_blanck'
+                                className='underline flex gap-[5px]'
+                                href={`https://${appDataStore.appData.parameters.pipedrive.company_domain}.pipedrive.com/deal/${orderState.deal_id}`}
+                            >
+                                {orderState.deal_id}
+                                <ArrowTopRightOnSquareIcon width={'15'} />
+                            </a>
+                            : null
+                        }
+
+                        <div className='flex justify-between'>
+                            <div className={`w2p-query-label
                             ${orderState.state === "SYNCED" ? 'success-label' : ''} 
                             ${orderState.state === "SENDED" ? 'warning-label' : ''} 
                             ${orderState.state === "NOT SYNCED" ? 'warning-label' : ''} 
                             ${orderState.state === "NOT READY" ? 'warning-label' : ''} 
                             ${orderState.state === "ERROR" ? 'error-label' : ''} 
-                        `}>
-                            <div>{orderState.state}</div>
+                            `}>
+                                <div>{orderState.state}</div>
+                            </div>
+                            <div className={classNames(open ? "rotate-90" : "rotate-0", 'transition')}><ChevronRightIcon width={'18px'} /></div>
                         </div>
                     </div>
                     <OpenableComponent stateOpen={open} label={false}>
-                        <div className='mt-2 p-2'>
+                        <div className='mt-2 p-2' onClick={(e) => e.stopPropagation()}>
                             <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
                                 style={{ backgroundImage: `url('${appDataStore.appData.build_url}/images/bg-grey.jpg')` }}
                             >

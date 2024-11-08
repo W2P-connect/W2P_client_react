@@ -10,7 +10,7 @@ import { HookField as HookFieldType, Block, GroupedStages } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
-import { MouseEvent, useMemo, useRef, useState } from 'react'
+import { FormEvent, MouseEvent, useMemo, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { getBlockExemple } from '_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
@@ -56,7 +56,7 @@ const HookField = ({ hookField }: Props) => {
       })
   }
 
-  const loadPipedriveStages = (e: MouseEvent) => {
+  const loadPipedriveStages = (e: FormEvent) => {
     callPipedriveApi("stages", null, null, null, e)
       .then(res => {
         if (res) {
@@ -295,15 +295,15 @@ const HookField = ({ hookField }: Props) => {
                 renderStages()
               }
               </div>
-              <button
-                type='button'
-                className='light-button'
-                onClick={e => loadPipedriveStages(e)}
-              >
-                {appDataStore.appData.parameters.pipedrive.stages.length
-                  ? translate("Reload pipedrive's stages")
-                  : translate("Load pipedrive's stages")}
-              </button>
+              <form onSubmit={e => loadPipedriveStages(e)}>
+                <button
+                  className='light-button'
+                >
+                  {appDataStore.appData.parameters.pipedrive.stages.length
+                    ? translate("Reload pipedrive's stages")
+                    : translate("Load pipedrive's stages")}
+                </button>
+              </form>
             </>
             : null
           }
