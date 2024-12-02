@@ -336,8 +336,8 @@ input.flat-input:focus-visible {
 }
 
 #w2p-app .success-label {
-  color: rgb(77 124 15/1);
-  background-color: rgba(163, 230, 53, 0.2);
+  color: #017737;
+  background-color: #ccfccb;
   border-radius: var(--border-radius-1);
   padding: 0.125rem 0.375rem;
 }
