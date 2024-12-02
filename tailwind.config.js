@@ -73,6 +73,29 @@ module.exports = {
           400: '#01c36d',
           500: '#01d67b',
         },
+        darkPurple: {
+          DEFAULT: '#190D30',
+          100: '#7E57B1',
+        },
+        woocommerce: {
+          DEFAULT: '#7E57B1',
+        },
+        supportBleu: {
+          DEFAULT: '#A6D9F7',
+          100: 'rgba(166, 217, 247, 0.4)'
+        },
+        supportGreen: {
+          DEFAULT: '#CCFCCB',
+        },
+        pipedrive: {
+          DEFAULT: '#017737',
+        },
+        darkGreen: {
+          DEFAULT: '#204644',
+        },
+        lightGrey: {
+          DEFAULT: '#C8C5CD',
+        },
       },
     },
   },

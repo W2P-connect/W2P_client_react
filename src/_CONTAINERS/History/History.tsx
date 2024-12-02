@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCallApi, removeEmptyProperties } from '../../helpers'
-import { AppDataContext } from '../../_CONTEXT/appDataContext'
 import Loader from '../../_COMPONENTS/GENERAL/Loader/Loader'
 import Query from '../../_COMPONENTS/Query/Query'
 import { translate } from '../../translation'
 import Pagination from '../../_COMPONENTS/NAVIGATION/Pagination/Pagination'
 import { appDataStore } from '_STORES/AppData'
-import { pipedriveFieldsStore } from '_STORES/PipedriveFields'
 import { Category, Query as QueryType, MetaKeySources } from 'Types'
-import { Axios } from 'axios'
 import Input from '_COMPONENTS/FORMS/INPUT/input/Input'
 
 export default function History() {
@@ -112,7 +109,6 @@ export default function History() {
                 <div className='w2p-query w2p-query-main-datas header-grid'>
                   <div className='strong-1' >{translate("Action")}</div>
                   <div className='strong-1'>{translate("Hook")}</div>
-                  <div className='strong-1'>{translate("Method")}</div>
                   <div className='strong-1'>{translate("Category")}</div>
                   <div className='strong-1'>{translate("Source")}</div>
                   <div className='strong-1'>{translate("Pipedrive id")}</div>

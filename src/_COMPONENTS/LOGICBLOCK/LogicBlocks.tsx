@@ -75,14 +75,14 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
                 )}
             </div>
 
-            {logicBlocks.length && logicBlocks[logicBlocks.length - 1].variables.length
+            {fieldCondition?.logicBlock?.enabled && logicBlocks.length && logicBlocks[logicBlocks.length - 1].variables.length
                 ? <button
                     type='button'
                     onClick={e => addNewLogicBlock()}
                     className='light-button'
                     style={{ fontSize: "14px" }}
                 >
-                    {translate("Add Backup Block if Previous Block Doesn't Match Condition")}
+                    {translate("Add Fallback value if Previous value Doesn't Match Condition")}
                 </button>
                 : null
             }

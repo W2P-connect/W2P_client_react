@@ -2,8 +2,8 @@
     /* switch */
     --switch-width: 46px;
     --switch-height: 24px;
-    --switch-bg: var(--w2p-primary-color);
-    --switch-checked-bg: var(--w2p-secondary-color);
+    --switch-bg: #d1d1d1;
+    --switch-checked-bg: #017737;
     --switch-offset: calc((var(--switch-height) - var(--circle-diameter)) / 2);
     --switch-transition: all .2s cubic-bezier(0.27, 0.2, 0.25, 1.51);
     /* circle */
@@ -66,7 +66,7 @@
     box-sizing: border-box;
     width: var(--switch-width);
     height: var(--switch-height);
-    background: linear-gradient(to bottom, var(--switch-bg), rgba(71, 74, 73, 0.80));
+    background: var(--switch-bg);
     border-radius: 999px;
     display: -webkit-box;
     display: -ms-flexbox;

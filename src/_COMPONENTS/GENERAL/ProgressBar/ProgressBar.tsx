@@ -9,10 +9,10 @@ export default function ProgressBar({ completed }: ProgressBarProps) {
         <div className="progress-bar-container">
             <div className="progress-bar">
                 <div
-                    className="progress-fill"
+                    className="bg-pipedrive progress-fill"
                     style={{ width: `${completed}%` }}
                 >
-                    <span className="progress-text px-2">{`${completed}%`}</span>
+                    <span className="px-2 progress-text">{`${completed}%`}</span>
                     {completed < 100 ? <div className="highlight"></div> : null}
                 </div>
             </div>

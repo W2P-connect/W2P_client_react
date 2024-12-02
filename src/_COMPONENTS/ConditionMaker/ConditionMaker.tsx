@@ -42,7 +42,7 @@ export default function ConditionMaker({ logicBlockCondition, setter = () => { }
                         value={`${conditionMaker.enabled}`}
                         onChange={e => setConditionMaker(prv => ({ ...prv, enabled: e.target.value === "true" }))}
                     >
-                        <option value="false">{translate("ALWAIS")}</option>
+                        <option value="false">{translate("ALWAYS")}</option>
                         <option value="true">{translate("ONLY IF")}</option>
                     </select>
                     {conditionMaker.enabled
@@ -51,15 +51,15 @@ export default function ConditionMaker({ logicBlockCondition, setter = () => { }
                                 value={conditionMaker.fieldNumber}
                                 onChange={e => setConditionMaker(prv => ({ ...prv, fieldNumber: e.target.value as "ALL" | "1" }))}
                             >
-                                <option value={"ALL"}>{translate("ALL FIELDS")}</option>
-                                <option value={"1"}>{translate("A LEAST ONE FIELD")}</option>
+                                <option value={"ALL"}>{translate("ALL VARIABLES LISTED")}</option>
+                                <option value={"1"}>{translate("A LEAST ONE VARIABLE")}</option>
                             </select>
                             <div>{conditionMaker.fieldNumber === "1"
-                                ? translate("of a block is set")
-                                : translate("of a block are sets")
+                                ? translate("of a field value is set")
+                                : translate("of a field value are sets")
                             }</div>
                         </>
-                        : <div>{translate("send to Pipedrive even if fields aren't set")}</div>
+                        : <div>{translate("send to Pipedrive even if listed variables aren't set")}</div>
                     }
                 </>
                 : null

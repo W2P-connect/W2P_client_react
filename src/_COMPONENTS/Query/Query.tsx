@@ -73,10 +73,9 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
           <div className='w2p-query-main-datas'>
             <div>{getActionButton(query.state)}</div>
             <div>{query.hook}</div>
-            <div>{query.method}</div>
             <div>{query.category}</div>
             <div>{`${query.source} (${query.source_id})`}</div>
-            <div onClick={(e) => e.stopPropagation()}>
+            <div onClick={(e) => e.stopPropagation()} className='cursor-default'>
               {query.target_id
                 ? <a
                   target='_blanck'

@@ -86,7 +86,7 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
                     <div className='italic'>{block.index === 0
                         // ? translate("Preferred block")
                         ? null
-                        : <span>{translate("Backup block")} {block.index}</span>
+                        : <span>{translate("Fallback variables")} {block.index}</span>
                     }
                     </div>
                     <div className='flex gap-1 items-center'>
@@ -99,7 +99,7 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
                                 className='add-new-field'
                                 onClick={_ => addElement()}
                             >
-                                {translate("Add new field")}
+                                {translate("Add new variables")}
                             </div>
                             : null}
                     </div>
@@ -109,7 +109,7 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
                             className='center underline w-100-p pointer'
                             onClick={_ => addElement()}
                         >
-                            {translate("Add a field")}
+                            {translate("Add variables")}
                         </div>}
                 </div>
             </div>

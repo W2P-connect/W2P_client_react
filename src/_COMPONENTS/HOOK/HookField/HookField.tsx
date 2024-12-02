@@ -351,10 +351,10 @@ const HookField = ({ hookField }: Props) => {
                       />
                       {selectedHook.category === "person"
                         ? translate(`If a person already has this value for this field in Pipedrive, 
-                      then link the Woocommerce account to that person. (only if the Woocommerce account is not already linked).`)
+                      then link the If this value already exists in Pipedrive for a person, link the WooCommerce account to that person if it is not already linked.`)
                         : selectedHook.category === "organization"
                           ? translate(`If an organization already has this value for this field in Pipedrive, 
-                        then link the Woocommerce account to that organization. (only if the Woocommerce account is not already linked).`)
+                      then link the If this value already exists in Pipedrive for an organization, link the WooCommerce account to that organization if it is not already linked.`)
                           : null //deal donc tchi
                       }
                     </label>

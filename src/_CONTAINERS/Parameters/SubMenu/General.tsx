@@ -344,7 +344,7 @@ const Connexion = () => {
           {translate(`To configure your API keys and your domain, 
           connect to your customer area on our site https://w2p.com`)}
         </p>
-        <div className='flex w2p-wrap flex-end gap-1'>
+        <div className='flex flex-end gap-1 w2p-wrap'>
           <Input
             className='flex-1 min-w-300'
             label={translate("your site domain")}
@@ -359,7 +359,7 @@ const Connexion = () => {
             className='flex-1 min-w-300'
           />
           <MainButton
-            style={2}>
+            style={1}>
             {translate("Check connexion")}
           </MainButton>
         </div>
@@ -386,7 +386,7 @@ const Connexion = () => {
           }
         />
 
-        <div className='flex w2p-wrap flex-end gap-1'>
+        <div className='flex flex-end gap-1 w2p-wrap'>
           <Input
             className='flex-1 min-w-300'
             label={translate("Company domain")}
@@ -400,7 +400,7 @@ const Connexion = () => {
             className='flex-1 min-w-300'
           />
           <MainButton
-            style={2}>
+            style={1}>
             {translate("Check connexion")}
           </MainButton>
         </div>

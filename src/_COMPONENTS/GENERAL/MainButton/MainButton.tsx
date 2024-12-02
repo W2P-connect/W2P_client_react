@@ -36,17 +36,21 @@ export default function MainButton({
     const getClasseFromStyle = (style: number) => {
         switch (style) {
             case 1:
-                return "shadow-sm hover:bg-primary-500 bg-primary focus-visible:outline-primary"
+                return "bg-pipedrive border-2 border-pipedrive text-white"
             case 2:
-                return "shadow-sm hover:bg-secondary-400 bg-secondary focus-visible:outline-secondary"
+                return "bg-woocommerce border-2 border-woocommerce text-white"
             case 3:
-                return "shadow-sm !text-primary-500 bg-white border border-1 border-primary focus-visible:outline-primary"
+                return "!text-darkPurple bg-white border-2 border-darkPurple"
             case 4:
-                return "bg-white border-1 border-primary focus-visible:outline-primary !text-primary-500"
+                return "bg-white border-2 border-pipedrive text-pipedrive";
             default:
-                return "shadow-sm hover:bg-primary-500 bg-primary focus-visible:outline-primary"
+                return ""
         }
     }
+
+    let defaultClassName = "rounded-[4px] px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold block text-center"
+    defaultClassName += " relative transform hover:shadow-inner-md hover:scale-[0.98] active:scale-95 active:shadow-inner transition-scale duration-200"
+
 
     return (
         <button

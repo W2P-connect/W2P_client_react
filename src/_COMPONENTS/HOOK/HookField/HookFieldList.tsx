@@ -34,7 +34,7 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
 
                     <div className='m-b-25'>
                         <Datalist
-                            label={translate('Search a field')}
+                            label={translate('Search a Pipedrive field')}
                             placeholder={translate('Name, owner, email,...')}
                             items={categoryFields.map(field => ({ value: field.name, id: field.id }))}
                             value={searchField}

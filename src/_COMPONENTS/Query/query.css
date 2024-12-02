@@ -14,7 +14,7 @@
 
 .w2p-query-main-datas {
     display: grid;
-    grid-template-columns: 1fr 3fr 2fr 2fr 2fr 2fr 2fr;
+    grid-template-columns: 1fr 3fr 2fr 2fr 2fr 2fr;
     white-space: nowrap;
     grid-auto-flow: column;
     min-height: 45px;
