@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useCallApi, removeEmptyProperties } from '../../helpers'
 import Loader from '../../_COMPONENTS/GENERAL/Loader/Loader'
 import Query from '../../_COMPONENTS/Query/Query'
 import { translate } from '../../translation'
 import Pagination from '../../_COMPONENTS/NAVIGATION/Pagination/Pagination'
 import { appDataStore } from '_STORES/AppData'
-import { Category, Query as QueryType, MetaKeySources } from 'Types'
+import { Category, Query as QueryType } from 'Types'
 import Input from '_COMPONENTS/FORMS/INPUT/input/Input'
 
 export default function History() {
@@ -23,42 +23,58 @@ export default function History() {
     source_id: ""
   })
 
+  const [parametersHasBeenUpdated, setParametersHasBeenUpdated] = useState(false)
+
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 10,
     total_pages: null,
+    delay: false,
   })
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
 
   useEffect(() => {
     const controller = new AbortController();
 
-    setQueries(_ => null)
+    timeoutRef.current && clearTimeout(timeoutRef.current)
 
-    callApi(
-      `${appDataStore.appData.w2p_client_rest_url}/queries`,
-      { method: "get" },
-      controller.signal,
-      { ...removeEmptyProperties(parameters), ...pagination, time: new Date().getTime() },
-    )
-      .then(res => {
-        if (res) {
-          setQueries(_ => res.data.data)
-          setPagination(prv => ({ ...prv, ...res.data.pagination }))
-        }
-      })
-      .catch(error => console.log(error))
+    timeoutRef.current = setTimeout(() => {
+      setQueries(_ => null)
+
+      callApi(
+        `${appDataStore.appData.w2p_client_rest_url}/queries`,
+        { method: "get" },
+        controller.signal,
+        { ...removeEmptyProperties(parameters), ...pagination, time: new Date().getTime() },
+      )
+        .then(res => {
+          if (res) {
+            setQueries(_ => res.data.data)
+            setPagination(prv => ({ ...prv, ...res.data.pagination }))
+          }
+        })
+        .catch(error => console.log(error))
+    }, pagination.delay ? 600 : 0)
 
     return () => {
       controller.abort()
+      timeoutRef.current && clearTimeout(timeoutRef.current)
     }
 
-  }, [parameters, pagination.page])
+  }, [parametersHasBeenUpdated, pagination.page])
+
+  useEffect(() => {
+    setPagination(prv => ({ ...prv, page: 1 }))
+    setParametersHasBeenUpdated(prv => !prv)
+  }, [parameters])
 
   const fieldsCategory: Category[] = ["deal", "organization", "person"]
 
   return (
     <div>
-      <div className='flex gap-2 justify-between mb-8'>
+      <div className='flex justify-between gap-2 mb-8'>
         <div className='flex gap-1'>
           <select
             value={parameters.hook}
@@ -106,7 +122,7 @@ export default function History() {
           {queries.length
             ? <div>
               <div className='flex column'>
-                <div className='w2p-query w2p-query-main-datas header-grid'>
+                <div className='header-grid w2p-query w2p-query-main-datas'>
                   <div className='strong-1' >{translate("Action")}</div>
                   <div className='strong-1'>{translate("Hook")}</div>
                   <div className='strong-1'>{translate("Category")}</div>
@@ -124,7 +140,9 @@ export default function History() {
                 <Pagination
                   currentPage={pagination.page}
                   totalPage={pagination.total_pages ?? 0}
-                  setCurrentPage={value => setPagination(prv => ({ ...prv, page: value }))}
+                  setCurrentPage={(value, delay) => {
+                    setPagination(prv => ({ ...prv, page: value, delay: delay }))
+                  }}
                 />
               </div>
             </div>
