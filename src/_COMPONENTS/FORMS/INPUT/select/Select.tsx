@@ -50,25 +50,24 @@ export default function Select({
         }
     }
 
-
     return (
         <Listbox value={selected} onChange={selectOption}>
             {({ open }) => (
                 <div className={className}>
                     {label
-                        ? <Label className="block text-sm font-medium leading-6 text-gray-900">{label}</Label>
+                        ? <Label className="block font-medium text-gray-900 text-sm leading-6">{label}</Label>
                         : null
                     }
                     <div className="relative mt-2">
-                        <ListboxButton className="pointer relative w-full bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6">
+                        <ListboxButton className="relative bg-white shadow-sm py-1.5 pr-10 pl-3 ring-1 ring-gray-300 ring-inset w-full text-gray-900 text-left sm:text-sm sm:leading-6 pointer">
                             {selected?.label ?? selected?.value}
-                            <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            <span className="right-0 absolute inset-y-0 flex items-center ml-3 pr-2 pointer-events-none">
+                                <ChevronUpDownIcon className="w-5 h-5 text-gray-400" aria-hidden="true" />
                             </span>
                         </ListboxButton>
 
                         <Transition show={open} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-                            <ListboxOptions className="absolute p-1 z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ListboxOptions className="z-10 absolute bg-white ring-opacity-5 shadow-lg mt-1 p-1 rounded-md ring-1 ring-black w-full max-h-56 text-base sm:text-sm overflow-auto focus:outline-none">
                                 {options.map((option, index) => (
                                     <ListboxOption
                                         key={index}
@@ -83,7 +82,7 @@ export default function Select({
                                     >
                                         {({ selected, focus }) => (
                                             <div>
-                                                <div className="flex items-start justify-between">
+                                                <div className="flex justify-between items-start">
                                                     <div>
                                                         <span
                                                             className={classNames(
@@ -103,7 +102,7 @@ export default function Select({
                                                                 'inset-y-0 right-0 flex items-center pr-2'
                                                             )}
                                                         >
-                                                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                                            <CheckIcon className="w-5 h-5" aria-hidden="true" />
                                                         </span>
                                                     ) : null}
                                                 </div>

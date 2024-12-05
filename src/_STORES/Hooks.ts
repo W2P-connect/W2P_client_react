@@ -27,14 +27,8 @@ class HookStore {
                     }
                 },
             },
-            "woocommerce_update_order": {
-                "status": {
-                    value: "open",
-                    condition: {
-                        SkipOnExist: false
-                    }
-                },
-            },
+            "woocommerce_update_order": {} //activation pour les produits
+            ,
             "woocommerce_order_status_on-hold": {
                 "status": {
                     value: "open",

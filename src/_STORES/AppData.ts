@@ -26,10 +26,8 @@ class AppDataStore {
                         value: "Woocomerce order n°"
                     },
                     {
-                        // label: "id",
                         value: "id",
                         source: "order",
-                        // description: "Order Id.",
                         exemple: "6452",
                         isFreeField: false,
                         id: "4e5e6f70-e922-41dd-b354-66c338e64343"
@@ -40,15 +38,11 @@ class AppDataStore {
             },
             sendProducts: true,
             searchBeforeCreate: true,
-            // createNew: true,
             productsName: {
                 variables: [
                     {
-                        // label: "name",
                         value: "name",
                         source: "product",
-                        // recommanded: true,
-                        // description: "Product name.",
                         exemple: "T-Shirt",
                         isFreeField: false,
                         id: "e9f54c61-462d-4491-8fd1-e3797b7a9079"
@@ -60,11 +54,8 @@ class AppDataStore {
             productsComment: {
                 variables: [
                     {
-                        // label: "attribute_summary",
-                        // recommanded: true,
                         value: "attribute_summary",
                         source: "product",
-                        // description: "Summary of attributes for variations of variable products.",
                         exemple: "Size: S, M, L - Color: Red, Blue, Green",
                         isFreeField: false,
                         id: "6a5c4310-11d9-49b2-b437-ab177ba56b8b"

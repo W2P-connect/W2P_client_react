@@ -1,17 +1,15 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../translation';
-import { classNames, deepMerge, useCallApi, useCallPipedriveApi } from '../../../helpers';
+import { classNames, deepCopy, useCallApi, useCallPipedriveApi } from '../../../helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
-import { runInAction, toJS } from 'mobx';
 import { hookStore } from '_STORES/Hooks';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 import { Category, HookField, PipedriveField } from 'Types';
-import { error } from 'console';
 import ProgressBar from '_COMPONENTS/GENERAL/ProgressBar/ProgressBar';
 
 interface SyncData {
@@ -37,33 +35,35 @@ interface SyncData {
   }
 }
 
+const emptySyncData = {
+  running: false,
+  sync_progress_users: 0,
+  sync_progress_orders: 0,
+  last_heartbeat: "",
+  last_error: "",
+  sync_additional_datas: {
+    total_users: 0,
+    current_user: 0,
+    total_orders: 0,
+    current_order: 0,
+    current_user_index: 0,
+    current_order_index: 0,
+    total_person_errors: 0,
+    total_person_uptodate: 0,
+    total_person_done: 0,
+    total_order_errors: 0,
+    total_order_uptodate: 0,
+    total_order_done: 0,
+  },
+  last_sinced_date: null,
+}
+
 const Connexion = () => {
 
   const callPipedriveApi = useCallPipedriveApi()
   const callApi = useCallApi()
 
-  const [syncData, setSyncData] = useState<SyncData>({
-    running: false,
-    sync_progress_users: 0,
-    sync_progress_orders: 0,
-    last_heartbeat: "",
-    last_error: "",
-    sync_additional_datas: {
-      total_users: 0,
-      current_user: 0,
-      total_orders: 0,
-      current_order: 0,
-      current_user_index: 0,
-      current_order_index: 0,
-      total_person_errors: 0,
-      total_person_uptodate: 0,
-      total_person_done: 0,
-      total_order_errors: 0,
-      total_order_uptodate: 0,
-      total_order_done: 0,
-    },
-    last_sinced_date: null,
-  })
+  const [syncData, setSyncData] = useState<SyncData>(emptySyncData)
 
   useEffect(() => {
     const fetchSyncProgress = async () => {
@@ -92,7 +92,7 @@ const Connexion = () => {
 
     intervalId = setInterval(() => {
       fetchSyncProgress();
-    }, syncData.running ? 8000 : 20 * 1000);
+    }, syncData.running ? 2000 : 20 * 1000);
 
     return () => {
       if (intervalId) {
@@ -246,14 +246,20 @@ const Connexion = () => {
     if (window.confirm(
       translate("Are you sure you want to restore all of your settings")
     )) {
+      const domain = appDataStore.appData.parameters.w2p.domain
       const newAppDataStore = appDataStore.appData
       newAppDataStore.parameters.w2p = appDataStore.emptyW2Pparameters
+      newAppDataStore.parameters.w2p.domain = domain
+
       hookStore.updateHookList([])
       appDataStore.setAppData(newAppDataStore)
 
+      callApi(`${appDataStore.appData.w2p_client_rest_url}/restore-parameters`, { method: "put" })
       saveParameters(null, false)
+      appDataStore.setAppData(newAppDataStore)
+      setSyncData(_ => emptySyncData)
       addNotification({
-        content: "Settigns restored !"
+        content: "Settings restored !"
       })
     }
   }
@@ -290,6 +296,28 @@ const Connexion = () => {
       const pipeOk = await checkPipedriveApi(e, false)
 
       if (w2pOk && pipeOk) {
+        setSyncData(prv => ({
+          ...prv,
+          running: false,
+          sync_progress_users: 0,
+          sync_progress_orders: 0,
+          last_heartbeat: "",
+          last_error: "",
+          sync_additional_datas: {
+            total_users: 0,
+            current_user: 0,
+            total_orders: 0,
+            current_order: 0,
+            current_user_index: 0,
+            current_order_index: 0,
+            total_person_errors: 0,
+            total_person_uptodate: 0,
+            total_person_done: 0,
+            total_order_errors: 0,
+            total_order_uptodate: 0,
+            total_order_done: 0,
+          },
+        }))
         callApi(
           `${appDataStore.appData.w2p_client_rest_url}/start-sync`,
           { method: "GET" },
@@ -297,28 +325,7 @@ const Connexion = () => {
           { "re-sync": true, "retry": retry, time: new Date().getTime() }
         )
           .then(async res => {
-            setSyncData(prv => ({
-              ...prv,
-              running: true,
-              sync_progress_users: 0,
-              sync_progress_orders: 0,
-              last_heartbeat: "",
-              last_error: "",
-              sync_additional_datas: {
-                total_users: 0,
-                current_user: 0,
-                total_orders: 0,
-                current_order: 0,
-                current_user_index: 0,
-                current_order_index: 0,
-                total_person_errors: 0,
-                total_person_uptodate: 0,
-                total_person_done: 0,
-                total_order_errors: 0,
-                total_order_uptodate: 0,
-                total_order_done: 0,
-              },
-            }))
+            setSyncData(prv => ({ ...prv, running: true }))
             addNotification({
               "error": !res?.data?.success,
               "content": res?.data?.message
@@ -418,7 +425,7 @@ const Connexion = () => {
       </div>
       <div className='m-t-100'>
         <h2>Restore settings</h2>
-        <p className='m-b-10'>{translate(`If you experience issues with your settings—particularly if your API key no longer points to the correct company—we recommend resetting your settings.`)}</p>
+        <p className='m-b-10'>{translate(`If you experience issues with your settings—particularly if your API key no longer points to the correct company—we recommend restoring your settings.`)}</p>
         <div className='flex gap-1'>
           <button className='light-button' onClick={_ => restoreSettings()}>
             {translate("Restore settings")}

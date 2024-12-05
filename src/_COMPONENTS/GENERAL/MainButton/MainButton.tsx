@@ -48,14 +48,11 @@ export default function MainButton({
         }
     }
 
-    let defaultClassName = "rounded-[4px] px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold block text-center"
-    defaultClassName += " relative transform hover:shadow-inner-md hover:scale-[0.98] active:scale-95 active:shadow-inner transition-scale duration-200"
-
-
     return (
         <button
             type={type}
-            className={classNames('rounded-md px-3.5 py-2.5 text-sm font-semibold text-white block text-center',
+            className={classNames(
+                'rounded-md px-3.5 py-2.5 text-sm font-semibold text-white block text-center',
                 'duration-150 transition-bg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ',
                 getClasseFromStyle(style),
                 loading ? 'cursor-wait' : '',

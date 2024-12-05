@@ -77,14 +77,18 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
             <div>{`${query.source} (${query.source_id})`}</div>
             <div onClick={(e) => e.stopPropagation()} className='cursor-default'>
               {query.target_id
-                ? <a
-                  target='_blanck'
-                  className='underline flex gap-[5px]'
-                  href={`https://${appDataStore.appData.parameters.pipedrive.company_domain}.pipedrive.com/${query.category}/${query.target_id}`}
-                >
-                  {query.target_id}
-                  <ArrowTopRightOnSquareIcon width={'15'} />
-                </a>
+                ? appDataStore.appData.parameters.pipedrive.company_domain
+                  ? <div className='flex gap-[5px]'>
+                    <a
+                      target='_blanck'
+                      className='underline'
+                      href={`https://${appDataStore.appData.parameters.pipedrive.company_domain}.pipedrive.com/${query.category}/${query.target_id}`}
+                    >
+                      {query.target_id}
+                    </a>
+                    <ArrowTopRightOnSquareIcon width={'15'} />
+                  </div>
+                  : query.target_id
                 : null
               }
             </div>
@@ -106,7 +110,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
           </div>
           <OpenableComponent stateOpen={open} label={false}>
             <div className='mt-2 p-2 cursor-auto' onClick={(e) => e.stopPropagation()}>
-              <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
+              <div className="bg-cover bg-center shadow-md mt-2 px-3 py-2 rounded-md"
                 style={{ backgroundImage: `url('${appDataStore.appData.build_url}/images/bg-grey.jpg')` }}
               >
                 <QueryDetails query={query} />
