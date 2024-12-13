@@ -3,6 +3,7 @@ import { BaseHookField, Category, Hook, HookField, PipedriveField, PreHook } fro
 import { v4 as uuidv4 } from 'uuid';
 import { pipedriveFieldsStore } from './PipedriveFields';
 import { deepCopy } from 'helpers';
+import { appDataStore } from './AppData';
 
 interface HookDefaults {
     [key: string]: {
@@ -389,7 +390,8 @@ class HookStore {
 
     addNewHook(hook: Hook) {
         runInAction(() => {
-            this.hooks.push(hook)
+            const validatedHook = this.validHook(hook)
+            validatedHook && this.hooks.push(validatedHook)
         })
     }
 
@@ -402,9 +404,24 @@ class HookStore {
         }
     }
 
+    validHook(hook: Hook): Hook | null {
+        const referenceHook = appDataStore.appData.CONSTANTES.W2P_HOOK_LIST
+            .find(hookRef => hook.key === hookRef.key)
+        if (referenceHook) {
+            return {
+                ...hook,
+                ...referenceHook,
+            }
+        } else {
+            return null
+        }
+    }
+
     updateHookList(newHookList: Hook[]) {
         runInAction(() => {
-            this.hooks = newHookList;
+            this.hooks = newHookList
+                .map(hook => this.validHook(hook))
+                .filter((hook): hook is Hook => hook !== null);
         })
     }
 
