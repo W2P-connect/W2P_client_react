@@ -8,7 +8,7 @@ import AppDataContextProvider from './_CONTEXT/appDataContext';
 import { AppLocalizerProvider } from './_CONTEXT/AppLocalizerContext';
 import axios from 'axios';
 import { appDataStore } from '_STORES/AppData';
-import { deepMerge, isLocal } from 'helpers';
+import { deepCopy, deepMerge, isLocal } from 'helpers';
 import { hookStore } from '_STORES/Hooks';
 import { AppData as AppDataType } from 'Types';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const appDataInit = deepMerge(appDataStore.emptyAppData, appData)
 
         appDataStore.setAppData(appDataInit);
-        appDataStore.setInitAppData(appDataInit);
+        appDataStore.setInitAppData(deepCopy(appDataInit));
 
         hookStore.updateHookList(appDataInit.parameters.w2p.hookList);
         pipedriveFieldsStore.setPipedriveFields(appDataInit.parameters.pipedrive.fields)

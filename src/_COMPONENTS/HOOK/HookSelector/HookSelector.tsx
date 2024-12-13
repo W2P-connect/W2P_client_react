@@ -1,4 +1,3 @@
-import './hookSlector.css'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox';
 import { translate } from '../../../translation';
 import { observer } from 'mobx-react-lite';
@@ -43,7 +42,7 @@ const HookSelector = ({ preHook, category }: Props) => {
                         ? '0 0 20px 2px rgba(60,60,60, 0.12)'
                         : '',
                 }}
-                className={`flex-1 border-1 hook-selector flex-col space-between`}
+                className={`border-1 hook-selector flex-col space-between rounded-xl px-2 py-1 cursor-pointer flex-auto max-w-[300px]`}
             >
                 <div>
                     <div className='flex-center'>
@@ -66,14 +65,16 @@ const HookSelector = ({ preHook, category }: Props) => {
                             )
                         }
                     </div>
-                    <div className='italic subtext'>
+                </div>
+                <div>
+                    <div className='mt-1 min-w-0 max-w-[200px] break-words overflow-hidden subtext'>
                         {preHook.description}
                     </div>
-                </div>
-                <div
-                    onClick={e => selectHook(e, hook)}
-                    className='mt-1 underline center pointer'>
-                    {translate("Set up")}
+                    <div
+                        onClick={e => selectHook(e, hook)}
+                        className='mt-1 underline center pointer'>
+                        {translate("Set up")}
+                    </div>
                 </div>
             </div>
             : null

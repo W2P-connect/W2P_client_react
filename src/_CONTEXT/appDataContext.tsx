@@ -1,5 +1,5 @@
 import React, { createContext } from 'react';
-import { useCallApi } from '../helpers';
+import { deepCopy, useCallApi } from '../helpers';
 import { translate } from 'translation';
 import { Hook, HookField, Parameters, ParametersForBackend } from 'Types';
 import { useNotification } from './hook/contextHook';
@@ -64,7 +64,7 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
                     content: translate(res?.data.message),
                 });
                 res?.data.token && appDataStore.setAppData({ ...appDataStore.appData, token: res?.data.token })
-                appDataStore.setInitAppData(appDataStore.getAppData())
+                appDataStore.setInitAppData(deepCopy(appDataStore.getAppData()))
             } catch (error: unknown) {
                 console.log(error);
                 if (isAxiosError(error)) {

@@ -2,12 +2,11 @@ import React, { useContext, useEffect } from 'react'
 import { translate } from '../../translation'
 import NavBar, { Item } from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { MenuContext } from '../../_CONTEXT/MenuContext'
-import { useAppDataContext } from '_CONTEXT/hook/contextHook'
+import SaveSettinsButton from './SaveSettinsButton'
 
 
 export default function Parameters() {
 
-  const { saveParameters } = useAppDataContext()
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
 
   useEffect(() => {
@@ -47,20 +46,11 @@ export default function Parameters() {
 
   return (
     <div>
-      {/* <h1>{translate("Parameters")}</h1> */}
       {currentSubMenu && <NavBar items={parametersItems} />}
       {currentSubMenuContent}
 
-      <div className='fixed bottom-0 right-0 p-5'>
-        <form onSubmit={e =>
-          saveParameters(e, true)
-        }>
-          <button
-            className='strong-button'
-          >
-            {translate("Save settings")}
-          </button>
-        </form>
+      <div className='right-0 bottom-0 fixed p-5'>
+        <SaveSettinsButton />
       </div>
     </div >
   )

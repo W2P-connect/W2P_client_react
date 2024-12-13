@@ -66,32 +66,34 @@ const FieldCategory = ({ category }: { category: Category }) => {
         <div className='w2p-instructions'>
           <p>{translate('Select the different events that will sync Woocommerce and WordPress informations to Pipedrive.')}</p>
         </div>
-        <div className='flex gap-1 w2p-wrap m-b-25 m-t-25'>
+
+        <div className="flex flex-wrap justify-stretch gap-2 mt-5 mb-5">
           {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST
             .filter(hook => !hook?.disabledFor?.includes(category))
             .map(hook => {
-              return <HookSelector key={hook.key} preHook={hook} category={category} />;
+              return <HookSelector key={hook.key} preHook={hook} category={category} />
             })}
         </div>
 
         {selectedHook
           ? <HookFieldList hook={selectedHook} />
-          : <h3 className='center m-t-25'>{translate('Select an event to configure it')}</h3>
+          : <h3 className='m-t-25 center'>{translate('Select an event to configure it')}</h3>
         }
       </div>
 
-      {selectedHook
-        ? <form onSubmit={e => getCategoryFields(e)}>
-          <button className='light-button m-t-25'>
-            {categoryFields?.length
-              ? translate('Reload custom fields')
-              : translate('Load custom fields')}
-          </button>
-        </form>
-        : null
+      {
+        selectedHook
+          ? <form onSubmit={e => getCategoryFields(e)}>
+            <button className='m-t-25 light-button'>
+              {categoryFields?.length
+                ? translate('Reload custom fields')
+                : translate('Load custom fields')}
+            </button>
+          </form>
+          : null
       }
 
-    </div>
+    </div >
   );
 };
 
