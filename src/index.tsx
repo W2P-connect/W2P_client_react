@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         let appData: AppDataType = appDataStore.emptyAppData
 
-        isLocal() && console.log("Running in local");
         if (isLocal()) {
+            console.log("Running in local");
             const appLocalizer = await axios.get(`http://w2p-bis.local/wp-json/w2p/v1/applocalizer`);
             appData = appLocalizer.data.data;
         } else {

@@ -53,25 +53,26 @@ const HookSelector = ({ preHook, category }: Props) => {
                         />
                         <div className='hook-label'>{preHook.label}</div>
                     </div>
-                    <div className='flex flex-wrap gap-x-[3px] gap-y-[3px] my-1'>
+                    <div className='flex flex-wrap gap-[4px] my-1'>
                         {hook.fields
                             .filter(field => field.enabled)
+                            .sort((a, b) => a.pipedrive.name.length - b.pipedrive.name.length)
                             .map((field: HookField) =>
-                                <span
-                                    className='border py-[3px] px-1 rounded-sm'
+                                <div
+                                    className='bg-gray-100 shadow-sm px-2 py-[2px] border rounded-xl'
                                     key={field.id}>
                                     {field.pipedrive.name}
-                                </span>
+                                </div>
                             )
                         }
                     </div>
-                    <div className='subtext italic'>
+                    <div className='italic subtext'>
                         {preHook.description}
                     </div>
                 </div>
                 <div
                     onClick={e => selectHook(e, hook)}
-                    className='underline center pointer'>
+                    className='mt-1 underline center pointer'>
                     {translate("Set up")}
                 </div>
             </div>

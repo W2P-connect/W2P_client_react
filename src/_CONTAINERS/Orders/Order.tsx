@@ -73,6 +73,9 @@ export default function Order({ order }: { order: OrderType }) {
         ? orderState.queries[0]
         : null
 
+    console.log(orderState);
+
+
     const lastDoneQuery = orderState.queries.find(query => query.state === "DONE")
 
     return (
@@ -90,24 +93,24 @@ export default function Order({ order }: { order: OrderType }) {
                         <div>{getActionButton(orderState.state)}</div>
                         <div>
                             <div>{new Date(orderState.date_created.date).toLocaleDateString()}</div>
-                            <div className='text-sm text-gray-600'>{new Date(orderState.date_created.date).toLocaleTimeString()}</div>
+                            <div className='text-gray-600 text-sm'>{new Date(orderState.date_created.date).toLocaleTimeString()}</div>
                         </div>
                         <div>{orderState.id}</div>
                         <div>
                             <div>{orderState.customer?.first_name} {orderState.customer?.last_name}</div>
-                            <div className='text-sm text-gray-600'>{orderState.customer?.user_email}</div>
+                            <div className='text-gray-600 text-sm'>{orderState.customer?.user_email}</div>
                         </div>
 
-                        {orderState.deal_id
+                        {lastDoneQuery?.target_id
                             ? <a
                                 target='_blanck'
-                                className='underline flex gap-[5px]'
-                                href={`https://${appDataStore.appData.parameters.pipedrive.company_domain}.pipedrive.com/deal/${orderState.deal_id}`}
+                                className='flex gap-[5px] underline'
+                                href={`https://${appDataStore.appData.parameters.pipedrive.company_domain}.pipedrive.com/deal/${lastDoneQuery.target_id}`}
                             >
                                 {orderState.deal_id}
                                 <ArrowTopRightOnSquareIcon width={'15'} />
                             </a>
-                            : null
+                            : <div></div>
                         }
 
                         <div className='flex justify-between'>
@@ -125,12 +128,12 @@ export default function Order({ order }: { order: OrderType }) {
                     </div>
                     <OpenableComponent stateOpen={open} label={false}>
                         <div className='mt-2 p-2' onClick={(e) => e.stopPropagation()}>
-                            <div className="shadow-md py-2 px-3 rounded-md mt-2 bg-cover bg-center"
+                            <div className="bg-cover bg-center shadow-md mt-2 px-3 py-2 rounded-md"
                                 style={{ backgroundImage: `url('${appDataStore.appData.build_url}/images/bg-grey.jpg')` }}
                             >
                                 {query
                                     ? <>
-                                        <div className='text-center pb-2 font-semibold border-b border-gray-200'>
+                                        <div className='border-gray-200 pb-2 border-b font-semibold text-center'>
                                             {orderState.state === "SYNCED"
                                                 ? "Last synced data"
                                                 : "Data to sync"
@@ -138,7 +141,7 @@ export default function Order({ order }: { order: OrderType }) {
                                         </div>
                                         <div className='flex'>
                                             <div className='flex-1'>
-                                                <div className='font-semibold mb-1'>{translate("Data for Pipedrive")}</div>
+                                                <div className='mb-1 font-semibold'>{translate("Data for Pipedrive")}</div>
                                                 {
                                                     query && query.payload.data.length
                                                         ? query.payload.data.map((data, index) => (
@@ -150,7 +153,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                 }
                                             </div>
                                             <div className='flex-1'>
-                                                <div className='mb-1 mt-1 pl-2 border-l'>
+                                                <div className='mt-1 mb-1 pl-2 border-l'>
                                                     {query?.payload.products?.length
                                                         ? query.payload.products.map((product, idx) => (
 
@@ -165,7 +168,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                                     </span>
                                                                 </div>
                                                                 <RenderIf condition={!!product.comments}>
-                                                                    <div className="italic text-gray-500">
+                                                                    <div className="text-gray-500 italic">
                                                                         Comments: {product.comments}
                                                                     </div>
                                                                 </RenderIf>
@@ -178,10 +181,10 @@ export default function Order({ order }: { order: OrderType }) {
                                         </div>
                                         <RenderIf condition={!!lastDoneQuery && orderState.state !== "SYNCED"} >
                                             <>
-                                                <div className='text-center pb-2 mt-4 font-semibold border-b border-gray-200'>Last synced data</div>
+                                                <div className='border-gray-200 mt-4 pb-2 border-b font-semibold text-center'>Last synced data</div>
                                                 <div className='flex'>
                                                     <div className='flex-1'>
-                                                        <div className='font-semibold mb-1'>{translate("Data for Pipedrive")}</div>
+                                                        <div className='mb-1 font-semibold'>{translate("Data for Pipedrive")}</div>
                                                         {
                                                             lastDoneQuery && lastDoneQuery.payload.data.length
                                                                 ? lastDoneQuery.payload.data.map((data, index) => (
@@ -193,7 +196,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                         }
                                                     </div>
                                                     <div className='flex-1'>
-                                                        <div className='mb-1 mt-1 pl-2 border-l'>
+                                                        <div className='mt-1 mb-1 pl-2 border-l'>
                                                             {lastDoneQuery?.payload.products?.length
                                                                 ? lastDoneQuery.payload.products.map((product, idx) => (
                                                                     <div key={idx} className="mb-1">
@@ -207,7 +210,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                                             </span>
                                                                         </div>
                                                                         <RenderIf condition={!!product.comments}>
-                                                                            <div className="italic text-gray-500">
+                                                                            <div className="text-gray-500 italic">
                                                                                 Comments: {product.comments}
                                                                             </div>
                                                                         </RenderIf>
@@ -222,7 +225,7 @@ export default function Order({ order }: { order: OrderType }) {
                                         </RenderIf>
                                     </>
                                     : <>
-                                        <div className='text-center font-semibold'>
+                                        <div className='font-semibold text-center'>
                                             None of the events you've set up for the deals have been triggered for this order yet. Therefore, no data can be sent to Pipedrive.
                                         </div>
                                         <div className='flex justify-center mt-3'>

@@ -6,12 +6,12 @@ export default function CustomHooksParameters({ hook }: { hook: Hook }) {
     let hookContent: ReactNode = <></>
 
     if (hook.key === "woocommerce_cart_updated") {
-        hookContent = <div className='w2p-warning'>The cart update of a user on your site will not be synchronized with Pipedrive if the user is not logged in.</div>
-    
-        if(hook.category === "deal") {
+        hookContent = <div className='w2p-warning'>Cart updates on your site won’t be synchronized with Pipedrive unless the user is logged in.</div>
+
+        if (hook.category === "deal") {
             hookContent = <>
+                <p className='bg-darkPurple opacity-70 mb-4 px-2 py-2 rounded-lg font-semibold text-white'>Automatically synchronize the WooCommerce cart contents with the Pipedrive deal</p>
                 {hookContent}
-                Syncrnoniser automatiquement le contenu du panier woocommerce avec le deal Pipedrive
             </>
         }
     }

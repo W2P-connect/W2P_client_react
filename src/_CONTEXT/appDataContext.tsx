@@ -24,16 +24,6 @@ export const formatHook = (hook: Hook) => {
     return formatedHook
 }
 
-export const formatParameters = (parameters: Parameters) => {
-
-    const formatedParameters = { ...parameters }
-    formatedParameters.w2p.hookList =
-        formatedParameters.w2p.hookList
-            .filter(hook => hook.fields.length)
-            .map(hook => formatHook(hook))
-    return formatedParameters
-}
-
 function AppDataContextProvider(props: { children: React.ReactNode }) {
     const { addNotification } = useNotification();
     const callApi = useCallApi();

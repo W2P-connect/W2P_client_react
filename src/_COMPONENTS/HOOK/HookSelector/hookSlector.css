@@ -1,11 +1,11 @@
 .hook-selector {
-    padding: 4px 7px;
-    border-radius: var(--border-radius-1);
-    cursor: pointer;
-    min-width: 145px;
-    background-color: white;
+  padding: 4px 7px;
+  border-radius: var(--border-radius-1);
+  cursor: pointer;
+  min-width: 145px;
+  background-color: white;
 }
 
 .hook-selector.active {
-    box-shadow: inset 0px 0px 0px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0px 0px 0px 2px rgba(0, 0, 0, 0.6);
 }

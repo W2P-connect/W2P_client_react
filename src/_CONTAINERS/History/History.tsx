@@ -36,9 +36,8 @@ export default function History() {
 
 
   useEffect(() => {
-    const controller = new AbortController();
-
     timeoutRef.current && clearTimeout(timeoutRef.current)
+    const controller = new AbortController();
 
     timeoutRef.current = setTimeout(() => {
       setQueries(_ => null)
