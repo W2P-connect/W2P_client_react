@@ -77,7 +77,7 @@ export default function Orders() {
                   <div className='strong-1'>{translate("Order id")}</div>
                   <div className='strong-1'>{translate("Customer")}</div>
                   <div className='strong-1'>{translate("Deal id")}</div>
-                  <div className='strong-1'>{translate("State")}</div>
+                  <div className='strong-1'>{translate("Sync state")}</div>
                 </div>
                 {
                   orders.map((order, index) => {

@@ -119,7 +119,8 @@ export default function Order({ order }: { order: OrderType }) {
                             ${orderState.state === "SENDED" ? 'warning-label' : ''} 
                             ${orderState.state === "NOT SYNCED" ? 'warning-label' : ''} 
                             ${orderState.state === "NOT READY" ? 'warning-label' : ''} 
-                            ${orderState.state === "ERROR" ? 'error-label' : ''} 
+                            ${orderState.state === "ERROR" ? 'error-label' : ''}
+                            ${orderState.state === "CANCELED" ? 'error-label' : ''}
                             `}>
                                 <div>{orderState.state}</div>
                             </div>

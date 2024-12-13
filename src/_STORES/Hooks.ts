@@ -72,7 +72,7 @@ class HookStore {
             },
             "woocommerce_order_status_cancelled": {
                 "status": {
-                    value: "lost",
+                    value: "deleted",
                     condition: {
                         SkipOnExist: false
                     }
@@ -219,7 +219,20 @@ class HookStore {
                             ],
                             "id": "a19ae5c7-74cd-4864-a15c-a86cccb3f793",
                             "index": 1
-                        }
+                        },
+                        {
+                            "variables": [
+                                {
+                                    "value": "user_email",
+                                    "source": "user",
+                                    "exemple": "john.doe@exemple.com",
+                                    "isFreeField": false,
+                                    "id": "062a3Rfc-9bfa-4188-a066-2d90093e9e74"
+                                }
+                            ],
+                            "id": "37659736-d9d3-448f-b693-810c777a4d61",
+                            "index": 2
+                        },
                     ],
                     condition: {
                         "logicBlock": {
@@ -236,7 +249,6 @@ class HookStore {
                             "variables": [
                                 {
                                     "value": "user_email",
-                                    "source": "user",
                                     "exemple": "john.doe@exemple.com",
                                     "isFreeField": false,
                                     "id": "062a38fc-9bfa-4188-a066-2d90093e9e74"
@@ -298,14 +310,27 @@ class HookStore {
                             ],
                             "id": "a19ae5c7-74cd-4864-a15c-a86cccb3f793",
                             "index": 1
-                        }
+                        },
+                        {
+                            "variables": [
+                                {
+                                    "value": "user_email",
+                                    "source": "user",
+                                    "exemple": "john.doe@exemple.com",
+                                    "isFreeField": false,
+                                    "id": "062a38fc-9bfa-4188-a066-2d90093e9e74"
+                                }
+                            ],
+                            "id": "3ed59736-d9d3-448f-b693-810c777a4d61",
+                            "index": 2
+                        },
                     ],
                     condition: {
                         "logicBlock": {
                             "enabled": true,
                             "fieldNumber": "ALL"
                         },
-                        "findInPipedrive": true,
+                        "findInPipedrive": false,
                         "SkipOnExist": true
                     },
                 },

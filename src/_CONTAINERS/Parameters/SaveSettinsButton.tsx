@@ -12,14 +12,7 @@ const SaveSettinsButton = () => {
         <form onSubmit={e =>
             saveParameters(e, true)
         }>
-            <button
-                className='strong-button'
-                style={{
-                    opacity: JSON.stringify(appDataStore.initAppData.parameters) !==
-                        JSON.stringify((appDataStore.getAppData().parameters)) ? 1 : 0
-
-                }}
-            >
+            <button className='strong-button'>
                 {translate("Save settings")}
             </button>
         </form>)

@@ -34,9 +34,9 @@ export default function Deals() {
           <h2>{translate("General settings")}</h2>
 
           <form>
-            <div className="text-sm font-medium leading-6 text-gray-900 mb-1 ">
+            <div className="mb-1 font-medium text-gray-900 text-sm leading-6">
               {translate("Default deal name (if not defined in the event) : ")}
-              <span className='italic text-xs text-gray-700 mb-1'>
+              <span className='mb-1 text-gray-700 text-xs italic'>
                 {options.defaultOrderName
                   ? getBlockExemple(options.defaultOrderName)
                   : null
@@ -51,17 +51,17 @@ export default function Deals() {
             />
           </form>
 
-          <h2 className='m-t-50 m-b-10'>{translate("Products settings")}</h2>
+          <h2 className='m-b-10 m-t-50'>{translate("Products settings")}</h2>
           <form>
             <div className='pt-2'>
-              <label className='cursor-pointer gap-1 flex items-center mb-2'>
+              <label className='flex items-center gap-1 mb-2 cursor-pointer'>
                 <input
                   type="checkbox"
                   onChange={(e) => updateOption("sendProducts", e.target.checked)}
                   checked={options.sendProducts ?? false}
                 />
                 <div>
-                  {translate("Send WooCommerce order products to the Pipedrive Deal.")}
+                  {translate("Send WooCommerce order products to the Pipedrive Deal when an event is triggered.")}
                 </div>
               </label>
             </div>
@@ -69,7 +69,7 @@ export default function Deals() {
             <div className={classNames(
               options.sendProducts ? '' : 'opacity-65 pointer-events-none'
             )}>
-              <div className='max-w-[450px] min-w-[200px] w-[40%] m-b-25'>
+              <div className='m-b-25 w-[40%] min-w-[200px] max-w-[450px]'>
                 <Select
                   label={"Amounts are"}
                   options={[
@@ -97,9 +97,9 @@ export default function Deals() {
                 />
               </div>
               <div className='mb-2'>
-                <div className="block text-sm font-medium leading-6 text-gray-900 mb-1">{translate("Pipedrive product name (required)")}</div>
+                <div className="block mb-1 font-medium text-gray-900 text-sm leading-6">{translate("Pipedrive product name (required)")}</div>
                 {/* <div className='mb-2'>
-                  <label className='cursor-pointer gap-1 flex items-center'>
+                  <label className='flex items-center gap-1 cursor-pointer'>
                     <input
                       type="checkbox"
                       onChange={(e) => updateOption("searchBeforeCreate", e.target.checked)}
@@ -117,7 +117,7 @@ export default function Deals() {
                 />
               </div>
               <div>
-                <div className="block text-sm font-medium leading-6 text-gray-900 mb-1">{translate("Pipedrive product comment")}</div>
+                <div className="block mb-1 font-medium text-gray-900 text-sm leading-6">{translate("Pipedrive product comment")}</div>
                 <VariableBlock
                   defautBlock={options.productsComment}
                   setter={(value) => updateOption("productsComment", value)}

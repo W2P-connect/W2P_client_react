@@ -315,7 +315,7 @@ interface Customer {
 }
 
 
-export type OrderState = "NOT READY" | "SENDED" | "SYNCED" | "NOT SYNCED" | "ERROR" | "INVALID"
+export type OrderState = "NOT READY" | "SENDED" | "SYNCED" | "NOT SYNCED" | "ERROR" | "INVALID" | "CANCELED"
 
 interface DateObject {
     date: string;
