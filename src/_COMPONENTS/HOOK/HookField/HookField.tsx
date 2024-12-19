@@ -108,8 +108,8 @@ const HookField = ({ hookField }: Props) => {
 
     // Rendu JSX
     return groupedStagesArray.map(group => (
-      <div key={group.pipeline_name} className='flex column m-b-10'>
-        <div className='strong-1 m-b-5'>{group.pipeline_name}</div>
+      <div key={group.pipeline_name} className='flex m-b-10 column'>
+        <div className='m-b-5 strong-1'>{group.pipeline_name}</div>
         <div className='flex gap-1'>
           {
             group.stages.map(stage => (
@@ -138,8 +138,8 @@ const HookField = ({ hookField }: Props) => {
 
         <div
           onClick={_ => setOpen(prv => !prv)}
-          className='w-full flex justify-between items-center cursor-pointer' >
-          <div className='text-base font-medium'>
+          className='flex justify-between items-center w-full cursor-pointer' >
+          <div className='font-medium text-base'>
             {hookFieldStore.isImportant(hookField)
               ? <span>🚨</span>
               : null}
@@ -309,7 +309,7 @@ const HookField = ({ hookField }: Props) => {
           }
 
           <div>
-            <h5 className='strong-1 m-t-40 m-b-10'>
+            <h5 className='m-b-10 m-t-40 strong-1'>
               {translate("Condition")}
             </h5>
             <div className='flex flex-col gap-2'>
@@ -326,7 +326,7 @@ const HookField = ({ hookField }: Props) => {
               </div>
 
               <div>
-                <label className='flex gap-1 items-center cursor-pointer'>
+                <label className='flex items-center gap-1 cursor-pointer'>
                   <input
                     type='checkbox'
                     // className='w2p-normal-checkbox'
@@ -341,7 +341,7 @@ const HookField = ({ hookField }: Props) => {
               <div>
                 {
                   linkableFields[selectedHook.category].includes(hookField.pipedrive.key)
-                    ? <label className='flex gap-1 items-center'>
+                    ? <label className='flex items-center gap-1'>
                       <input
                         type='checkbox'
                         // className='w2p-normal-checkbox'
@@ -350,11 +350,9 @@ const HookField = ({ hookField }: Props) => {
                         checked={hookField.condition.findInPipedrive ?? false}
                       />
                       {selectedHook.category === "person"
-                        ? translate(`If a person already has this value for this field in Pipedrive, 
-                      then link the If this value already exists in Pipedrive for a person, link the WooCommerce account to that person if it is not already linked.`)
+                        ? translate(` If a person in Pipedrive already has this value for this field, link their WooCommerce account to that person. (only if it's not already linked).`)
                         : selectedHook.category === "organization"
-                          ? translate(`If an organization already has this value for this field in Pipedrive, 
-                      then link the If this value already exists in Pipedrive for an organization, link the WooCommerce account to that organization if it is not already linked.`)
+                          ? translate(` If an organization in Pipedrive already has this value for this field, link their WooCommerce account to that person. (only if it's not already linked).`)
                           : null //deal donc tchi
                       }
                     </label>
