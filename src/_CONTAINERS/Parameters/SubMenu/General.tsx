@@ -441,7 +441,7 @@ const Connexion = () => {
         {syncData.running
           ? <div className='mt-4'>
             <p>{translate("If the synchronization appears to be stuck for several minutes, you can try restarting it")}</p>
-            <form onSubmit={e => !syncData.running && syncroniseAll(e, true)}>
+            <form onSubmit={e => syncroniseAll(e, true)}>
               <button className='mt-2'>
                 {translate("Restart Synchronization")}
               </button>
