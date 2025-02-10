@@ -20,9 +20,9 @@ class PipedriveFieldStore {
     }
 
     setPipedriveFields(pipedriveFields: PipedriveField[]) {
-        // runInAction(() => {
-        //     this.fields = pipedriveFields
-        // })
+        runInAction(() => {
+            this.fields = pipedriveFields
+        })
     }
 
     getCategoryFields(category: Category) {
