@@ -31,9 +31,6 @@ const FieldCategory = ({ category }: { category: Category }) => {
     }
   }, [category, selectedHook])
 
-
-
-
   const getCategoryFields = (e: React.FormEvent) => {
     e.preventDefault()
     if (hookStore.selectedHookId) {
@@ -45,8 +42,9 @@ const FieldCategory = ({ category }: { category: Category }) => {
           const fields: PipedriveField[] = res.data.data.map((field: PipedriveField) => {
             return { ...field as PipedriveField, category: category }
           });
-          pipedriveFieldsStore.addPipedriveFields(fields)
-          hookStore.updateHookFieldsFromPipedriveFields(fields)
+
+          const addedFieds = pipedriveFieldsStore.addPipedriveFields(fields)
+          hookStore.updateHookFieldsFromPipedriveFields(addedFieds)
         })
 
         .catch(error => {

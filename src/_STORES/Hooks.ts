@@ -363,7 +363,6 @@ class HookStore {
         }
     };
 
-
     emptyHookField: BaseHookField = {
         id: '',
         enabled: false,
@@ -377,7 +376,6 @@ class HookStore {
         pipedriveFieldId: 0,
         hookId: ''
     };
-
 
     emptyHook: Hook = {
         id: "",
@@ -505,6 +503,7 @@ class HookStore {
         const hookIdx = hookIndex
             ? hookIndex
             : hookStore.getHookIndex(hookId);
+
         if (hookIdx > -1) {
             pipedriveFields
                 .forEach(pipedriveField => {
@@ -529,6 +528,7 @@ class HookStore {
                 };
 
                 runInAction(() => {
+
                     this.hooks[hIdx].fields.push(deepCopy(newHookField));
                     return newHookField;
                 })
@@ -556,7 +556,7 @@ class HookStore {
             if (hookField) {
                 return this.formatHookField(hookField)
             } else {
-                const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId)
+                const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId, hook.category);
                 return pipedriveField
                     ? this.addHookField(hookId, pipedriveField)
                     : null
@@ -570,15 +570,20 @@ class HookStore {
         if ("pipedrive" in field) {
             return field;
         } else {
-            const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId);
-            const formatedField = pipedriveField
-                ? {
-                    ...field,
-                    pipedrive: pipedriveField,
-                }
-                : null;
+            const hook = this.hooks.find(hook => hook.id === field.hookId)
+            if (hook) {
+                const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId, hook.category);
+                const formatedField = pipedriveField
+                    ? {
+                        ...field,
+                        pipedrive: pipedriveField,
+                    }
+                    : null;
 
-            return formatedField
+                return formatedField
+            } else {
+                return null
+            }
         }
     }
 

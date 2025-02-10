@@ -7,10 +7,12 @@ import { hookFieldStore } from '_STORES/HookField';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist';
 import HookParameters from '../HooksParameters/HookParameters';
+import { toJS } from 'mobx';
 
 export default function HookFieldList({ hook }: { hook: Hook }) {
 
     const categoryFields = pipedriveFieldsStore.getCategoryFields(hook.category);
+
 
     const [searchField, setSearchField] = useState<string>("")
 
@@ -20,7 +22,9 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                 .filter(field => searchField
                     ? field.name.includes(searchField)
                     : true)
-                .map(field => hookStore.getHookFieldFromPipedrive(hook.id, field.id))
+                .map(field => {
+                    return hookStore.getHookFieldFromPipedrive(hook.id, field.id)
+                })
                 .filter((hookfield): hookfield is HookFieldType => hookfield !== null)
             : []
         , [hook, categoryFields, searchField])
@@ -43,7 +47,7 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                     </div>
 
                     {filteredHookFieldsList.length ?
-                        <div className='flex column m-t-25 gap-1'>
+                        <div className='flex gap-1 m-t-25 column'>
                             {/* Priority fields */}
                             {filteredHookFieldsList
                                 .filter(hookfield => hookFieldStore.isImportant(hookfield))

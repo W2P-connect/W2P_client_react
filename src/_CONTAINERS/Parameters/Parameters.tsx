@@ -10,8 +10,6 @@ export default function Parameters() {
   const { currentSubMenu, currentSubMenuContent, setCurrentSubMenuPage } = useContext(MenuContext)
 
   useEffect(() => {
-    console.log(currentSubMenu);
-
     if (!currentSubMenu) {
       setCurrentSubMenuPage('general') //Page par défaut
     }

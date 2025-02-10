@@ -13,6 +13,8 @@ import { hookStore } from '_STORES/Hooks';
 import { AppData as AppDataType } from 'Types';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import { env } from 'process';
+import { userSettings } from 'userSettings';
+import { toJS } from 'mobx';
 
 // Render the app inside our shortcode's #app div
 document.addEventListener('DOMContentLoaded', async () => {
@@ -29,6 +31,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const appDataInit = deepMerge(appDataStore.emptyAppData, appData)
+
+
+
+        if (isLocal()) {
+            //@ts-ignore
+            appDataInit.parameters.w2p.hookList = userSettings.w2p_parameters.hookList
+            //@ts-ignore
+            appDataInit.parameters.w2p.deal = userSettings.w2p_parameters.deal
+            appDataInit.parameters.w2p.organization = userSettings.w2p_parameters.organization
+            appDataInit.parameters.w2p.person = userSettings.w2p_parameters.person
+            appDataInit.parameters.pipedrive.api_key = userSettings.pipedrive_parameters.api_key
+            appDataInit.parameters.pipedrive.company_domain = userSettings.pipedrive_parameters.domain
+
+
+            console.log("appDataInit", toJS(appDataInit));
+
+        }
 
         appDataStore.setAppData(appDataInit);
         appDataStore.setInitAppData(deepCopy(appDataInit));

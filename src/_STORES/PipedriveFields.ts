@@ -1,6 +1,8 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction, toJS } from "mobx";
 import { Category, PipedriveField } from "Types";
 import { unusableFieldsKey } from "appConstante";
+import { log } from "console";
+import { deepCopy } from "helpers";
 
 class PipedriveFieldStore {
 
@@ -18,9 +20,9 @@ class PipedriveFieldStore {
     }
 
     setPipedriveFields(pipedriveFields: PipedriveField[]) {
-        runInAction(() => {
-            this.fields = pipedriveFields
-        })
+        // runInAction(() => {
+        //     this.fields = pipedriveFields
+        // })
     }
 
     getCategoryFields(category: Category) {
@@ -28,29 +30,36 @@ class PipedriveFieldStore {
     }
 
     addPipedriveFields(PipedriveFields: PipedriveField[]) {
-        this.fields = this.fields.filter(existingField =>
-            !PipedriveFields.some(newField => newField.id === existingField.id)
+        const fieldqNoDuplicate = deepCopy(this.fields).filter((existingField: PipedriveField) =>
+            !PipedriveFields.some(newField =>
+                newField.id === existingField.id && newField.category === existingField.category
+            )
         );
+
         const fieldsToAdd = PipedriveFields.filter(field => this.isFieldValid(field));
 
         runInAction(() => {
-            this.fields = [...this.fields, ...fieldsToAdd];
+            this.fields = deepCopy([...fieldqNoDuplicate, ...fieldsToAdd]);
+            console.log("PASSED fields:", toJS(PipedriveFields));
+            console.log("To add Fields", fieldsToAdd);
+            console.log("OLD WITHOUT DUPLICATE addPipedriveFields", toJS(fieldqNoDuplicate));
+            console.log("Final stored fields:", toJS(this.fields));
         });
 
-        return fieldsToAdd;
+        return [...fieldqNoDuplicate, ...fieldsToAdd];
     }
 
 
     addPipedriveField(pipedriveField: PipedriveField) {
-        if (!this.getPiepdriveField(pipedriveField.id)) {
+        if (!this.getPiepdriveField(pipedriveField.id, pipedriveField.category)) {
             runInAction(() => {
                 this.fields.push(pipedriveField);
             })
         }
     }
 
-    getPiepdriveField(id: number): PipedriveField | undefined {
-        return this.fields.find(field => field.id === id)
+    getPiepdriveField(id: number, category: Category): PipedriveField | undefined {
+        return this.fields.find(field => field.id === id && field.category === category);
     }
 
     removeUnvalidFields = (pipedriveFieldsResponse: PipedriveField[]) => {

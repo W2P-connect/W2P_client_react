@@ -59,7 +59,11 @@ class HookFieldStore {
 
         const field = this.getHookFieldFromId(hookFieldId);
         if (field) {
-            const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId);
+            const hook = hookStore.hooks.find(hook => hook.id === field.hookId)
+
+            if (!hook) return null
+
+            const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId, hook.category);
             const result = pipedriveField
                 ? {
                     ...field,
@@ -90,7 +94,7 @@ class HookFieldStore {
     }
 
     isImportant(hookField: HookField): boolean {
-        const hook = hookStore.getHook(hookField.hookId)
+        const hook = hookStore.hooks.find(hook => hook.id === hookField.hookId)
         return (pipedriveFieldsStore.isFieldValid(hookField.pipedrive)
             && hook && priorityFieldsKey[hook.category]?.includes(hookField.pipedrive.key))
             ? true
@@ -98,7 +102,7 @@ class HookFieldStore {
     }
 
     isRequired(hookField: HookField): boolean {
-        const hook = hookStore.getHook(hookField.id)
+        const hook = hookStore.hooks.find(hook => hook.id === hookField.hookId)
         if (hook) {
             return appDataStore.appData.CONSTANTES.W2P_REQUIRED_FIELDS[hook.category].includes(hookField.pipedrive.key)
         } else {

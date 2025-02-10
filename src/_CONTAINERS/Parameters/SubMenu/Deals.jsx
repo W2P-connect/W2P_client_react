@@ -5,7 +5,7 @@ import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'
 import VariableBlock, { getBlockExemple } from '../../../_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { appDataStore } from '_STORES/AppData'
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.'
-import { classNames } from 'helpers'
+import { classNames, deepCopy } from 'helpers'
 
 export default function Deals() {
 
@@ -16,7 +16,7 @@ export default function Deals() {
   }, [])
 
   useEffect(() => {
-    const newAppData = appDataStore.appData
+    const newAppData = deepCopy(appDataStore.appData)
     newAppData.parameters.w2p.deal = options
     appDataStore.setAppData(newAppData)
   }, [options])

@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../translation';
-import { classNames, deepCopy, useCallApi, useCallPipedriveApi } from '../../../helpers';
+import { classNames, useCallApi, useCallPipedriveApi } from '../../../helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
@@ -64,6 +64,7 @@ const Connexion = () => {
   const callApi = useCallApi()
 
   const [syncData, setSyncData] = useState<SyncData>(emptySyncData)
+const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchSyncProgress = async () => {
@@ -91,8 +92,9 @@ const Connexion = () => {
     let intervalId: NodeJS.Timeout;
 
     intervalId = setInterval(() => {
+      clearInterval(intervalId);
       fetchSyncProgress();
-    }, syncData.running ? 2000 : 20 * 1000);
+    }, syncData.running ? 5000 : 20 * 1000);
 
     return () => {
       if (intervalId) {

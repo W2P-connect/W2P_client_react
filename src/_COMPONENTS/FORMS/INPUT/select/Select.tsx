@@ -36,12 +36,15 @@ export default function Select({
 
     useEffect(() => {
         if (value) {
-            const option = options.find(option => option.value === value)
-            selectOption(option ? option : options[0])
-        } else {
-            selectOption(options[0])
+            const option = options.find(option => option.value === value);
+            if (option && option.value !== selected?.value) {
+                selectOption(option);
+            }
+        } else if (options.length && options[0].value !== selected?.value) {
+            selectOption(options[0]);
         }
-    }, [value, options])
+    }, [value, options]);
+    
 
     const selectOption = (option: Option | undefined) => {
         if (option) {
@@ -59,7 +62,7 @@ export default function Select({
                         : null
                     }
                     <div className="relative mt-2">
-                        <ListboxButton className="relative bg-white shadow-sm py-1.5 pr-10 pl-3 ring-1 ring-gray-300 ring-inset w-full text-gray-900 text-left sm:text-sm sm:leading-6 pointer">
+                        <ListboxButton className="relative bg-white shadow-sm py-1.5 pr-10 pl-3 ring-1 ring-gray-300 ring-inset w-full text-gray-900 sm:text-sm text-left sm:leading-6 pointer">
                             {selected?.label ?? selected?.value}
                             <span className="right-0 absolute inset-y-0 flex items-center ml-3 pr-2 pointer-events-none">
                                 <ChevronUpDownIcon className="w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -67,7 +70,7 @@ export default function Select({
                         </ListboxButton>
 
                         <Transition show={open} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-                            <ListboxOptions className="z-10 absolute bg-white ring-opacity-5 shadow-lg mt-1 p-1 rounded-md ring-1 ring-black w-full max-h-56 text-base sm:text-sm overflow-auto focus:outline-none">
+                            <ListboxOptions className="z-10 absolute bg-white ring-opacity-5 shadow-lg mt-1 p-1 rounded-md focus:outline-none ring-1 ring-black w-full max-h-56 overflow-auto sm:text-sm text-base">
                                 {options.map((option, index) => (
                                     <ListboxOption
                                         key={index}
