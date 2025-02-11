@@ -12,9 +12,6 @@ import { deepCopy, deepMerge, isLocal } from 'helpers';
 import { hookStore } from '_STORES/Hooks';
 import { AppData as AppDataType } from 'Types';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
-import { env } from 'process';
-import { userSettings } from 'userSettings';
-import { toJS } from 'mobx';
 
 // Render the app inside our shortcode's #app div
 document.addEventListener('DOMContentLoaded', async () => {
