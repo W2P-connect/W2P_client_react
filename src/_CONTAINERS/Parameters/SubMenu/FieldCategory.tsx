@@ -66,7 +66,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
         </div>
 
         <div className="flex flex-wrap justify-stretch gap-2 mt-5 mb-5">
-          {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST
+          {appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST
             .filter(hook => !hook?.disabledFor?.includes(category))
             .map(hook => {
               return <HookSelector key={hook.key} preHook={hook} category={category} />

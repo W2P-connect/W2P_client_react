@@ -428,7 +428,7 @@ class HookStore {
     }
 
     validHook(hook: Hook): Hook | null {
-        const referenceHook = appDataStore.appData.CONSTANTES.W2P_HOOK_LIST
+        const referenceHook = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST
             .find(hookRef => hook.key === hookRef.key)
         if (referenceHook) {
             return {

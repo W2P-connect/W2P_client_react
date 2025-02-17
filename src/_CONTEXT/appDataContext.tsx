@@ -58,7 +58,7 @@ function AppDataContextProvider(props: { children: React.ReactNode }) {
             newParameters.w2p.hookList = newParameters.w2p.hookList.filter(hook => hook.enabled || (hook.fields && hook.fields.length))
 
             try {
-                const res = await callApi(`${appDataStore.appData.w2p_client_rest_url}/parameters`, { method: "put" }, null, { parameters: newParameters }, e);
+                const res = await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/parameters`, { method: "put" }, null, { parameters: newParameters }, e);
                 notification && addNotification({
                     error: false,
                     content: translate(res?.data.message),

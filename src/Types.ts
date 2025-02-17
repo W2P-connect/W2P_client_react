@@ -1,10 +1,10 @@
 export interface AppData {
     CONSTANTES: {
-        W2P_AVAIBLE_STATES: QueryState[]
-        W2P_HOOK_LIST: PreHook[]
-        W2P_META_KEYS: MetaKeyCategory[]
-        W2P_HOOK_SOURCES: ('order' | 'user' | 'product')[]
-        W2P_REQUIRED_FIELDS: {
+        W2PCIFW_AVAIBLE_STATES: QueryState[]
+        W2PCIFW_HOOK_LIST: PreHook[]
+        W2PCIFW_META_KEYS: MetaKeyCategory[]
+        W2PCIFW_HOOK_SOURCES: ('order' | 'user' | 'product')[]
+        W2PCIFW_REQUIRED_FIELDS: {
             deal: string[]
             organization: string[]
             person: string[]
@@ -12,8 +12,8 @@ export interface AppData {
     },
     parameters: Parameters,
     build_url: string,
-    w2p_client_rest_url: string,
-    w2p_distant_rest_url: string,
+    w2pcifw_client_rest_url: string,
+    w2pcifw_distant_rest_url: string,
     token: string,
     nonce: string,
 }
@@ -213,7 +213,7 @@ export type PipedriveProductData = {
     }
 }
 
-export type WoocomerceProductData = {
+export type WoocommerceProductData = {
     product_id: number;
     variation_id: number | null;
     product_name: string;
@@ -279,7 +279,7 @@ export interface Order {
     shipping: Address;
     payment_method: string;
     payment_method_title: string;
-    products: WoocomerceProductData[];
+    products: WoocommerceProductData[];
     transaction_id: string;
     currency_symbol: string;
     customer: Customer | null;

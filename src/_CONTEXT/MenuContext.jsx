@@ -3,7 +3,7 @@ import Parameters from '../_CONTAINERS/Parameters/Parameters';
 import Orders from '../_CONTAINERS/Orders/Orders';
 import History from '../_CONTAINERS/History/History';
 
-import General from '../_CONTAINERS/Parameters/SubMenu/General';
+import General from '../_CONTAINERS/Parameters/SubMenu/General/General';
 import Persons from '../_CONTAINERS/Parameters/SubMenu/Persons';
 import Organizations from '../_CONTAINERS/Parameters/SubMenu/Organizations';
 import Deals from '../_CONTAINERS/Parameters/SubMenu/Deals';

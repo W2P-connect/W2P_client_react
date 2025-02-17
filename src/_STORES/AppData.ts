@@ -21,9 +21,9 @@ class AppDataStore {
                 variables: [
                     {
                         id: "d7778f5b-910c-44f9-8c69-099bcb50fedc",
-                        exemple: "Woocomerce order n°",
+                        exemple: "Woocommerce order n°",
                         isFreeField: true,
-                        value: "Woocomerce order n°"
+                        value: "Woocommerce order n°"
                     },
                     {
                         value: "id",
@@ -114,19 +114,19 @@ class AppDataStore {
             w2p: this.emptyW2Pparameters,
         },
         CONSTANTES: {
-            W2P_AVAIBLE_STATES: [],
-            W2P_HOOK_LIST: [],
-            W2P_HOOK_SOURCES: [],
-            W2P_META_KEYS: [],
-            W2P_REQUIRED_FIELDS: {
+            W2PCIFW_AVAIBLE_STATES: [],
+            W2PCIFW_HOOK_LIST: [],
+            W2PCIFW_HOOK_SOURCES: [],
+            W2PCIFW_META_KEYS: [],
+            W2PCIFW_REQUIRED_FIELDS: {
                 deal: [],
                 organization: [],
                 person: [],
             }
         },
         build_url: '',
-        w2p_client_rest_url: '',
-        w2p_distant_rest_url: '',
+        w2pcifw_client_rest_url: '',
+        w2pcifw_distant_rest_url: '',
         token: '',
         nonce: '',
     }
@@ -192,7 +192,7 @@ class AppDataStore {
     }
 
     getParentHookFromKey(key: string) {
-        return this.appData.CONSTANTES.W2P_HOOK_LIST
+        return this.appData.CONSTANTES.W2PCIFW_HOOK_LIST
             .find(hook => hook.key === key && hook)
     }
 }

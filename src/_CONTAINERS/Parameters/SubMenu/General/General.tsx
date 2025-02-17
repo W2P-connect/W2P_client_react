@@ -1,7 +1,7 @@
-import { FormEvent, useEffect, useState } from 'react'
-import Input from '../../../_COMPONENTS/FORMS/INPUT/input/Input';
-import { translate } from '../../../translation';
-import { classNames, useCallApi, useCallPipedriveApi } from '../../../helpers';
+import { FormEvent, useState } from 'react'
+import Input from '../../../../_COMPONENTS/FORMS/INPUT/input/Input';
+import { translate } from '../../../../translation';
+import { deepCopy, isLocal, useCallApi, useCallPipedriveApi } from '../../../../helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
@@ -10,98 +10,16 @@ import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 import { Category, HookField, PipedriveField } from 'Types';
-import ProgressBar from '_COMPONENTS/GENERAL/ProgressBar/ProgressBar';
-
-interface SyncData {
-  running: boolean;
-  sync_progress_users: number;
-  sync_progress_orders: number;
-  last_heartbeat: string;
-  last_error: string;
-  last_sinced_date: Date | null;
-  sync_additional_datas: {
-    total_users: number;
-    current_user: number;
-    total_orders: number;
-    current_order: number;
-    current_user_index: number;
-    current_order_index: number;
-    total_person_errors: number;
-    total_person_uptodate: number;
-    total_person_done: number;
-    total_order_errors: number;
-    total_order_uptodate: number;
-    total_order_done: number;
-  }
-}
-
-const emptySyncData = {
-  running: false,
-  sync_progress_users: 0,
-  sync_progress_orders: 0,
-  last_heartbeat: "",
-  last_error: "",
-  sync_additional_datas: {
-    total_users: 0,
-    current_user: 0,
-    total_orders: 0,
-    current_order: 0,
-    current_user_index: 0,
-    current_order_index: 0,
-    total_person_errors: 0,
-    total_person_uptodate: 0,
-    total_person_done: 0,
-    total_order_errors: 0,
-    total_order_uptodate: 0,
-    total_order_done: 0,
-  },
-  last_sinced_date: null,
-}
+import Syncronize from './Syncronize';
 
 const Connexion = () => {
 
   const callPipedriveApi = useCallPipedriveApi()
   const callApi = useCallApi()
 
-  const [syncData, setSyncData] = useState<SyncData>(emptySyncData)
-const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [distantDomain, setDistantDomain] = useState<string>("");
+  const [distantApiKey, setDistantApiKey] = useState<string>("");
 
-  useEffect(() => {
-    const fetchSyncProgress = async () => {
-      try {
-        const res = await callApi(
-          `${appDataStore.appData.w2p_client_rest_url}/sync-progress`,
-          { method: "GET" },
-          null,
-          { time: new Date().getTime() }
-        );
-        if (res?.data) {
-          setSyncData(prv => ({
-            ...prv,
-            ...res.data,
-            last_sinced_date: res.data?.last_sinced_date ? new Date(res.data?.last_sinced_date) : null,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching sync progress:", error);
-      }
-    };
-
-    fetchSyncProgress();
-
-    let intervalId: NodeJS.Timeout;
-
-    intervalId = setInterval(() => {
-      clearInterval(intervalId);
-      fetchSyncProgress();
-    }, syncData.running ? 5000 : 20 * 1000);
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [syncData.running]);
 
   const { saveParameters } = useAppDataContext()
   const { addNotification } = useNotification()
@@ -122,7 +40,7 @@ const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   const checkW2pAPI = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {
     e.preventDefault()
-    return callApi(`${appDataStore.appData.w2p_distant_rest_url}/authentification`, { method: 'get' }, null, {
+    return callApi(`${appDataStore.appData.w2pcifw_distant_rest_url}/authentification`, { method: 'get' }, null, {
       domain: appDataStore.appData.parameters.w2p.domain,
       api_key: appDataStore.appData.parameters.w2p.api_key,
     }, e, false)
@@ -192,7 +110,7 @@ const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
       pipedriveFieldsStore.addPipedriveFields(allFields);
 
       const defaultParametersCategories: Category[] = Object.keys(hookStore.defaultHookSettings) as Category[];
-      const preHooks = appDataStore.appData.CONSTANTES.W2P_HOOK_LIST;
+      const preHooks = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST;
 
       // Si les hooks n'ont jamais été crée les fields ne seront jamais ajouté aux hooks (qui n'existent pas...)
       defaultParametersCategories.forEach(category => {
@@ -215,7 +133,7 @@ const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   const setupHooks = () => {
     const categories: Category[] = Object.keys(hookStore.defaultHookSettings) as Category[];
-    const preHooks = appDataStore.appData.CONSTANTES.W2P_HOOK_LIST;
+    const preHooks = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST;
 
     categories.forEach(category => {
       preHooks.forEach(preHook => {
@@ -256,13 +174,12 @@ const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
       hookStore.updateHookList([])
       appDataStore.setAppData(newAppDataStore)
 
-      callApi(`${appDataStore.appData.w2p_client_rest_url}/restore-parameters`, { method: "put" })
+      callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-parameters`, { method: "put" })
       saveParameters(null, false)
       appDataStore.setAppData(newAppDataStore)
-      setSyncData(_ => emptySyncData)
-      addNotification({
-        content: "Settings restored !"
-      })
+
+      window.location.reload()
+
     }
   }
 
@@ -290,65 +207,80 @@ const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
     appDataStore.setPipedriveParameter("company_domain", fomatedValue)
   }
 
-  const syncroniseAll = async (e: FormEvent, retry: boolean) => {
+
+  const loadDistantSettings = async (e: FormEvent) => {
     e.preventDefault()
-    if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started")) {
+    addNotification({ error: false, content: translate("Loading distant settings...") })
+    const query = await callApi(
+      `${distantDomain}/wp-json/w2p/v1/config`,
+      { method: "get" },
+      null,
+      { time: new Date().getTime(), api_key: distantApiKey }
+    )
 
-      const w2pOk = await checkW2pAPI(e, false)
-      const pipeOk = await checkPipedriveApi(e, false)
+    if (query?.status === 200 && query?.data?.success === true && query.data.data) {
 
-      if (w2pOk && pipeOk) {
-        setSyncData(prv => ({
-          ...prv,
-          running: false,
-          sync_progress_users: 0,
-          sync_progress_orders: 0,
-          last_heartbeat: "",
-          last_error: "",
-          sync_additional_datas: {
-            total_users: 0,
-            current_user: 0,
-            total_orders: 0,
-            current_order: 0,
-            current_user_index: 0,
-            current_order_index: 0,
-            total_person_errors: 0,
-            total_person_uptodate: 0,
-            total_person_done: 0,
-            total_order_errors: 0,
-            total_order_uptodate: 0,
-            total_order_done: 0,
-          },
-        }))
-        callApi(
-          `${appDataStore.appData.w2p_client_rest_url}/start-sync`,
-          { method: "GET" },
-          null,
-          { "re-sync": true, "retry": retry, time: new Date().getTime() }
-        )
-          .then(async res => {
-            setSyncData(prv => ({ ...prv, running: true }))
-            addNotification({
-              "error": !res?.data?.success,
-              "content": res?.data?.message
-                ? res.data.message
-                : res?.data?.success ? "Synchronization has started" : "Failed to start synchronization"
-            })
-          })
-          .catch(error => {
-            addNotification({
-              "error": true,
-              "content": translate("Wa have encountered an error, try again later")
-            })
-          })
-      }
+      delete query.data?.data?.nonce
+      delete query.data?.data?.token
+      delete query.data?.data?.w2pcifw_distant_rest_url
+      delete query.data?.data?.w2pcifw_client_rest_url
+      delete query.data?.data?.parameters.pipedrive.api_key
+      delete query.data?.data?.parameters.pipedrive.company_domain
+      delete query.data?.data?.parameters.w2p.api_key
+      delete query.data?.data?.parameters.pipedrive.domain
+
+
+      const newAppDataStore = { ...deepCopy(appDataStore.appData), ...deepCopy(query.data.data) }
+
+      appDataStore.setAppData(newAppDataStore)
+      hookStore.updateHookList(newAppDataStore.parameters.w2p.hookList);
+      pipedriveFieldsStore.setPipedriveFields(newAppDataStore.parameters.pipedrive.fields)
+
+      console.log(newAppDataStore);
+
+      addNotification({ error: false, content: translate("Distant settings loaded") })
+
+    } else {
+
+      addNotification({ error: true, content: translate("Error while loading distant settings") })
     }
   }
 
   return (
     <>
       <form onSubmit={e => checkW2pAPI(e)}>
+
+        {
+          isLocal()
+            ? <div className='mb-12'>
+              <h2>Load distant settings</h2>
+              <div className='flex flex-end gap-1 w2p-wrap'>
+                <Input
+                  className='flex-1 min-w-300'
+                  label={translate("Distant site domain")}
+                  onInput={(value) => setDistantDomain(value)}
+                  value={distantDomain}
+                />
+                <Input
+                  className='flex-1 min-w-300'
+                  label={translate("Distant site api key")}
+                  onInput={(value) => setDistantApiKey(value)}
+                  value={distantApiKey}
+                />
+                <MainButton style={1}
+                  type='button'
+                  onClick={e => loadDistantSettings(e)}
+                >
+                  {translate("Load distant settings")}
+                </MainButton>
+              </div>
+            </div>
+            : null
+        }
+
         <h2>W2P connexion</h2>
+
+
         <p className='m-b-10'>
           {translate(`To configure your API keys and your domain, 
           connect to your customer area on our site https://w2p.com`)}
@@ -438,82 +370,8 @@ const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
         </div>
       </div>
       <div className='m-t-100'>
-        <h2>Synchronize all existing data with Pipedrive</h2>
-        <p className='m-b-10'>{translate(`This action will synchronize all orders and users from your site with Pipedrive. To prevent system overload, the synchronization process may take several hours depending on the number of items being sent to Pipedrive.`)}</p>
-        {syncData.running
-          ? <div className='mt-4'>
-            <p>{translate("If the synchronization appears to be stuck for several minutes, you can try restarting it")}</p>
-            <form onSubmit={e => syncroniseAll(e, true)}>
-              <button className='mt-2'>
-                {translate("Restart Synchronization")}
-              </button>
-            </form>
-          </div>
-          : <>
-            <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
-            {
-              syncData.last_error
-                ? <p className='text-red-700'>Error during sync: {syncData.last_error}</p>
-                : null
-            }
-            <div className='flex gap-1'>
-              <form onSubmit={e => !syncData.running && syncroniseAll(e, false)}>
-                <button
-                  className={classNames(
-                    syncData.running ? "opacity-65 cursor-wait" : "",
-                    "mt-2"
-                  )}
-                >
-                  {translate("Synchronize all")}
-                </button>
-              </form>
-            </div>
-          </>
-        }
+        <Syncronize checkPipedriveApi={checkPipedriveApi} checkW2pAPI={checkW2pAPI} />
 
-        {
-          syncData.running || syncData.last_heartbeat
-            ? <div className='mt-4'>
-              <div >
-                <div className='mb-2'>
-                  <Tooltip
-                    tooltipText={
-                      <div className='text-center'>
-                        {`Errors during sync: ${syncData.sync_additional_datas.total_person_errors}`}
-                      </div>
-                    }
-                    mainText={<div>Users and organizations synchronization progress {`${syncData.sync_additional_datas.current_user_index} / ${syncData.sync_additional_datas.total_users}`}</div>
-                    }
-                  />
-                </div>
-                <ProgressBar completed={syncData.sync_progress_users} />
-              </div>
-              <div className='mt-4'>
-                <div className='mb-2'>
-                  <Tooltip
-                    tooltipText={
-                      <div className='text-center'>
-                        {`Errors during sync: ${syncData.sync_additional_datas.total_order_errors}`}
-                      </div>
-                    }
-                    mainText={<div>Orders synchronization progress {`${syncData.sync_additional_datas.current_order_index} / ${syncData.sync_additional_datas.total_orders}`}</div>
-                    }
-                  />
-                </div>
-                <ProgressBar completed={syncData.sync_progress_orders} />
-              </div>
-            </div>
-            : null
-        }
-
-        {
-          syncData.last_sinced_date
-            ? <div className='mt-4'>
-              <span className='font-semibold'>Last syncronisation : </span>
-              {syncData.last_sinced_date.toLocaleString()}
-            </div>
-            : null
-        }
       </div>
     </>
   )

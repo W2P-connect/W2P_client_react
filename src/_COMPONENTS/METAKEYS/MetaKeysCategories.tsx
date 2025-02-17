@@ -19,7 +19,7 @@ interface Props {
 
 export default function MetaKeysCategories({ onSelect, source }: Props) {
 
-    // console.log(source, 'appDataStore.appData.CONSTANTES.W2P_META_KEYS', toJS(appDataStore.appData.CONSTANTES.W2P_META_KEYS));
+    // console.log(source, 'appDataStore.appData.CONSTANTES.W2PCIFW_META_KEYS', toJS(appDataStore.appData.CONSTANTES.W2PCIFW_META_KEYS));
 
 
     const [currentCategory, setCurrentCategory] = useState<Item | null>(null)
@@ -46,7 +46,7 @@ export default function MetaKeysCategories({ onSelect, source }: Props) {
             active: false,
             value: <AddFreeField onSelect={addVariable} />
         },
-        ...appDataStore.appData.CONSTANTES.W2P_META_KEYS
+        ...appDataStore.appData.CONSTANTES.W2PCIFW_META_KEYS
             .filter(category => !source
                 ? true
                 : category.allowedSource.includes(source)
@@ -91,7 +91,7 @@ export default function MetaKeysCategories({ onSelect, source }: Props) {
     };
 
     return (
-        <div className='meta-keys-container relative flex flex-col h-full'>
+        <div className='relative flex flex-col h-full meta-keys-container'>
             <NavBar
                 items={navBar}
             />
@@ -106,14 +106,14 @@ export default function MetaKeysCategories({ onSelect, source }: Props) {
 
             {
                 variables.length
-                    ? <div className='mt-4 flex justify-between relative border-t border-gray-300 pt-3'>
+                    ? <div className='relative flex justify-between mt-4 pt-3 border-gray-300 border-t'>
                         <VariableList
                             variableArray={variables}
                             onUpdate={setVariables}
                         />
                         <button
                             onClick={selectVariables}
-                            className='strong-button m-l-10 self-center'
+                            className='self-center m-l-10 strong-button'
                         >
                             {translate("Add")}
                         </button>

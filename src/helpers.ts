@@ -67,7 +67,7 @@ export const useCallApi = () => {
                 // Supprimer la classe 'submitting' si une erreur se produit
                 submitter && submitter.classList.remove("submitting");
 
-                if (error?.response?.status === 401 && url.startsWith(appData.w2p_client_rest_url)) {
+                if (error?.response?.status === 401 && url.startsWith(appData.w2pcifw_client_rest_url)) {
                     addNotification({
                         error: true,
                         content: translate("You are not allowed to access this resource. Please refresh the page."),

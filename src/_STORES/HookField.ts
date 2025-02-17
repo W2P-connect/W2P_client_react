@@ -104,7 +104,7 @@ class HookFieldStore {
     isRequired(hookField: HookField): boolean {
         const hook = hookStore.hooks.find(hook => hook.id === hookField.hookId)
         if (hook) {
-            return appDataStore.appData.CONSTANTES.W2P_REQUIRED_FIELDS[hook.category].includes(hookField.pipedrive.key)
+            return appDataStore.appData.CONSTANTES.W2PCIFW_REQUIRED_FIELDS[hook.category].includes(hookField.pipedrive.key)
         } else {
             return false
         }

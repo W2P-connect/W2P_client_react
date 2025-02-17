@@ -40,10 +40,6 @@ class PipedriveFieldStore {
 
         runInAction(() => {
             this.fields = deepCopy([...fieldqNoDuplicate, ...fieldsToAdd]);
-            console.log("PASSED fields:", toJS(PipedriveFields));
-            console.log("To add Fields", fieldsToAdd);
-            console.log("OLD WITHOUT DUPLICATE addPipedriveFields", toJS(fieldqNoDuplicate));
-            console.log("Final stored fields:", toJS(this.fields));
         });
 
         return [...fieldqNoDuplicate, ...fieldsToAdd];

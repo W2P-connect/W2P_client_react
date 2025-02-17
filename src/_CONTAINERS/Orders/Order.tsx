@@ -41,7 +41,7 @@ export default function Order({ order }: { order: OrderType }) {
         formValues.direct_to_pipedrive = true;
 
         callApi(
-            `${appDataStore.appData.w2p_client_rest_url}/order/${orderState.id}/send`,
+            `${appDataStore.appData.w2pcifw_client_rest_url}/order/${orderState.id}/send`,
             { method: "PUT" },
             null,
             formValues,
@@ -61,7 +61,6 @@ export default function Order({ order }: { order: OrderType }) {
             })
             .catch(error => {
                 error?.response?.data?.data && setOrderState(_ => error?.response?.data?.data)
-                console.log(error);
                 addNotification({
                     error: !error?.response?.data?.success,
                     content: error?.response?.data?.message
@@ -73,9 +72,6 @@ export default function Order({ order }: { order: OrderType }) {
         ? orderState.queries[0]
         : null
 
-    console.log(orderState);
-
-
     const lastDoneQuery = orderState.queries.find(query => query.state === "DONE")
 
     return (
@@ -85,7 +81,6 @@ export default function Order({ order }: { order: OrderType }) {
                     className={`w2p-order pointer`}
                     onClick={(e: React.MouseEvent) => {
                         if (e.currentTarget.tagName.toUpperCase() !== 'BUTTON') {
-                            console.log(e.currentTarget);
                             setOpen(prev => !prev);
                         }
                     }}>
@@ -134,7 +129,7 @@ export default function Order({ order }: { order: OrderType }) {
                             >
                                 {query
                                     ? <>
-                                        <div className='border-gray-200 pb-2 border-b font-semibold text-center'>
+                                        <div className='pb-2 border-gray-200 border-b font-semibold text-center'>
                                             {orderState.state === "SYNCED"
                                                 ? "Last synced data"
                                                 : "Data to sync"
@@ -182,7 +177,7 @@ export default function Order({ order }: { order: OrderType }) {
                                         </div>
                                         <RenderIf condition={!!lastDoneQuery && orderState.state !== "SYNCED"} >
                                             <>
-                                                <div className='border-gray-200 mt-4 pb-2 border-b font-semibold text-center'>Last synced data</div>
+                                                <div className='mt-4 pb-2 border-gray-200 border-b font-semibold text-center'>Last synced data</div>
                                                 <div className='flex'>
                                                     <div className='flex-1'>
                                                         <div className='mb-1 font-semibold'>{translate("Data for Pipedrive")}</div>

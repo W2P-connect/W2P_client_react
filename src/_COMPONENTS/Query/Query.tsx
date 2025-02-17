@@ -8,7 +8,7 @@ import { Query as QueryType, QueryState } from 'Types'
 import { useNotification } from '_CONTEXT/hook/contextHook'
 import { appDataStore } from '_STORES/AppData'
 import QueryDetails from './QueryDetails'
-import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ArrowTopRightOnSquareIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
@@ -32,7 +32,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
   const sendQuery = (e: React.FormEvent) => {
     callApi(`
-    ${appDataStore.appData.w2p_client_rest_url}/query/${query.id}/send`,
+    ${appDataStore.appData.w2pcifw_client_rest_url}/query/${query.id}/send`,
       { method: "PUT" },
       null,
       { direct_to_pipedrive: true },
@@ -66,7 +66,6 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
           className={`w2p-query pointer`}
           onClick={(e: React.MouseEvent) => {
             if (e.currentTarget.tagName.toUpperCase() !== 'BUTTON') {
-              console.log(e.currentTarget);
               setOpen(prev => !prev);
             }
           }}>

@@ -43,7 +43,7 @@ export default function History() {
       setQueries(_ => null)
 
       callApi(
-        `${appDataStore.appData.w2p_client_rest_url}/queries`,
+        `${appDataStore.appData.w2pcifw_client_rest_url}/queries`,
         { method: "get" },
         controller.signal,
         { ...removeEmptyProperties(parameters), ...pagination, time: new Date().getTime() },
@@ -79,7 +79,7 @@ export default function History() {
             value={parameters.hook}
             onChange={e => setParameters(prv => ({ ...prv, hook: e.target.value }))}>
             <option value={""}>{translate("All hooks")}</option>
-            {appDataStore.appData.CONSTANTES.W2P_HOOK_LIST.map(hook =>
+            {appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST.map(hook =>
               <option key={hook.key} value={hook.label}>{hook.label}</option>
             )}
           </select>
@@ -95,7 +95,7 @@ export default function History() {
             value={parameters.state}
             onChange={e => setParameters(prv => ({ ...prv, state: e.target.value }))}>
             <option value={""}>{translate("All states")}</option>
-            {appDataStore.appData.CONSTANTES.W2P_AVAIBLE_STATES.map(state =>
+            {appDataStore.appData.CONSTANTES.W2PCIFW_AVAIBLE_STATES.map(state =>
               <option key={state} value={state}>{state}</option>
             )}
           </select>
@@ -105,7 +105,7 @@ export default function History() {
             value={parameters.source}
             onChange={e => setParameters(prv => ({ ...prv, source: e.target.value }))}>
             <option value={""}>{translate("All sources")}</option>
-            {appDataStore.appData.CONSTANTES.W2P_HOOK_SOURCES.map(source =>
+            {appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_SOURCES.map(source =>
               <option key={source} value={source}>{source}</option>
             )}
           </select>
