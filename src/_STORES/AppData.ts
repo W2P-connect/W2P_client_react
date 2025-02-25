@@ -125,8 +125,8 @@ class AppDataStore {
             }
         },
         build_url: '',
-        w2pcifw_client_rest_url: '',
-        w2pcifw_distant_rest_url: '',
+        W2PCIFW_client_rest_url: '',
+        W2PCIFW_distant_rest_url: '',
         token: '',
         nonce: '',
     }

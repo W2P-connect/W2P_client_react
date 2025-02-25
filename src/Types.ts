@@ -12,8 +12,8 @@ export interface AppData {
     },
     parameters: Parameters,
     build_url: string,
-    w2pcifw_client_rest_url: string,
-    w2pcifw_distant_rest_url: string,
+    W2PCIFW_client_rest_url: string,
+    W2PCIFW_distant_rest_url: string,
     token: string,
     nonce: string,
 }

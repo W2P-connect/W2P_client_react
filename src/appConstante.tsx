@@ -8,7 +8,7 @@ export const linkableFields: {
 } = {
     'person': ["name", "email", "phone"],
     'organization': ["name"],
-    'deal': []
+    'deal': ["title"],
 }
 
 export const unusableFieldsKey: string[] = [
