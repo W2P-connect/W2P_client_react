@@ -43,7 +43,7 @@ export default function History() {
       setQueries(_ => null)
 
       callApi(
-        `${appDataStore.appData.w2pcifw_client_rest_url}/queries`,
+        `${appDataStore.appData.W2PCIFW_client_rest_url}/queries`,
         { method: "get" },
         controller.signal,
         { ...removeEmptyProperties(parameters), ...pagination, time: new Date().getTime() },

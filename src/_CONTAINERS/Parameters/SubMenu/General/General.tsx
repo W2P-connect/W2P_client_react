@@ -41,7 +41,7 @@ const Connexion = () => {
 
   const checkW2pAPI = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {
     e.preventDefault()
-    return callApi(`${appDataStore.appData.w2pcifw_distant_rest_url}/authentification`, { method: 'get' }, null, {
+    return callApi(`${appDataStore.appData.W2PCIFW_distant_rest_url}/authentification`, { method: 'get' }, null, {
       domain: appDataStore.appData.parameters.w2p.domain,
       api_key: appDataStore.appData.parameters.w2p.api_key,
     }, e, false)
@@ -173,7 +173,7 @@ const Connexion = () => {
       hookStore.updateHookList([])
       appDataStore.setAppData(newAppDataStore)
 
-      callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-parameters`, { method: "put" })
+      callApi(`${appDataStore.appData.W2PCIFW_client_rest_url}/restore-parameters`, { method: "put" })
       saveParameters(null, false)
       appDataStore.setAppData(newAppDataStore)
 
@@ -221,8 +221,8 @@ const Connexion = () => {
 
       delete query.data?.data?.nonce
       delete query.data?.data?.token
-      delete query.data?.data?.w2pcifw_distant_rest_url
-      delete query.data?.data?.w2pcifw_client_rest_url
+      delete query.data?.data?.W2PCIFW_distant_rest_url
+      delete query.data?.data?.W2PCIFW_client_rest_url
       delete query.data?.data?.parameters.pipedrive.api_key
       delete query.data?.data?.parameters.pipedrive.company_domain
       delete query.data?.data?.parameters.w2p.api_key
