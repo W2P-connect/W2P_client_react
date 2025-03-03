@@ -70,7 +70,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
         const fetchSyncProgress = async () => {
             try {
                 const res = await callApi(
-                    `${appDataStore.appData.W2PCIFW_client_rest_url}/sync-progress`,
+                    `${appDataStore.appData.w2pcifw_client_rest_url}/sync-progress`,
                     { method: "GET" },
                     null,
                     { time: new Date().getTime() }
@@ -134,7 +134,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                     },
                 }))
                 callApi(
-                    `${appDataStore.appData.W2PCIFW_client_rest_url}/start-sync`,
+                    `${appDataStore.appData.w2pcifw_client_rest_url}/start-sync`,
                     { method: "GET" },
                     null,
                     { "re-sync": true, "retry": retry, time: new Date().getTime() }

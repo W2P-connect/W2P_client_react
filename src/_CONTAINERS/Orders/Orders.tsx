@@ -31,7 +31,7 @@ export default function Orders() {
     timeoutRef.current = setTimeout(() => {
       setOrders(_ => null)
       callApi(
-        `${appDataStore.appData.W2PCIFW_client_rest_url}/orders`,
+        `${appDataStore.appData.w2pcifw_client_rest_url}/orders`,
         { method: "get" },
         controller.signal,
         { ...pagination, orderId: orderId, time: new Date().getTime() },

@@ -32,7 +32,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
 
   const sendQuery = (e: React.FormEvent) => {
     callApi(`
-    ${appDataStore.appData.W2PCIFW_client_rest_url}/query/${query.id}/send`,
+    ${appDataStore.appData.w2pcifw_client_rest_url}/query/${query.id}/send`,
       { method: "PUT" },
       null,
       { direct_to_pipedrive: true },

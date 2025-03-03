@@ -41,7 +41,7 @@ export default function Order({ order }: { order: OrderType }) {
         formValues.direct_to_pipedrive = true;
 
         callApi(
-            `${appDataStore.appData.W2PCIFW_client_rest_url}/order/${orderState.id}/send`,
+            `${appDataStore.appData.w2pcifw_client_rest_url}/order/${orderState.id}/send`,
             { method: "PUT" },
             null,
             formValues,
