@@ -11,6 +11,12 @@ export const linkableFields: {
     'deal': []
 }
 
+export const externalLinks: Record<string, string> = {
+    setupGuideVideo: "https://woocommerce-to-pipedrive.com/setup-guide/",
+    setupGuide: "https://woocommerce-to-pipedrive.com/guides-releases-tutorials/woocommerce-pipedrive-sync-guide/",
+    homePage: "https://woocommerce-to-pipedrive.com/",
+}
+
 export const unusableFieldsKey: string[] = [
     "id",
     "org_id",

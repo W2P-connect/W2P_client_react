@@ -6,6 +6,7 @@ import { appDataStore } from '_STORES/AppData'
 import { deepCopy } from 'helpers'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.'
+import { externalLinks } from 'appConstante'
 
 const Organizations = () => {
 
@@ -27,16 +28,30 @@ const Organizations = () => {
 
   return (
     <>
+
+      <div
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('${appDataStore.appData.build_url}/images/bg-purple.jpg')`
+        }}
+        className='bg-cover bg-center shadow-md mb-12 p-4 rounded-xl'
+      >
+        <div className='flex justify-between items-center gap-4'>
+          <div>
+            <p className='text-base'>👋 Need help? Follow our guide <a target='_blank' className='underline' href={externalLinks.setupGuide}>here</a>. </p>
+          </div>
+        </div>
+      </div>
+
       {/* {options
         ? <>
-          <h2 className='m-t-50 m-b-10'>{translate("General settings")}</h2>
+          <h2 className='m-b-10 m-t-50'>{translate("General settings")}</h2>
           <form>
             <div className='m-b-25'>
               <div className='w2p-instructions'>
                 {translate("The 'billing_company' field is usually provided only when adding billing information when the user places their first order. If you want the organization to be created beforehand, you can use event parameters and other fields like the user's email, which is provided during registration.")}
               </div>
 
-              <label className='pointer flex items-center m-b-10 text-red-700'>
+              <label className='flex items-center m-b-10 text-red-700 pointer'>
                 <input
                   type="checkbox"
                   className='m-r-10'
@@ -55,7 +70,7 @@ const Organizations = () => {
                 />
               </label>
 
-              <label className='pointer flex items-center m-b-10'>
+              <label className='flex items-center m-b-10 pointer'>
                 <input
                   type="checkbox"
                   className='m-r-10'

@@ -11,6 +11,7 @@ import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 import { Category, HookField, PipedriveField } from 'Types';
 import Syncronize from './Syncronize';
+import { externalLinks } from 'appConstante';
 
 const Connexion = () => {
 
@@ -92,8 +93,6 @@ const Connexion = () => {
       const categories: Category[] = ["deal", "organization", "person"]
       const results = await Promise.all(categories.map(async (category) => {
         const res = await callPipedriveApi(`${category}Fields`, null, null, null);
-        console.log(res?.data);
-
         if (!res?.data?.data) {
           throw new Error(`No data in Pipedrive response for category: ${category}`);
         }
@@ -248,6 +247,19 @@ const Connexion = () => {
 
   return (
     <>
+      <div
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('${appDataStore.appData.build_url}/images/bg-purple.jpg')`
+        }}
+        className='bg-cover bg-center shadow-md mb-12 p-4 rounded-xl'
+      >
+        <div className='flex justify-between items-center gap-4'>
+          <div>
+            <p className='text-base'>👋 Need help? Follow our video guide <a target='_blank' className='underline' href={externalLinks.setupGuideVideo}>here</a>. </p>
+          </div>
+        </div>
+      </div>
+
       <form onSubmit={e => checkW2pAPI(e)}>
 
         {
@@ -283,7 +295,8 @@ const Connexion = () => {
 
         <p className='m-b-10'>
           {translate(`To configure your API keys and your domain, 
-          connect to your customer area on our site https://w2p.com`)}
+          connect to your customer area`)}{" "}
+          <a className='font-semibold underline' href={externalLinks.homePage} target='_blank'>{translate("on our site")}.</a>
         </p>
         <div className='flex flex-end gap-1 w2p-wrap'>
           <Input
