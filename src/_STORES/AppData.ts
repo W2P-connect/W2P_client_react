@@ -122,7 +122,8 @@ class AppDataStore {
                 deal: [],
                 organization: [],
                 person: [],
-            }
+            },
+            W2PCIFW_IS_WOOCOMERCE_ACTIVE: true
         },
         build_url: '',
         w2pcifw_client_rest_url: '',

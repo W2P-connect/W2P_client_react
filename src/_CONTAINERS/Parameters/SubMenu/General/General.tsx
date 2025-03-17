@@ -255,7 +255,7 @@ const Connexion = () => {
       >
         <div className='flex justify-between items-center gap-4'>
           <div>
-            <p className='text-base'>👋 Need help? Follow our video guide <a target='_blank' className='underline' href={externalLinks.setupGuideVideo}>here</a>. </p>
+            <p className='text-base'>👋 Ready to get started? start syncng now by <a target='_blank' className='underline' href={externalLinks.getStarted}>following our setup guide</a>. </p>
           </div>
         </div>
       </div>

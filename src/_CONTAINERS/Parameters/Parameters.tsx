@@ -3,6 +3,7 @@ import { translate } from '../../translation'
 import NavBar, { Item } from '../../_COMPONENTS/NAVIGATION/NavBar/NavBar'
 import { MenuContext } from '../../_CONTEXT/MenuContext'
 import SaveSettinsButton from './SaveSettinsButton'
+import { appDataStore } from '_STORES/AppData'
 
 
 export default function Parameters() {
@@ -34,14 +35,17 @@ export default function Parameters() {
       active: currentSubMenu === "organizations",
       value: "organizations",
     },
-    {
+  ]
+
+  if (appDataStore.appData.CONSTANTES.W2PCIFW_IS_WOOCOMERCE_ACTIVE) {
+    parametersItems.push({
       label: translate("Deals"),
       onClick: (item: Item) => setCurrentSubMenuPage(item.value),
       active: currentSubMenu === "deals",
       value: "deals",
-    },
-  ]
-
+    })
+  }
+  
   return (
     <div>
       {currentSubMenu && <NavBar items={parametersItems} />}

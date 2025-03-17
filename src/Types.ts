@@ -8,7 +8,8 @@ export interface AppData {
             deal: string[]
             organization: string[]
             person: string[]
-        }
+        },
+        W2PCIFW_IS_WOOCOMERCE_ACTIVE: boolean
     },
     parameters: Parameters,
     build_url: string,
