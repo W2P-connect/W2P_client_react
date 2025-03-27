@@ -70,6 +70,10 @@ class HookStore {
                         }
                     ],
                     condition: {
+                        logicBlock: {
+                            enabled: true,
+                            fieldNumber: "ALL"
+                        },
                         SkipOnExist: false
                     }
                 },
@@ -98,6 +102,10 @@ class HookStore {
                         }
                     ],
                     condition: {
+                        logicBlock: {
+                            enabled: true,
+                            fieldNumber: "ALL"
+                        },
                         SkipOnExist: true
                     }
                 },

@@ -245,13 +245,13 @@ const Connexion = () => {
     }
   }
 
-  const migrateSettings = async () => {
+  const migrateSettings = async (e: FormEvent) => {
+    e.preventDefault()
     addNotification({
       content: "Migrating settings..."
     })
 
-    const migration = await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/migrate`, { method: "get" })
-    console.log("migration", migration);
+    await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/migrate`, { method: "get" }, null, null, e)
 
     addNotification({
       content: "Settings migrated !"
@@ -404,7 +404,7 @@ const Connexion = () => {
         <h2>Migrate settings</h2>
         <p className='m-b-10'>{translate("You can migrate your settings from the previous version of our plugin to maintain compatibility (only for users who did not download the plugin from the WordPress platform).")}</p>
         <div className=''>
-          <button className='light-button' onClick={_ => migrateSettings()}>
+          <button className='light-button' onClick={e => migrateSettings(e)}>
             {translate("Migrate settings")}
           </button>
         </div>
