@@ -53,12 +53,52 @@ class HookStore {
                         SkipOnExist: false
                     }
                 },
+                "won_time": {
+                    value: [
+                        {
+                            variables: [
+                                {
+                                    value: "_date_paid",
+                                    source: "order",
+                                    exemple: "2025-03-27 14:30:00",
+                                    isFreeField: false,
+                                    id: "3e59362e-3cd3-4c6c-8aec-a0d350r1ab8f"
+                                }
+                            ],
+                            id: "02e6fddc-998f-4a7f-bac3-d4539bfd3177",
+                            index: 0
+                        }
+                    ],
+                    condition: {
+                        SkipOnExist: false
+                    }
+                },
             },
             "woocommerce_order_status_completed": {
                 "status": {
                     value: "won",
                     condition: {
                         SkipOnExist: false
+                    }
+                },
+                "won_time": {
+                    value: [
+                        {
+                            variables: [
+                                {
+                                    value: "_completed_date",
+                                    source: "order",
+                                    exemple: "2025-03-27 14:30:00",
+                                    isFreeField: false,
+                                    id: "3e59362e-3cd3-4c6c-8aec-a0d31256ab8f"
+                                }
+                            ],
+                            id: "02e6rrrc-998f-4a7f-bac3-d4539bfd3177",
+                            index: 0
+                        }
+                    ],
+                    condition: {
+                        SkipOnExist: true
                     }
                 },
             },

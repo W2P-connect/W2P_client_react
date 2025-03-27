@@ -27,7 +27,7 @@ export const unusableFieldsKey: string[] = [
     "update_time",
     //deal
     "value",
-    "won_time",
+    // "won_time",
     "lost_time",
     "expected_close_date",
     "channel_id",

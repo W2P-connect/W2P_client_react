@@ -106,7 +106,7 @@ export const useCallPipedriveApi = () => {
                 // })
                 reject(false);
             } else {
-                const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
+                const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/api/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
                 callApi(url, options = options ?? { method: "get" }, abortSignal, data, e)
                     .then((res) => {
                         resolve(res);

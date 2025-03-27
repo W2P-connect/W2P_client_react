@@ -245,6 +245,19 @@ const Connexion = () => {
     }
   }
 
+  const migrateSettings = async () => {
+    addNotification({
+      content: "Migrating settings..."
+    })
+
+    const migration = await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/migrate`, { method: "get" })
+    console.log("migration", migration);
+
+    addNotification({
+      content: "Settings migrated !"
+    })
+  }
+
   return (
     <>
       <div
@@ -386,6 +399,17 @@ const Connexion = () => {
         <Syncronize checkPipedriveApi={checkPipedriveApi} checkW2pAPI={checkW2pAPI} />
 
       </div>
+
+      <div className='m-t-100'>
+        <h2>Migrate settings</h2>
+        <p className='m-b-10'>{translate("You can migrate your settings from the previous version of our plugin to maintain compatibility (only for users who did not download the plugin from the WordPress platform).")}</p>
+        <div className=''>
+          <button className='light-button' onClick={_ => migrateSettings()}>
+            {translate("Migrate settings")}
+          </button>
+        </div>
+      </div>
+
     </>
   )
 }
