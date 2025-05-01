@@ -543,11 +543,11 @@ class HookStore {
 
     updateHookFieldsFromPipedriveFields(pipedriveFields: PipedriveField[]): void {
         this.hooks.forEach((hook, idx) => {
-            this.addHookFieldsFromPipedrive(hook.id, pipedriveFields, idx)
+            this.addHookFieldsFromPipedrive(hook.category, hook.id, pipedriveFields, idx)
         })
     }
 
-    addHookFieldsFromPipedrive(hookId: string, pipedriveFields: PipedriveField[], hookIndex: number | null = null): void {
+    addHookFieldsFromPipedrive(category: Category, hookId: string, pipedriveFields: PipedriveField[], hookIndex: number | null = null): void {
         const hookIdx = hookIndex
             ? hookIndex
             : hookStore.getHookIndex(hookId);
@@ -555,7 +555,9 @@ class HookStore {
         if (hookIdx > -1) {
             pipedriveFields
                 .forEach(pipedriveField => {
-                    this.addHookField(hookId, pipedriveField, hookIdx)
+                    if (pipedriveField.category === category) {
+                        this.addHookField(hookId, pipedriveField, hookIdx)
+                    }
                 })
         }
     }
