@@ -397,19 +397,7 @@ const Connexion = () => {
       </div>
       <div className='m-t-100'>
         <Syncronize checkPipedriveApi={checkPipedriveApi} checkW2pAPI={checkW2pAPI} />
-
       </div>
-
-      <div className='m-t-100'>
-        <h2>Migrate settings</h2>
-        <p className='m-b-10'>{translate("You can migrate your settings from the previous version of our plugin to maintain compatibility (only for users who did not download the plugin from the WordPress platform).")}</p>
-        <div className=''>
-          <button className='light-button' onClick={e => migrateSettings(e)}>
-            {translate("Migrate settings")}
-          </button>
-        </div>
-      </div>
-
     </>
   )
 }
