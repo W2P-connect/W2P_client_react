@@ -92,7 +92,6 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
         let intervalId: NodeJS.Timeout;
 
         intervalId = setInterval(() => {
-            clearInterval(intervalId);
             fetchSyncProgress();
         }, syncData.running ? 5000 : 20 * 1000);
 
