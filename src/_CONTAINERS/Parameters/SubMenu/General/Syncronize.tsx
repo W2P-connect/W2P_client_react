@@ -172,7 +172,18 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                     </form>
                 </div>
                 : <>
-                    <p className='m-b-10'>{translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks.`)}</p>
+                    <p className="mb-2">
+                        {translate(`Before starting the synchronization, make sure you have properly configured the settings for the order and person hooks:`)}
+                    </p>
+                    <ul className="space-y-1 mb-6 text-muted-foreground text-sm list-disc list-inside">
+                        <li className='pl-2'>
+                            {translate(`During a full sync, the "User Updated" event is used to send user data to Pipedrive for persons and organizations (if defined). This hook is the most relevant for syncing general user information, as it is triggered anytime a user profile is updated — for example, after a new order or a profile change.`)}
+                        </li>
+                        <li className='pl-2'>
+                            {translate(`For orders, the event corresponding to each order's current status (e.g., "Completed", "Processing") is used. Make sure you have configured those events under the "Deal" section if you want orders to be included in the sync.`)}
+                        </li>
+                    </ul>
+
                     {
                         syncData.last_error
                             ? <p className='text-red-700'>Error during sync: {syncData.last_error}</p>
