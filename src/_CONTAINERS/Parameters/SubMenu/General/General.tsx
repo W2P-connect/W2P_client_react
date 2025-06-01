@@ -27,16 +27,20 @@ const Connexion = () => {
 
   const checkPipedriveApi = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {
     e.preventDefault()
-    return callPipedriveApi("dealFields", null, null, null, e)
-      .then(async _ => {
-        notification && addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
-        await saveParameters(e, false)
-        return true  // Ajoute un return ici pour garantir un type de retour boolean
-      })
-      .catch(_ => {
+    try {
+      const response = await callPipedriveApi("dealFields", null, null, null, e)
+      if (!response?.status || response?.status !== 200) {
         addNotification({ error: true, content: translate("Connection to Pipedrive failed. Please check the API key or company domain.") })
         return false
-      })
+      } else {
+        notification && addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
+        await saveParameters(e, false)
+        return true
+      }
+    } catch {
+      addNotification({ error: true, content: translate("Connection to Pipedrive failed. Please check the API key or company domain.") })
+      return false
+    }
   }
 
   const checkW2pAPI = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {

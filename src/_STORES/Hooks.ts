@@ -314,6 +314,55 @@ class HookStore {
                         "findInPipedrive": true,
                         "SkipOnExist": false
                     },
+                },
+                "first_name": {
+                    value: [{
+                        "variables": [
+                            {
+                                "label": "First name",
+                                "value": "first_name",
+                                "source": "user",
+                                "description": "User's first name.",
+                                "exemple": "John",
+                                "isFreeField": false,
+                                "id": "31a9403f-883d-445c-bc7a-48df73aa73c7"
+                            }
+                        ],
+                        "id": "7c305eda-b182-44e1-868e-58b14e1d93b1",
+                        "index": 0
+
+                    }],
+                    condition: {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    }
+                },
+                "last_name": {
+                    value: [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Last name",
+                                    "value": "last_name",
+                                    "source": "user",
+                                    "description": "User's last name.",
+                                    "exemple": "Doe",
+                                    "isFreeField": false,
+                                    "id": "03391c8f-312c-4317-86e8-733cd91921d6"
+                                }
+                            ],
+                            "id": "85d9fdf0-a775-40a5-a965-a887d6561e3e",
+                            "index": 0
+                        }
+                    ],
+                    condition: {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    }
                 }
             },
             "profile_update": {
@@ -406,6 +455,111 @@ class HookStore {
                         "findInPipedrive": true,
                         "SkipOnExist": false
                     },
+                },
+                "first_name": {
+                    value: [
+                        {
+                            "variables": [
+                                {
+                                    "label": "First name",
+                                    "value": "first_name",
+                                    "source": "user",
+                                    "description": "User's first name.",
+                                    "exemple": "John",
+                                    "isFreeField": false,
+                                    "id": "e4d97742-13cd-464b-9ef2-69c5f415c0d7"
+                                }
+                            ],
+                            "id": "b1888144-2388-4db2-a33c-2f9f35bda99d",
+                            "index": 0
+                        },
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing first_name",
+                                    "value": "billing_first_name",
+                                    "source": "user",
+                                    "description": "Customer's billing first name.",
+                                    "exemple": "John",
+                                    "isFreeField": false,
+                                    "id": "2f71c06a-077c-4e21-adbd-bd72c98f5039"
+                                }
+                            ],
+                            "id": "187d7260-af4a-4740-9b34-ad0cb81e187a",
+                            "index": 1
+                        }
+                    ],
+                    condition: {
+                        "logicBlock": {
+                            "enabled": true,
+                            "fieldNumber": "1"
+                        }
+                    }
+                },
+                "last_name": {
+                    value: [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Last name",
+                                    "value": "last_name",
+                                    "source": "user",
+                                    "description": "User's last name.",
+                                    "exemple": "Doe",
+                                    "isFreeField": false,
+                                    "id": "b1296850-3522-4516-a083-f35d452c6a78"
+                                }
+                            ],
+                            "id": "0899328f-95a1-481e-a433-6e5c4b9f5e53",
+                            "index": 0
+                        },
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing last name",
+                                    "value": "billing_last_name",
+                                    "source": "user",
+                                    "description": "Customer's billing last name.",
+                                    "exemple": "Doe",
+                                    "isFreeField": false,
+                                    "id": "0ac6a99f-e3fa-4217-a42b-1ec7e087652f"
+                                }
+                            ],
+                            "id": "dbf85761-e943-4480-86a1-45690ef9edf2",
+                            "index": 1
+                        }
+                    ],
+                    condition: {
+                        "logicBlock": {
+                            "enabled": true,
+                            "fieldNumber": "1"
+                        }
+                    }
+                },
+                "phone": {
+                    value: [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing phone",
+                                    "value": "billing_phone",
+                                    "source": "user",
+                                    "description": "Customer's billing phone number.",
+                                    "exemple": "123-456-7890",
+                                    "isFreeField": false,
+                                    "id": "3dd480b5-f8d0-48ca-90d2-e6966e4b7e8d"
+                                }
+                            ],
+                            "id": "587d354f-d9e5-4196-b941-651cb87f3230",
+                            "index": 0
+                        }
+                    ],
+                    condition: {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ import { classNames, useCallApi } from 'helpers';
 import { useNotification } from '_CONTEXT/hook/contextHook';
 import { appDataStore } from '_STORES/AppData';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
+import RenderIf from '_COMPONENTS/GENERAL/RenderIf';
 
 interface SyncData {
     running: boolean;
@@ -136,7 +137,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                     `${appDataStore.appData.w2pcifw_client_rest_url}/start-sync`,
                     { method: "GET" },
                     null,
-                    { "re-sync": true, "retry": retry, time: new Date().getTime() }
+                    { "retry": retry, time: new Date().getTime() }
                 )
                     .then(async res => {
                         setSyncData(prv => ({ ...prv, running: true }))
@@ -157,6 +158,10 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
         }
     }
 
+    console.log("syncData.last_error?.includes('Pipedrive API limit exceeded')");
+    console.log(syncData.last_error?.includes("Pipedrive API limit exceeded"));
+
+    const isPipedriveApiLimitExceeded = syncData.last_error?.includes("Pipedrive API limit exceeded");
     return (
         <div>
             <h2>Synchronize all existing data with Pipedrive</h2>
@@ -185,18 +190,20 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
 
                     {
                         syncData.last_error
-                            ? <p className='text-red-700'>Error during sync: {syncData.last_error}</p>
+                            ? <p className='text-red-700'>{isPipedriveApiLimitExceeded ? "" : translate("Error during sync:")}{syncData.last_error}</p>
                             : null
                     }
                     <div className='flex gap-1'>
-                        <form onSubmit={e => !syncData.running && syncroniseAll(e, false)}>
+                        <form onSubmit={e => !syncData.running && syncroniseAll(e, syncData.sync_progress_orders < 100 ? true : false)}>
                             <button
                                 className={classNames(
                                     syncData.running ? "opacity-65 cursor-wait" : "",
                                     "mt-2"
                                 )}
                             >
-                                {translate("Synchronize all")}
+                                {syncData.sync_progress_orders < 100
+                                    ? translate("Resume synchronization")
+                                    : translate("Synchronize all")}
                             </button>
                         </form>
                     </div>
