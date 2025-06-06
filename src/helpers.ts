@@ -90,42 +90,21 @@ export const useCallPipedriveApi = () => {
     const appData = appDataStore.appData
 
     // Define the function with proper TypeScript types
-    const callPipedriveApi = (
+    const callPipedriveApi = async (
         uri: string,
         options: AxiosRequestConfig | null,
         abortSignal: AbortSignal | null = null,
         data: object | null = null,
         e: React.FormEvent | null = null
     ): Promise<AxiosResponse<any> | null> => {
-        return new Promise(async (resolve, reject) => {
-            e && e.preventDefault()
-            if (!appData.parameters.pipedrive.company_domain || !appData.parameters.pipedrive.api_key) {
-                // addNotification({
-                //     error: true,
-                //     content: translate("You must first add your Pipedrive API information in the settings."),
-                // })
-                reject(false);
-            } else {
-                const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/api/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
-                callApi(url, options = options ?? { method: "get" }, abortSignal, data, e)
-                    .then((res) => {
-                        resolve(res);
-                    })
-                    .catch(async (error) => {
-                        console.log(error);
-
-                        if (error.code !== "ERR_CANCELED") {
-                            if (error.response && error.response.status === 429) {
-                                setTimeout(() => {
-                                    callPipedriveApi(uri, options, abortSignal, data, e).then(resolve).catch(reject);
-                                }, 750);
-                            } else {
-                                reject(error);
-                            }
-                        }
-                    });
-            }
-        });
+        e && e.preventDefault()
+        if (!appData.parameters.pipedrive.company_domain || !appData.parameters.pipedrive.api_key) {
+            return null;
+        } else {
+            const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/api/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
+            const res = await callApi(url, options = options ?? { method: "get" }, abortSignal, data, e)
+            return res
+        }
     };
 
     return callPipedriveApi;
