@@ -190,7 +190,7 @@ const Connexion = () => {
       newAppData.parameters.pipedrive = appDataStore.emptyPipedriveParameters
       appDataStore.setAppData(newAppData)
       pipedriveFieldsStore.ressetPipedriveFields()
-
+      callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-pipedrive-parameter`, { method: "put" })
       saveParameters(null, false)
 
       addNotification({
