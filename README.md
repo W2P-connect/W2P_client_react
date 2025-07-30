@@ -1,70 +1,54 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# W2P Client – React Frontend
 
-## Available Scripts
+Ce projet constitue la partie frontend React de l'intégration W2P, un plugin qui synchronise les données entre WooCommerce et Pipedrive. Il communique avec un backend local où le plugin W2P est activé.
 
-In the project directory, you can run:
+⚠️ **Ce projet nécessite un backend fonctionnel avec le plugin W2P activé pour fonctionner correctement. Assure-toi d'avoir l'accès à ce backend local avant de démarrer.**
 
-### `npm start`
+## 🚀 Démarrage rapide
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 1. Clone le repo
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+git clone https://github.com/W2P-connect/W2P_client_react.git
+cd W2P_client_react
+```
 
-### `npm test`
+### 2. Installe les dépendances
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+### 3. Démarre l'application
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Le frontend nécessite un backend local avec le plugin W2P activé pour fonctionner. Une fois que tout est configuré :
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+L'application sera accessible par défaut à http://localhost:3000.
 
-### `npm run eject`
+## 🛠 Stack technique
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **React**
+- **MobX** pour la gestion d'état
+- **Typescript**
+- **Tailwind CSS** pour la gestion des styles
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📁 Structure du projet
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Le projet suit une structure simple et modulaire, facilitant la gestion de l'état, des composants et des fonctions :
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **public/** : Contient les fichiers statiques accessibles depuis le navigateur.
+- **src/** : Contient tout le code source de l'application.
+  - **src/helpers/** : Fonctions utilitaires et helpers.
+  - **src/_COMPONENTS/** : Composants réutilisables dans toute l'application.
+  - **src/_CONTEXT/** : Contextes pour partager des données entre composants.
+  - **src/_STORES/** : Gestion de l'état avec MobX.
+  - **src/_CONTAINERS/** : Contient les sections rangées par page (containers).
 
-## Learn More
+## 📩 Feedback ou bugs
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Si tu rencontres des problèmes ou souhaites contribuer à ce projet, tu peux ouvrir un ticket ici : https://woocommerce-to-pipedrive.com/contact.
