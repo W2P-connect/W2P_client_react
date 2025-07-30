@@ -215,10 +215,10 @@ const Connexion = () => {
     e.preventDefault()
     addNotification({ error: false, content: translate("Loading distant settings...") })
     const query = await callApi(
-      `${distantDomain}/wp-json/w2p/v1/config`,
+      `${appDataStore.appData.w2pcifw_client_rest_url}/distant_settings`,
       { method: "get" },
       null,
-      { time: new Date().getTime(), api_key: distantApiKey }
+      { time: new Date().getTime(), distant_rest_url: distantDomain, distant_rest_token: distantApiKey }
     )
 
     if (query?.status === 200 && query?.data?.success === true && query.data.data) {
@@ -232,6 +232,7 @@ const Connexion = () => {
       delete query.data?.data?.parameters.w2p.api_key
       delete query.data?.data?.parameters.pipedrive.domain
 
+      query.data.data.CONSTANTES.W2PCIFW_IS_WOOCOMERCE_ACTIVE = true
 
       const newAppDataStore = { ...deepCopy(appDataStore.appData), ...deepCopy(query.data.data) }
 
