@@ -65,7 +65,6 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
     const { addNotification } = useNotification()
 
     const [syncData, setSyncData] = useState<SyncData>(emptySyncData)
-    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const fetchSyncProgress = async () => {
@@ -103,15 +102,25 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
         };
     }, [syncData.running]);
 
-    const syncroniseAll = async (e: FormEvent, retry: boolean) => {
+    const stopSync = async (e: FormEvent) => {
         e.preventDefault()
-        if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' hook and the order states? Please note that you will not be able to cancel the synchronization once it has started")) {
+        const response = await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/stop-sync`, { method: "get" }, null, { time: new Date().getTime() }, e)
+        if (response?.status === 200) {
+            addNotification({ error: false, content: translate("Synchronization will be stopped soon (it can take a few minutes)") })
+        } else {
+            addNotification({ error: true, content: translate("An error occured while stopping the synchronization") })
+        }
+    }
+
+    const syncroniseAll = async (e: FormEvent, resume: boolean) => {
+        e.preventDefault()
+        if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' and order events ?")) {
 
             const w2pOk = await checkW2pAPI(e, false)
             const pipeOk = await checkPipedriveApi(e, false)
 
             if (w2pOk && pipeOk) {
-                setSyncData(prv => ({
+                !resume && setSyncData(prv => ({
                     ...prv,
                     running: false,
                     sync_progress_users: 0,
@@ -137,7 +146,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                     `${appDataStore.appData.w2pcifw_client_rest_url}/start-sync`,
                     { method: "GET" },
                     null,
-                    { "retry": retry, time: new Date().getTime() }
+                    { "resume": resume, time: new Date().getTime() }
                 )
                     .then(async res => {
                         setSyncData(prv => ({ ...prv, running: true }))
@@ -158,22 +167,33 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
         }
     }
 
-    console.log("syncData.last_error?.includes('Pipedrive API limit exceeded')");
-    console.log(syncData.last_error?.includes("Pipedrive API limit exceeded"));
-
-    const isPipedriveApiLimitExceeded = syncData.last_error?.includes("Pipedrive API limit exceeded");
     return (
         <div>
             <h2>Synchronize all existing data with Pipedrive</h2>
-            <p className='m-b-10'>{translate(`This action will synchronize all orders and users from your site with Pipedrive. To prevent system overload, the synchronization process may take several hours depending on the number of items being sent to Pipedrive.`)}</p>
+            <p className='m-b-10'>
+                {translate(`This action will synchronize all orders and users from your site with Pipedrive. To prevent system overload, the synchronization process may take several hours or days depending on the number of items being sent to Pipedrive and your daily Pipedrive API limit.`)}
+            </p>
             {syncData.running
                 ? <div className='mt-4'>
-                    <p>{translate("If the synchronization appears to be stuck for several minutes, you can try restarting it")}</p>
-                    <form onSubmit={e => syncroniseAll(e, true)}>
-                        <button className='mt-2'>
-                            {translate("Restart Synchronization")}
-                        </button>
-                    </form>
+                    <p>{translate("If the synchronization appears to be stuck for several minutes, you can try resuming it")}</p>
+                    <div className='flex gap-2'>
+                        <form onSubmit={e => syncroniseAll(e, true)}>
+                            <button className='mt-2'>
+                                {translate("Resume Synchronization")}
+                            </button>
+                        </form>
+                        <div className='flex gap-1'>
+                            <form onSubmit={e => stopSync(e)}>
+                                <button
+                                    className={classNames(
+                                        "mt-2"
+                                    )}
+                                >
+                                    {translate("Pause synchronization")}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 : <>
                     <p className="mb-2">
@@ -190,22 +210,34 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
 
                     {
                         syncData.last_error
-                            ? <p className='text-red-700'>{isPipedriveApiLimitExceeded ? "" : translate("Error during sync:")}{syncData.last_error}</p>
+                            ? <p className='text-red-700'>{translate("Error during sync: ")}{syncData.last_error}</p>
                             : null
                     }
                     <div className='flex gap-1'>
-                        <form onSubmit={e => !syncData.running && syncroniseAll(e, syncData.sync_progress_orders < 100 ? true : false)}>
+                        <form onSubmit={e => syncroniseAll(e, false)}>
                             <button
                                 className={classNames(
                                     syncData.running ? "opacity-65 cursor-wait" : "",
                                     "mt-2"
                                 )}
                             >
-                                {syncData.sync_progress_orders < 100
-                                    ? translate("Resume synchronization")
-                                    : translate("Synchronize all")}
+                                {syncData.sync_progress_users > 0
+                                    ? translate("Restart Sync from Scratch")
+                                    : translate("Start Full Synchronization")}
                             </button>
                         </form>
+                        <RenderIf condition={syncData.sync_progress_users > 0 && syncData.sync_progress_orders < 100}>
+                            <form onSubmit={e => syncroniseAll(e, true)}>
+                                <button
+                                    className={classNames(
+                                        syncData.running ? "opacity-65 cursor-wait" : "",
+                                        "mt-2"
+                                    )}
+                                >
+                                    {translate("Resume synchronization")}
+                                </button>
+                            </form>
+                        </RenderIf>
                     </div>
                 </>
             }
@@ -225,7 +257,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                                     }
                                 />
                             </div>
-                            <ProgressBar completed={syncData.sync_progress_users} />
+                            <ProgressBar completed={syncData.sync_progress_users} running={syncData.running} />
                         </div>
                         <div className='mt-4'>
                             <div className='mb-2'>
@@ -239,7 +271,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                                     }
                                 />
                             </div>
-                            <ProgressBar completed={syncData.sync_progress_orders} />
+                            <ProgressBar completed={syncData.sync_progress_orders} running={syncData.running} />
                         </div>
                     </div>
                     : null
