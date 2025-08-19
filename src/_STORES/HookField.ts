@@ -1,9 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { BaseHookField, Block, Hook, HookField, PipedriveField } from 'Types';
+import { BaseHookField, Block, HookField } from 'Types';
 import { hookStore } from './Hooks'
 import { pipedriveFieldsStore } from './PipedriveFields';
 import { priorityFieldsKey } from 'appConstante';
-import { v4 as uuidv4 } from 'uuid';
 import { appDataStore } from './AppData';
 
 class HookFieldStore {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { appDataStore } from '_STORES/AppData'
-import { useCallApi } from '../../helpers'
+import { useCallApi } from '../../utils/helpers'
 import Pagination from '_COMPONENTS/NAVIGATION/Pagination/Pagination';
 import Loader from '_COMPONENTS/GENERAL/Loader/Loader';
 import Order from './Order';

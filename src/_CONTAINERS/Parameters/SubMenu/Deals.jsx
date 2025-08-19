@@ -4,8 +4,7 @@ import { translate } from '../../../translation'
 import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'
 import VariableBlock, { getBlockExemple } from '../../../_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { appDataStore } from '_STORES/AppData'
-import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.'
-import { classNames, deepCopy } from 'helpers'
+import { classNames, deepCopy } from 'utils/helpers'
 import { externalLinks } from 'appConstante'
 
 export default function Deals() {
@@ -36,7 +35,7 @@ export default function Deals() {
       >
         <div className='flex justify-between items-center gap-4'>
           <div>
-            <p className='text-base'>👋 Need help? Follow our guide <a target='_blank' className='underline' href={externalLinks.setupGuide}>here</a>. </p>
+            <p className='text-base'>👋 Need help? Follow our guide <a target='_blank' rel="noreferrer" className='underline' href={externalLinks.setupGuide}>here</a>. </p>
           </div>
         </div>
       </div>

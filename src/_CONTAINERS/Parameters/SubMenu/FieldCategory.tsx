@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { translate } from '../../../translation'
-import { useCallPipedriveApi } from '../../../helpers'
+import { useCallPipedriveApi } from '../../../utils/helpers'
 import HookSelector from '_COMPONENTS/HOOK/HookSelector/HookSelector'
 import { Category, PipedriveField } from 'Types'
 import { useNotification } from '_CONTEXT/hook/contextHook'

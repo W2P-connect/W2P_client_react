@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import ProgressBar from '_COMPONENTS/GENERAL/ProgressBar/ProgressBar';
 import { translate } from 'translation';
-import { classNames, useCallApi } from 'helpers';
+import { classNames, useCallApi } from 'utils/helpers';
 import { useNotification } from '_CONTEXT/hook/contextHook';
 import { appDataStore } from '_STORES/AppData';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
@@ -100,7 +100,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                 clearInterval(intervalId);
             }
         };
-    }, [syncData.running]);
+    }, [syncData.running, callApi]);
 
     const stopSync = async (e: FormEvent) => {
         e.preventDefault()

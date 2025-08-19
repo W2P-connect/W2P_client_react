@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useCallApi, removeEmptyProperties } from '../../helpers'
+import { useCallApi, removeEmptyProperties } from '../../utils/helpers'
 import Loader from '../../_COMPONENTS/GENERAL/Loader/Loader'
 import Query from '../../_COMPONENTS/Query/Query'
 import { translate } from '../../translation'
