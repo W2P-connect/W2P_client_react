@@ -1,21 +1,21 @@
-import { Component, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { classNames } from 'helpers'
+import { classNames } from 'utils/helpers'
 
 
 interface Option {
-    id: number
-    value: string
+    id: number | string
+    value: number | string
     label: string
     description?: string
 }
 
 interface SelectProps {
     options: Option[]
-    onSelect?: (value: string) => void
+    onSelect?: (value: number | string) => void
     label?: string
-    value?: string | null
+    value?: string | null | number
     className?: string
 }
 
@@ -35,33 +35,28 @@ export default function Select({
     const [selected, setSelected] = useState<Option | null>(null)
 
     useEffect(() => {
-        if (value) {
-            const option = options.find(option => option.value === value);
-            if (option && option.value !== selected?.value) {
-                selectOption(option);
-            }
-        } else if (options.length && options[0].value !== selected?.value) {
-            selectOption(options[0]);
-        }
+        const next =
+            value !== null && value !== undefined
+                ? options.find(o => o.value === value) ?? null
+                : null;
+        setSelected(next);
     }, [value, options]);
-    
 
-    const selectOption = (option: Option | undefined) => {
-        if (option) {
-            setSelected(option)
-            onSelect && onSelect(option.value)
-        }
-    }
+    const selectOption = (option: Option) => {
+        setSelected(option);               // update interne
+        onSelect?.(option.value);          // notify parent (action utilisateur)
+    };
+
 
     return (
         <Listbox value={selected} onChange={selectOption}>
             {({ open }) => (
                 <div className={className}>
                     {label
-                        ? <Label className="block font-medium text-gray-900 text-sm leading-6">{label}</Label>
+                        ? <Label className="block mb-2 font-medium text-gray-900 text-sm leading-6">{label}</Label>
                         : null
                     }
-                    <div className="relative mt-2">
+                    <div className={"relative"}>
                         <ListboxButton className="relative bg-white shadow-sm py-1.5 pr-10 pl-3 ring-1 ring-gray-300 ring-inset w-full text-gray-900 sm:text-sm text-left sm:leading-6 pointer">
                             {selected?.label ?? selected?.value}
                             <span className="right-0 absolute inset-y-0 flex items-center ml-3 pr-2 pointer-events-none">
@@ -70,7 +65,7 @@ export default function Select({
                         </ListboxButton>
 
                         <Transition show={open} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-                            <ListboxOptions className="z-10 absolute bg-white ring-opacity-5 shadow-lg mt-1 p-1 rounded-md focus:outline-none ring-1 ring-black w-full max-h-56 overflow-auto sm:text-sm text-base">
+                            <ListboxOptions className="z-[9999] absolute bg-white ring-opacity-5 shadow-lg mt-1 p-1 rounded-md focus:outline-none ring-1 ring-black w-full max-h-56 overflow-auto sm:text-sm text-base">
                                 {options.map((option, index) => (
                                     <ListboxOption
                                         key={index}
