@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline'; // Assurez-vous d'importer votre icône correctement
-import { classNames } from 'helpers';
+import { classNames } from 'utils/helpers';
 import { InformationCircleIcon as InformationCircleIconSolid } from '@heroicons/react/20/solid';
 
 interface TooltipProps {
