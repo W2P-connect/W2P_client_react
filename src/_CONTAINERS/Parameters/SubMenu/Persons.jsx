@@ -3,8 +3,7 @@ import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import { observer } from 'mobx-react-lite'
 import { appDataStore } from '_STORES/AppData'
-import { deepCopy } from 'helpers'
-import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import { deepCopy } from 'utils/helpers'
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.'
 import { externalLinks } from 'appConstante'
 
@@ -36,7 +35,7 @@ const Persons = () => {
             >
                 <div className='flex justify-between items-center gap-4'>
                     <div>
-                        <p className='text-base'>👋 Need help? Follow our guide <a target='_blank' className='underline' href={externalLinks.setupGuide}>here</a>. </p>
+                        <p className='text-base'>👋 Need help? Follow our guide <a target='_blank' rel="noreferrer" className='underline' href={externalLinks.setupGuide}>here</a>. </p>
                     </div>
                 </div>
             </div>
