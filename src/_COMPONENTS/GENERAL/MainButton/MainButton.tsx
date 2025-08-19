@@ -1,4 +1,4 @@
-import { classNames } from 'helpers';
+import { classNames } from 'utils/helpers';
 import { ReactNode, MouseEvent } from 'react'
 
 interface MainButtonProps {
