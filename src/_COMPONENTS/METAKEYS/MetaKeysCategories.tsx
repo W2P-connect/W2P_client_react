@@ -65,31 +65,6 @@ export default function MetaKeysCategories({ onSelect, source }: Props) {
         }
     ]
 
-
-    const deleteVariable = (id: VariableType["id"]) => {
-        console.log(id, variables);
-
-        setVariables(prv => prv.filter(variable => variable.id !== id))
-    }
-
-    const updateVariable = (updatedVariable: VariableType) => {
-        setVariables(prv => (prv.map(variable =>
-            variable.id === updatedVariable.id ? updatedVariable : variable
-        )));
-    }
-
-    const handleDragEnd = (result: DropResult) => {
-        if (!result.destination) {
-            return;
-        }
-
-        const newVariables = Array.from(variables);
-        const [reorderedItem] = newVariables.splice(result.source.index, 1);
-        newVariables.splice(result.destination.index, 0, reorderedItem);
-
-        setVariables(prv => newVariables);
-    };
-
     return (
         <div className='relative flex flex-col h-full meta-keys-container'>
             <NavBar
