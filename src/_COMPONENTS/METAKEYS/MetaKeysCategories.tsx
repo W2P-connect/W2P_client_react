@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './MetaKeysCategories.css'
 import NavBar, { Item } from '../NAVIGATION/NavBar/NavBar';
 import MetaKeysCategory from './MetaKeysCategory';
@@ -7,10 +7,8 @@ import { appDataStore } from '_STORES/AppData';
 import { MetaKeySources, Variable as VariableType } from 'Types';
 import { translate } from 'translation';
 import AddFreeField from './AddFreeField';
-import { DropResult } from 'react-beautiful-dnd';
 import VariableList from '_COMPONENTS/LOGICBLOCK/VariableList';
-import { toJS } from 'mobx';
-import { classNames } from 'helpers';
+import { classNames } from 'utils/helpers';
 
 interface Props {
     source?: MetaKeySources
