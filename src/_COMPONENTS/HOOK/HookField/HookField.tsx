@@ -2,7 +2,7 @@ import './hookField.css'
 import { isLogicBlockField } from '../../../_CONTAINERS/Parameters/parametersHelpers'
 import InputCheckbox from '../../FORMS/InputCheckbox/InputCheckbox'
 import { translate } from '../../../translation'
-import { classNames, isNumberArray, mayJsonParse, useCallPipedriveApi } from '../../../helpers'
+import { classNames, isNumberArray, mayJsonParse, useCallPipedriveApi } from '../../../utils/helpers'
 import LogicBlocks from '../../LOGICBLOCK/LogicBlocks'
 import ConditionMaker from '../../ConditionMaker/ConditionMaker'
 import { additionalFieldsData, linkableFields } from '../../../appConstante'
@@ -10,10 +10,11 @@ import { HookField as HookFieldType, Block, GroupedStages } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
-import { FormEvent, MouseEvent, useMemo, useRef, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { getBlockExemple } from '_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import { useLoadPipedriveUsers } from 'utils/pipedrive'
 
 interface Props {
   hookField: HookFieldType
@@ -42,16 +43,8 @@ const HookField = ({ hookField }: Props) => {
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { condition: { ...hookField.condition, [key]: value } });
   };
 
-  const loadPipedriveUsers = (e: React.FormEvent) => {
-    callPipedriveApi("users", null, null, null, e)
-      .then(res => {
-        if (res) {
-          const newAppDataStore = appDataStore.appData
-          newAppDataStore.parameters.pipedrive.users = res.data.data
-          appDataStore.setAppData(newAppDataStore)
-        }
-      })
-  }
+
+  const loadPipedriveUsers = useLoadPipedriveUsers()
 
   const loadPipedriveStages = (e: FormEvent) => {
     callPipedriveApi("stages", null, null, null, e)
