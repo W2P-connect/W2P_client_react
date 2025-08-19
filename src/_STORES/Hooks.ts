@@ -1,8 +1,8 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { BaseHookField, Category, Hook, HookField, PipedriveField, PreHook } from 'Types';
 import { v4 as uuidv4 } from 'uuid';
 import { pipedriveFieldsStore } from './PipedriveFields';
-import { deepCopy } from 'helpers';
+import { deepCopy } from 'utils/helpers';
 import { appDataStore } from './AppData';
 
 interface HookDefaults {
@@ -590,6 +590,9 @@ class HookStore {
         enabled: false,
         option: {
             createActivity: false,
+            activity: {
+                subject: ""
+            }
         },
         category: "person",
         fields: [],
