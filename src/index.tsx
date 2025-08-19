@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client'; // Mise à jour pour utiliser createRoot
 import App from './App';
 import PopupContextProvider from './_CONTEXT/PopupContext';
@@ -8,7 +7,7 @@ import AppDataContextProvider from './_CONTEXT/appDataContext';
 import { AppLocalizerProvider } from './_CONTEXT/AppLocalizerContext';
 import axios from 'axios';
 import { appDataStore } from '_STORES/AppData';
-import { deepCopy, deepMerge, isLocal } from 'helpers';
+import { deepCopy, deepMerge, isLocal } from 'utils/helpers';
 import { hookStore } from '_STORES/Hooks';
 import { AppData as AppDataType } from 'Types';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
