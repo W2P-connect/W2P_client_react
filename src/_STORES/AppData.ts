@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { AppData, Category, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
-import { deepCopy } from 'helpers';
+import { AppData, Hook, Parameters, PipedriveField, PipedriveParameters, W2pParameters } from 'Types';
+import { deepCopy } from 'utils/helpers';
 import { hookStore } from './Hooks';
 import { pipedriveFieldsStore } from './PipedriveFields';
 
@@ -12,6 +12,7 @@ class AppDataStore {
         users: [],
         stages: [],
         fields: [],
+        activityTypes: []
     }
 
     defaultW2Pparameters: Omit<W2pParameters, 'domain' | 'api_key' | 'hookList'> = {
