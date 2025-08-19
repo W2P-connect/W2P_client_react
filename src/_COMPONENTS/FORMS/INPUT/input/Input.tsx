@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
 import './input.css';
-import { classNames } from 'helpers';
+import { classNames } from 'utils/helpers';
 
 interface InputProps {
     label?: string;
@@ -50,7 +50,7 @@ const Input: React.FC<InputProps> = ({
             inputRef.current.style.paddingLeft = '0px';
             inputRef.current.style.paddingRight = '0px';
         }
-    }, [value]);
+    }, [value, widthFromValue]);
 
     return (
         <div style={style} className={`w2p-input ${className} ${disabled && 'disabled'}`}>
