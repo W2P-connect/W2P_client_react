@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react'
 import Input from '../../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../../translation';
-import { deepCopy, isLocal, useCallApi, useCallPipedriveApi } from '../../../../helpers';
+import { deepCopy, isLocal, useCallApi, useCallPipedriveApi } from '../../../../utils/helpers';
 import { appDataStore } from '_STORES/AppData';
 import { useAppDataContext, useNotification } from '_CONTEXT/hook/contextHook';
 import { observer } from 'mobx-react-lite';
@@ -250,19 +250,6 @@ const Connexion = () => {
     }
   }
 
-  const migrateSettings = async (e: FormEvent) => {
-    e.preventDefault()
-    addNotification({
-      content: "Migrating settings..."
-    })
-
-    await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/migrate`, { method: "get" }, null, null, e)
-
-    addNotification({
-      content: "Settings migrated !"
-    })
-  }
-
   return (
     <>
       <div
@@ -273,7 +260,7 @@ const Connexion = () => {
       >
         <div className='flex justify-between items-center gap-4'>
           <div>
-            <p className='text-base'>👋 Ready to get started? start syncng now by <a target='_blank' className='underline' href={externalLinks.getStarted}>following our setup guide</a>. </p>
+            <p className='text-base'>👋 Ready to get started? start syncng now by <a target='_blank' rel="noreferrer" className='underline' href={externalLinks.getStarted}>following our setup guide</a>. </p>
           </div>
         </div>
       </div>
@@ -314,7 +301,7 @@ const Connexion = () => {
         <p className='m-b-10'>
           {translate(`To configure your API keys and your domain, 
           connect to your customer area`)}{" "}
-          <a className='font-semibold underline' href={externalLinks.homePage} target='_blank'>{translate("on our site")}.</a>
+          <a className='font-semibold underline' href={externalLinks.homePage} rel="noreferrer" target='_blank'>{translate("on our site")}.</a>
         </p>
         <div className='flex flex-end gap-1 w2p-wrap'>
           <Input
@@ -349,10 +336,10 @@ const Connexion = () => {
           mainText={translate("To synchronize your Woocommerce data with Pipedrive, please provide the Pipedrive domain of your organization and an API key")}
           tooltipText={<>{translate("For more information, follow these links")}:
             <li>
-              <a target="blank" href='https://pipedrive.readme.io/docs/how-to-find-the-api-token'>https://pipedrive.readme.io/docs/how-to-find-the-api-token</a>
+              <a rel="noreferrer" target="blank" href='https://pipedrive.readme.io/docs/how-to-find-the-api-token'>https://pipedrive.readme.io/docs/how-to-find-the-api-token</a>
             </li>
             <li>
-              <a target="blank" href='https://pipedrive.readme.io/docs/how-to-get-the-company-domain'>https://pipedrive.readme.io/docs/how-to-get-the-company-domain</a>
+              <a target="blank" rel="noreferrer" href='https://pipedrive.readme.io/docs/how-to-get-the-company-domain'>https://pipedrive.readme.io/docs/how-to-get-the-company-domain</a>
             </li>
           </>
           }
