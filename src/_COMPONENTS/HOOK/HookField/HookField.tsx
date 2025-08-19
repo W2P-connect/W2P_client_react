@@ -25,8 +25,6 @@ const HookField = ({ hookField }: Props) => {
 
   const [open, setOpen] = useState<boolean>(false)
 
-  // const field = useRef(hookField)
-
   const selectedHook = useMemo(() => hookStore.getHook(hookField.hookId), [hookField])
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
@@ -37,7 +35,6 @@ const HookField = ({ hookField }: Props) => {
         setOpen(_ => false)
       }
     }
-    // field.current = { ...field.current, [key]: value }
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
   };
 
@@ -154,12 +151,15 @@ const HookField = ({ hookField }: Props) => {
               ? <div className='italic'>
                 <div className={
                   classNames(
-                    !open ? "opacity-100" : "opacity-0",
-                    "transition-opacity"
+                    "transition-opacity opacity-100"
                   )}>
-                  {Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
-                    ? getBlockExemple(hookField.value[0])
-                    : mayJsonParse(`${hookField.value}`, hookField.value)
+                  {
+                    hookFieldStore.hasValue(hookField)
+                    ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
+                      ? getBlockExemple(hookField.value[0])
+                      : mayJsonParse(`${hookField.value}`, hookField.value)
+                      : <span>⚠️ no value</span>
+
                   }
                 </div>
 
