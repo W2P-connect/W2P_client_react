@@ -39,6 +39,7 @@ export interface PipedriveParameters {
     users: User[],
     stages: Stage[],
     fields: PipedriveField[],
+    activityTypes: PipedriveActivityType[]
 }
 
 export interface W2pParameters {
@@ -115,6 +116,17 @@ export interface Hook extends PreHook {
     category: Category,
     option: {
         createActivity?: boolean,
+        activity: {
+            subject: string,
+            type?: string,
+            owner_id?: number,
+            note?: string,
+            done?: boolean,
+            enable_due_date?: boolean,
+            due_date_value?: number,
+            due_date_time?: string,
+            due_date_unit?: 'day' | 'week' | 'month',
+        }
     }
     fields: HookField[],
 }
@@ -472,6 +484,18 @@ export interface User {
     access: Access[];
 }
 
+export type PipedriveActivityType = {
+  id: number;
+  order_nr: number;
+  name: string;
+  key_string: string;
+  icon_key: string;
+  active_flag: boolean;
+  color: string;
+  is_custom_flag: boolean;
+  add_time: string;   // format "YYYY-MM-DD HH:mm:ss"
+  update_time: string; // format "YYYY-MM-DD HH:mm:ss"
+};
 export interface PipedriveField {
     id: number;
     key: string;
