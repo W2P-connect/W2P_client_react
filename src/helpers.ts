@@ -132,6 +132,18 @@ export function deepMerge<T extends Record<string, any>>(obj1: T, obj2: T): T {
     return obj1;
 }
 
+export function updateIn<T extends object>(
+  obj: T,
+  path: string[],
+  value: any
+): T {
+  if (path.length === 0) return obj;
+  const [key, ...rest] = path;
+  return {
+    ...obj,
+    [key]: rest.length ? updateIn((obj as any)[key] ?? {}, rest, value) : value
+  } as T;
+}
 
 
 export function deepCopy(obj: Record<string, any>) {
