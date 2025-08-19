@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { BaseHookField, Hook, HookField, PipedriveField } from 'Types';
+import { BaseHookField, Block, Hook, HookField, PipedriveField } from 'Types';
 import { hookStore } from './Hooks'
 import { pipedriveFieldsStore } from './PipedriveFields';
 import { priorityFieldsKey } from 'appConstante';
@@ -109,6 +109,31 @@ class HookFieldStore {
             return false
         }
     }
+
+    hasValue(field: HookField): boolean {
+        const value = field.value;
+
+        if (typeof value === "number") {          
+            return !isNaN(value) && value > 0;
+        }
+
+        if (typeof value === "string") {
+            return value.trim().length > 0;
+        }
+
+        if (Array.isArray(value)) {
+            // Array<number>
+            if (typeof value[0] === "number") {
+                return value.length > 0;
+            }
+
+            // Block[]
+            return (value as Block[]).some(block => block.variables.length > 0);
+        }
+
+        return false;
+    }
+
 }
 
 export const hookFieldStore = new HookFieldStore();
