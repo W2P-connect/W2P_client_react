@@ -52,10 +52,6 @@ export default function Orders() {
 
   }, [pagination.page, orderId])
 
-  useEffect(() => {
-    console.log(orders);
-  }, [orders])
-
   return (
     <>
       <div className='mb-2'>
