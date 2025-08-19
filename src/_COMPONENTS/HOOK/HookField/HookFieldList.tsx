@@ -1,5 +1,5 @@
 import { hookStore } from '_STORES/Hooks';
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { translate } from 'translation'
 import { Hook, HookField as HookFieldType } from 'Types';
 import HookField from './HookField';
@@ -7,7 +7,6 @@ import { hookFieldStore } from '_STORES/HookField';
 import { pipedriveFieldsStore } from '_STORES/PipedriveFields';
 import Datalist from '_COMPONENTS/FORMS/INPUT/datalist/Datalist';
 import HookParameters from '../HooksParameters/HookParameters';
-import { toJS } from 'mobx';
 
 export default function HookFieldList({ hook }: { hook: Hook }) {
 
@@ -66,5 +65,6 @@ export default function HookFieldList({ hook }: { hook: Hook }) {
                 </div>
                 : null
             }
-        </div>)
+        </div>
+    )
 }
