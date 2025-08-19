@@ -1,8 +1,7 @@
-import { makeAutoObservable, runInAction, toJS } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { Category, PipedriveField } from "Types";
 import { unusableFieldsKey } from "appConstante";
-import { log } from "console";
-import { deepCopy } from "helpers";
+import { deepCopy } from "utils/helpers";
 
 class PipedriveFieldStore {
 
