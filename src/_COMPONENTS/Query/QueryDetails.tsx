@@ -7,22 +7,26 @@ export default function QueryDetails({ query }: { query: Query }) {
 
     return (
         <div className='flex'>
-            <div className='w2p-query-data flex-1' >
-                <div className='font-semibold mb-6 text-center border-b pb-2 mb-2'>{translate("Data for Pipedrive")}</div>
+            <div className='flex-1 w2p-query-data' >
+                <div className='mb-2 mb-6 pb-2 border-b font-semibold text-center'>{translate("Data for Pipedrive")}</div>
                 {
                     query.payload.data.length
                         ? <div className='pb-6 border-b'>
-                            <div className='font-semibold mb-4'>{translate("Fields")}:</div>
+                            <div className='mb-4 font-semibold'>{translate("Fields")}:</div>
                             {query.payload.data.map((data, index) => (
                                 <div key={index}>
-                                    <span className='font-medium'>{data.name}:</span> {typeof data.value === 'object' ? JSON.stringify(data.value) : data.value}
+                                    <span className='font-medium'>{data.name}:</span>{" "}
+                                    {typeof data.value === 'object'
+                                        ? JSON.stringify(data.value)
+                                        : String(data.value)}
                                 </div>
                             ))}
+
                         </div>
                         : <div>{translate('No fields data to send.')}</div>
                 }
                 <RenderIf condition={!!query.payload.products?.length} >
-                    <div className='font-semibold mt-6 mb-4'>{translate("Products")}:</div>
+                    <div className='mt-6 mb-4 font-semibold'>{translate("Products")}:</div>
                     <div>
                         {
                             query.payload.products?.length
@@ -38,7 +42,7 @@ export default function QueryDetails({ query }: { query: Query }) {
                                             </span>
                                         </div>
                                         <RenderIf condition={!!product.comments}>
-                                            <div className="italic text-gray-500">
+                                            <div className="text-gray-500 italic">
                                                 Comments: {product.comments}
                                             </div>
                                         </RenderIf>
@@ -50,8 +54,8 @@ export default function QueryDetails({ query }: { query: Query }) {
                 </RenderIf>
             </div>
             <div className='flex-1'>
-                <div className='font-semibold mb-6 text-center border-b pb-2 mb-2'>{translate("Informations")}</div>
-                <div className='border-l pl-4'>
+                <div className='mb-6 pb-2 border-b font-semibold text-center'>{translate("Informations")}</div>
+                <div className='pl-4 border-l'>
                     <div className='mb-6'>
                         <div>
                             <div className='strong-1'>{translate("Created at")}</div>
@@ -73,9 +77,10 @@ export default function QueryDetails({ query }: { query: Query }) {
 
                     <RenderIf condition={!!query.additional_data?.traceback && Array.isArray(query.additional_data.traceback)}>
                         <div>
-                            <div className='font-semibold mb-4 pt-6 border-t'>{translate("Traceback")}</div>
+                            <div className='mb-4 pt-6 border-t font-semibold'>{translate("Traceback")}</div>
                             {query.additional_data.traceback
-                                ?.sort((a, b) => {''
+                                ?.sort((a, b) => {
+                                    ''
                                     return new Date(a.date).getTime() - new Date(b.date).getTime()
                                 })
                                 .map((trace, index) => {
