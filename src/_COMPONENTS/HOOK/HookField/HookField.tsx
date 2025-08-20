@@ -151,7 +151,7 @@ const HookField = ({ hookField }: Props) => {
                     ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
                       ? getBlockExemple(hookField.value[0])
                       : mayJsonParse(`${hookField.value}`, hookField.value)
-                      : <span>⚠️ no value</span>
+                      : <span>⚠️ you need to set a value</span>
 
                   }
                 </div>
