@@ -18,12 +18,12 @@ function CreateActivity({ hook }: { hook: Hook }) {
     const activityTypesOptions =
         [{
             id: 0,
-            value: 0,
+            value: '0',
             label: translate('No activity type')
         }].concat(
             appDataStore.appData.parameters.pipedrive.activityTypes.map((type, index) => ({
-                id: index,
-                value: type.id,
+                id: type.id,
+                value: type.key_string,
                 label: type.name
             }))
         )
@@ -80,9 +80,8 @@ function CreateActivity({ hook }: { hook: Hook }) {
                             hook.id,
                             updateIn(hook, ["option", "activity", "note"], e.target.value)
                         )}
-                    >
-                        {hook.option.activity?.note ?? ''}
-                    </textarea>
+                        defaultValue={hook.option.activity?.note ?? ''}
+                    />
 
                     <p className='mt-2'>Activities are automatically linked to the related person, organization, and order that triggered the event</p>
                 </div>
@@ -186,22 +185,22 @@ function CreateActivity({ hook }: { hook: Hook }) {
                                     value={hook.option.activity?.due_date_unit ?? "day"}
                                     onChange={e => hookStore.updateHook(
                                         hook.id,
-                                        updateIn(hook, ["option", "activity", "due_date_value"], e.target.value)
+                                        updateIn(hook, ["option", "activity", "due_date_unit"], e.target.value)
                                     )}
                                 >
                                     <option value="day">{translate("DAY")}</option>
                                     <option value="week">{translate("WEEK")}</option>
                                     <option value="month">{translate("MONTH")}</option>
                                 </select>
-                                at
+                                <div className='px-2'>at </div>
                                 <Input
                                     type='time'
                                     step="60"
-                                    value={hook.option.activity?.due_date_time ?? "09:00"}
+                                    value={hook.option.activity?.due_time ?? "09:00"}
                                     onInput={value =>
                                         hookStore.updateHook(
                                             hook.id,
-                                            updateIn(hook, ["option", "activity", "due_date_time"], value)
+                                            updateIn(hook, ["option", "activity", "due_time"], value)
                                         )
                                     }
                                 />
