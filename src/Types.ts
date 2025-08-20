@@ -118,14 +118,14 @@ export interface Hook extends PreHook {
         createActivity?: boolean,
         activity: {
             subject: string,
-            type?: string,
-            owner_id?: number,
-            note?: string,
-            done?: boolean,
-            enable_due_date?: boolean,
-            due_date_value?: number,
-            due_date_time?: string,
-            due_date_unit?: 'day' | 'week' | 'month',
+            type: string,
+            owner_id: number,
+            note: string,
+            done: boolean,
+            enable_due_date: boolean,
+            due_date_value: number,
+            due_time: string,
+            due_date_unit: 'day' | 'week' | 'month',
         }
     }
     fields: HookField[],
