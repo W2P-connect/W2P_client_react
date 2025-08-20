@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useContext, useEffect, useState } from 'react'
 import Input from '../../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../../translation';
 import { deepCopy, isLocal, useCallApi, useCallPipedriveApi } from '../../../../utils/helpers';
@@ -12,8 +12,12 @@ import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton';
 import { Category, HookField, PipedriveField } from 'Types';
 import Syncronize from './Syncronize';
 import { externalLinks } from 'appConstante';
+import { PopupContext } from '_CONTEXT/PopupContext';
+import { delay } from 'lodash';
 
 const Connexion = () => {
+
+  const { addPopupContent, showPopup } = useContext(PopupContext)
 
   const callPipedriveApi = useCallPipedriveApi()
   const callApi = useCallApi()
@@ -33,7 +37,10 @@ const Connexion = () => {
         addNotification({ error: true, content: translate("Connection to Pipedrive failed. Please check the API key or company domain.") })
         return false
       } else {
-        notification && addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
+        if (notification) {
+          addNotification({ error: false, content: translate("Connection to Pipedrive successful.") })
+          setTimeout(() => startDefaultSettingsAnimation(), 1000)
+        }
         await saveParameters(e, false)
         return true
       }
@@ -43,6 +50,62 @@ const Connexion = () => {
     }
   }
 
+  const startDefaultSettingsAnimation = () => {
+    if (
+      !appDataStore.appData.parameters.w2p.domain ||
+      !appDataStore.appData.parameters.w2p.api_key ||
+      !appDataStore.appData.parameters.pipedrive.api_key ||
+      !appDataStore.appData.parameters.pipedrive.company_domain
+    ) {
+      return
+    }
+
+    addPopupContent(
+      <div className='gap-3 grid p-4'>
+        <h2 className='p-2'>You’re one click away from syncing WooCommerce with Pipedrive</h2>
+        <p className='font-semibold text-lg center'>
+          👉 Activate the default settings to start sending your store data to Pipedrive instantly. You can change or disable any of these later.
+        </p>
+
+        <div className='flex justify-center items-center gap-4 py-6'>
+          <form onSubmit={async e => {
+            await loadDefaultSettings(e)
+            showPopup(false)
+          }}>
+            <MainButton type='submit'
+              style={1}>
+              Load default settings
+            </MainButton>
+          </form>
+          <MainButton onClick={_ => showPopup(false)} style={3}>
+            Configure manually
+          </MainButton>
+        </div>
+
+        <p className='font-medium'>This will configure the following parameters:</p>
+        <ul className='pl-4 list-disc'>
+          <li>
+            <strong>People:</strong> Create or update a Person whenever a WooCommerce user signs up or is updated.
+            Sends <em>full name</em>, <em>first/last name</em>, <em>email</em>, and <em>phone</em> when available.
+          </li>
+          <li>
+            <strong>Organizations:</strong> Create or update an Organization from the user’s <em>billing company name</em> on user updates
+            (e.g., when billing details are added during checkout).
+          </li>
+          <li>
+            <strong>Deals:</strong> Create and update Deals from WooCommerce orders, attaching line items
+            (product name, price, quantity) and the order comment. Deal title, status, and <em>won time</em> are set based on the order status.
+          </li>
+        </ul>
+
+
+        <small style={{ color: '#666' }}>
+          You can update these defaults anytime in Settings.
+        </small>
+      </div>
+    );
+  }
+
   const checkW2pAPI = async (e: FormEvent, notification: boolean = true): Promise<boolean> => {
     e.preventDefault()
     return callApi(`${appDataStore.appData.w2pcifw_distant_rest_url}/authentification`, { method: 'get' }, null, {
@@ -50,7 +113,10 @@ const Connexion = () => {
       api_key: appDataStore.appData.parameters.w2p.api_key,
     }, e, false)
       .then(async res => {
-        notification && addNotification({ error: false, content: translate(res?.data?.message) })
+        if (notification) {
+          addNotification({ error: false, content: translate(res?.data?.message) })
+          setTimeout(() => startDefaultSettingsAnimation(), 1000)
+        }
         await saveParameters(e, false)
         return true
       })
@@ -72,23 +138,19 @@ const Connexion = () => {
       return
     }
 
-    if (window.confirm(
-      translate("Loading the default settings will overwrite some of your parameters. Do you wish to continue ?")
-    )) {
 
-      const pipeOk = await checkPipedriveApi(e, false)
-      if (pipeOk) {
-        await loadAllPipedriveFields(e)
+    const pipeOk = await checkPipedriveApi(e, false)
+    if (pipeOk) {
+      await loadAllPipedriveFields(e)
 
-        setupHooks();
+      setupHooks();
 
-        const newAppDataStore = appDataStore.appData
-        newAppDataStore.parameters.w2p.deal = appDataStore.defaultW2Pparameters.deal
+      const newAppDataStore = appDataStore.appData
+      newAppDataStore.parameters.w2p.deal = appDataStore.defaultW2Pparameters.deal
 
-        appDataStore.setAppData(newAppDataStore)
-        saveParameters(e, false)
-          .then(_ => addNotification({ error: false, content: translate("Default parameters loaded.") }))
-      }
+      appDataStore.setAppData(newAppDataStore)
+      saveParameters(e, false)
+        .then(_ => addNotification({ error: false, content: translate("Default parameters loaded.") }))
     }
   }
 
@@ -186,7 +248,7 @@ const Connexion = () => {
     }
   }
 
-  const restorePipedriveData = () => {
+  const restorePipedriveData = async () => {
     if (window.confirm(
       translate("Are you sure you want to delete all of your Pipedrive data")
     )) {
@@ -194,7 +256,7 @@ const Connexion = () => {
       newAppData.parameters.pipedrive = appDataStore.emptyPipedriveParameters
       appDataStore.setAppData(newAppData)
       pipedriveFieldsStore.ressetPipedriveFields()
-      callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-pipedrive-parameter`, { method: "put" })
+      await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-pipedrive-parameter`, { method: "put" })
       saveParameters(null, false)
 
       addNotification({
@@ -296,8 +358,6 @@ const Connexion = () => {
         }
 
         <h2>W2P connexion</h2>
-
-
         <p className='m-b-10'>
           {translate(`To configure your API keys and your domain, 
           connect to your customer area`)}{" "}
@@ -323,13 +383,14 @@ const Connexion = () => {
           </MainButton>
         </div>
       </form>
-      <form className='m-t-100' onSubmit={e => checkPipedriveApi(e)}>
+
+      <form className='mt-20' onSubmit={e => checkPipedriveApi(e)}>
         <h2>Pipedrive</h2>
         <div className='w2p-instructions'>
           <p>{translate(
-            `We strongly recommend that you use an API key from a Pipedrive 
-            Administrator account so that you can access all the Pipedrive information 
-            you need for settings`)}
+            `We strongly recommend using an API key from a 
+            Pipedrive Administrator account to ensure 
+            access to all the information you need for settings`)}
           </p>
         </div>
         <Tooltip
@@ -364,18 +425,36 @@ const Connexion = () => {
           </MainButton>
         </div>
       </form >
-      <div className='m-t-100'>
+      <div className='mt-20'>
         <form onSubmit={e => loadDefaultSettings(e)}>
           <h2>Load default settings</h2>
-          <p className='m-b-10'>{translate(`This option allows you to load the plugin's default settings to start with a functional configuration.`)}</p>
-          <div className='flex gap-1'>
+          <p className='m-b-10 font-medium'>{translate(`This option allows you to load the plugin's default settings to start with a functional configuration.`)}</p>
+          <ul className='pl-4 list-disc'>
+            <li>
+              <strong>People:</strong> Create or update a Person whenever a WooCommerce user signs up or is updated.
+              Sends <em>full name</em>, <em>first/last name</em>, <em>email</em>, and <em>phone</em> when available.
+            </li>
+            <li>
+              <strong>Organizations:</strong> Create or update an Organization from the user’s <em>billing company name</em> on user updates
+              (e.g., when billing details are added during checkout).
+            </li>
+            <li>
+              <strong>Deals:</strong> Create and update Deals from WooCommerce orders, attaching line items
+              (product name, price, quantity) and the order comment. Deal title, status, and <em>won time</em> are set based on the order status.
+            </li>
+          </ul>
+
+          <div className='pt-4'>
             <button className='light-button'>
               {translate("Load default settings")}
             </button>
           </div>
+
+
+
         </form>
       </div>
-      <div className='m-t-100'>
+      <div className='mt-20'>
         <h2>Restore settings</h2>
         <p className='m-b-10'>{translate(`If you experience issues with your settings—particularly if your API key no longer points to the correct company—we recommend restoring your settings.`)}</p>
         <div className='flex gap-1'>
@@ -387,7 +466,7 @@ const Connexion = () => {
           </button>
         </div>
       </div>
-      <div className='m-t-100'>
+      <div className='mt-20'>
         <Syncronize checkPipedriveApi={checkPipedriveApi} checkW2pAPI={checkW2pAPI} />
       </div>
     </>
