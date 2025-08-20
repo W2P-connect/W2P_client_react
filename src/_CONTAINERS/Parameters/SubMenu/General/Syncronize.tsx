@@ -100,7 +100,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
                 clearInterval(intervalId);
             }
         };
-    }, [syncData.running, callApi]);
+    }, [syncData.running]);
 
     const stopSync = async (e: FormEvent) => {
         e.preventDefault()
