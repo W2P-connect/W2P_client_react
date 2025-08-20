@@ -591,7 +591,15 @@ class HookStore {
         option: {
             createActivity: false,
             activity: {
-                subject: ""
+                subject: "",
+                due_time: "09:00",
+                due_date_unit: "day",
+                due_date_value: 2,
+                enable_due_date: true,
+                done: false,
+                note: "",
+                owner_id: 0,
+                type: "",
             }
         },
         category: "person",
