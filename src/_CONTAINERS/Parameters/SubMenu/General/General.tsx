@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useEffect, useState } from 'react'
+import { FormEvent, useContext, useState } from 'react'
 import Input from '../../../../_COMPONENTS/FORMS/INPUT/input/Input';
 import { translate } from '../../../../translation';
 import { deepCopy, isLocal, useCallApi, useCallPipedriveApi } from '../../../../utils/helpers';
@@ -13,7 +13,6 @@ import { Category, HookField, PipedriveField } from 'Types';
 import Syncronize from './Syncronize';
 import { externalLinks } from 'appConstante';
 import { PopupContext } from '_CONTEXT/PopupContext';
-import { delay } from 'lodash';
 
 const Connexion = () => {
 
