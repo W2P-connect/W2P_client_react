@@ -4,6 +4,7 @@ import VariableBlock, { emptyBlock } from './VariableBlock'
 import { v4 as uuidv4 } from 'uuid';
 import "./logicBlock.css"
 import { Block, FieldCondition } from 'Types';
+import RenderIf from '_COMPONENTS/GENERAL/RenderIf';
 
 interface Props {
     defaultLogicBlocks: Block[];
@@ -63,7 +64,7 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
                 {logicBlocks.map((block, index) => {
                     return <div key={block.id}
                         style={{ opacity: cantBeActive(index) ? 0.5 : 1 }}
-                        className='w-[100%]'
+                        className='relative w-[100%]'
                     >
                         <VariableBlock
                             defautBlock={{ ...block, index: index }}
