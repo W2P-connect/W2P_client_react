@@ -18,10 +18,10 @@ function CreateActivity({ hook }: { hook: Hook }) {
     const activityTypesOptions =
         [{
             id: 0,
-            value: '0',
+            value: 'no_activity_type',
             label: translate('No activity type')
         }].concat(
-            appDataStore.appData.parameters.pipedrive.activityTypes.map((type, index) => ({
+            appDataStore.appData.parameters.pipedrive.activityTypes.map(type => ({
                 id: type.id,
                 value: type.key_string,
                 label: type.name
@@ -34,7 +34,7 @@ function CreateActivity({ hook }: { hook: Hook }) {
             value: 0,
             label: translate('No owner')
         }].concat(
-            appDataStore.appData.parameters.pipedrive.users.map((user, index) => ({
+            appDataStore.appData.parameters.pipedrive.users.map(user => ({
                 id: user.id,
                 value: user.id,
                 label: user.name
@@ -100,7 +100,8 @@ function CreateActivity({ hook }: { hook: Hook }) {
                                     updateIn(hook, ["option", "activity", "type"], value)
                                 )
                             }
-                            value={hook.option.activity?.type ?? activityTypesOptions[0].value}
+                            value={hook.option.activity?.type ?? activityTypesOptions[0]}
+                            defaultOption={activityTypesOptions[0]}
                         />
                         <form onSubmit={e => loadActivityTypes(e)}>
                             <button
