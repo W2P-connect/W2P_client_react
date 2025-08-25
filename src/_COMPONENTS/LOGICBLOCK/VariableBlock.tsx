@@ -8,6 +8,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { Block, Variable as VariableType } from 'Types'
 import VariableList from './VariableList'
 import { hookStore } from '_STORES/Hooks'
+import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
 
 export const emptyBlock: Block = {
     variables: [],
@@ -72,9 +73,9 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
     const addElement = () => {
         addPopupContent(<MetaKeysCategories onSelect={addVariables} source={source || selectedHook?.source} />)
     }
-
+    
     return (
-        <div className='block-container'>
+        <div className='block-container relative p-2'>
             <div className="flex">
                 {deleter
                     ? <div
@@ -89,7 +90,7 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
                         : <span>{translate("Fallback variables")} {block.index}</span>
                     }
                     </div>
-                    <div className='flex gap-1 items-center'>
+                    <div className='flex items-center gap-1'>
                         <VariableList
                             variableArray={block.variables}
                             onUpdate={updateVariables}
@@ -103,19 +104,24 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
                             </div>
                             : null}
                     </div>
-                    {block.variables?.length
-                        ? null
-                        : <div
-                            className='center underline w-100-p pointer'
-                            onClick={_ => addElement()}
-                        >
-                            {translate("Add variables")}
-                        </div>}
+                    {<RenderIf condition={!block.variables?.length}>
+                        <div className='flex gap-6 w-100-p center'>
+                            <div className='underline pointer' onClick={_ => addElement()}>
+                                {translate("Add variables")}
+                            </div>
+                            <RenderIf condition={block.index === 0 && block.variables.length === 0}>
+                                <div className='animate-pulse'>
+                                    <div> 👈 Define the value to send to Pipedrive for this field</div>
+                                </div>
+                            </RenderIf>
+                        </div>
+                    </RenderIf>}
+
                 </div>
             </div>
             {
                 showExemple ?
-                    <div className='italic flex justify-end mt-1 text-xs text-gray-700'>
+                    <div className='flex justify-end mt-1 text-gray-700 text-xs italic'>
                         {getBlockExemple(block)}
                     </div>
                     : null
