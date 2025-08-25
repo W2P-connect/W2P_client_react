@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { classNames } from 'utils/helpers'
+import { set } from 'lodash'
 
 
 interface Option {
@@ -13,6 +14,7 @@ interface Option {
 
 interface SelectProps {
     options: Option[]
+    defaultOption?: Option
     onSelect?: (value: number | string) => void
     label?: string
     value?: string | null | number
@@ -31,15 +33,18 @@ export default function Select({
     label = '',
     value = null,
     className = "",
+    defaultOption
 }: SelectProps) {
     const [selected, setSelected] = useState<Option | null>(null)
 
     useEffect(() => {
+
         const next =
             value !== null && value !== undefined
                 ? options.find(o => o.value === value) ?? null
                 : null;
-        setSelected(next);
+
+        setSelected(next ?? defaultOption ?? null);
     }, [value, options]);
 
     const selectOption = (option: Option) => {
