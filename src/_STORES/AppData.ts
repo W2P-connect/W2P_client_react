@@ -75,12 +75,14 @@ class AppDataStore {
             linkToOrga: true,
             defaultEmailAsName: true,
         },
+        cart_duration: 2,
     }
 
     emptyW2Pparameters: W2pParameters = {
         domain: "",
         api_key: "",
         hookList: [],
+        cart_duration: 2,
         deal: {
             amountsAre: "Tax exclusive",
             defaultOrderName: {
