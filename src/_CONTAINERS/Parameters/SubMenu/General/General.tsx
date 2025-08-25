@@ -226,7 +226,7 @@ const Connexion = () => {
     })
   };
 
-  const restoreSettings = () => {
+  const restoreSettings = async () => {
     if (window.confirm(
       translate("Are you sure you want to restore all of your settings")
     )) {
@@ -238,8 +238,8 @@ const Connexion = () => {
       hookStore.updateHookList([])
       appDataStore.setAppData(newAppDataStore)
 
-      callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-parameters`, { method: "put" })
-      saveParameters(null, false)
+      await callApi(`${appDataStore.appData.w2pcifw_client_rest_url}/restore-parameters`, { method: "put" })
+      await saveParameters(null, false)
       appDataStore.setAppData(newAppDataStore)
 
       window.location.reload()
