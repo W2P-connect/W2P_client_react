@@ -194,7 +194,7 @@ const HookField = ({ hookField }: Props) => {
                 )
               }
               </div>
-              : <div className='m-t-10'>{translate("There is no option defined on Pipedrive for this field.")}</div>
+              : <div className='m-t-10'>{translate("No options found for this field. If you’ve just added some in Pipedrive, reload custom fields at the bottom of the page.")}</div>
             : null
           }
           {/* FIELDTYPE ENUM */}
