@@ -49,6 +49,7 @@ export interface W2pParameters {
     deal: DealsConfig;
     organization: OrganizationsConfig;
     person: PersonsConfig;
+    cart_duration: number;
 }
 interface DealsConfig {
     amountsAre: string | null;
@@ -239,7 +240,7 @@ export type WoocommerceProductData = {
     item_type: string;
 }
 
-export type QuerySource = "user" | "order" | "product"
+export type QuerySource = "user" | "order" | "product" | "cart"
 
 export type PayloadData = {
     condition: FieldCondition,
