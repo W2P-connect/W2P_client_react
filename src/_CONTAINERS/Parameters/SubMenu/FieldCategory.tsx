@@ -62,7 +62,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
     <div key={category}>
       <div>
         <div className='w2p-instructions'>
-          <p>{translate('Select the different events that will sync Woocommerce and WordPress informations to Pipedrive.')}</p>
+          <p>{translate(`Select the different events that will sync data from Woocommerce and WordPress informations to ${category}'s in Pipedrive.`)}</p>
         </div>
 
         <div className="flex flex-wrap justify-stretch gap-2 mt-5 mb-5">

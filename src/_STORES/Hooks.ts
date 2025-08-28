@@ -20,6 +20,89 @@ class HookStore {
 
     defaultHookSettings: Record<Category, HookDefaults> = {
         deal: {
+            "woocommerce_abandoned_cart": {
+                "status": {
+                    value: "open",
+                    condition: {
+                        SkipOnExist: false
+                    }
+                },
+                "title": {
+                    value: [
+                        {
+                            variables: [
+                                {
+                                    value: "billing_company",
+                                    source: "user",
+                                    exemple: "ABC Corp",
+                                    isFreeField: false,
+                                    id: "d6d51433-d8a4-404a-9432-6db4db85db44"
+                                },
+                                {
+                                    id: "32e3ec72-dcf6-4a95-a953-6474a15b42aa",
+                                    exemple: "'s Woocommerce pending cart",
+                                    isFreeField: true,
+                                    value: "'s Woocommerce pending cart"
+                                }
+                            ],
+                            id: "de3e94bc-6408-4eb8-b04a-0d8cb0e79b55",
+                            index: 0
+                        },
+                        {
+                            variables: [
+                                {
+                                    value: "billing_first_name",
+                                    source: "user",
+                                    exemple: "John",
+                                    isFreeField: false,
+                                    id: "46764686-cbd0-4862-8425-157d7f51a268"
+                                },
+                                {
+                                    value: "billing_last_name",
+                                    source: "user",
+                                    exemple: "Doe",
+                                    isFreeField: false,
+                                    id: "accc63d1-2e5b-472b-b9ab-d1c6e98b8a90"
+                                },
+                                {
+                                    id: "9ad449f8-5144-485f-8626-520b0e2201dc",
+                                    exemple: "'s Woocommerce pending cart",
+                                    isFreeField: true,
+                                    value: "'s Woocommerce pending cart"
+                                }
+                            ],
+                            id: "4422a471-b8b9-4941-b244-a2842bbdfd7e",
+                            index: 1
+                        },
+                        {
+                            variables: [
+                                {
+                                    value: "user_email",
+                                    source: "user",
+                                    exemple: "john.doe@exemple.com",
+                                    isFreeField: false,
+                                    id: "19c70690-1887-4bff-9f90-c73b7cd9459c"
+                                },
+                                {
+                                    id: "f82d890c-ec46-4f89-8d84-c301069683f0",
+                                    exemple: "'s Woocommerce pending cart",
+                                    isFreeField: true,
+                                    value: "'s Woocommerce pending cart"
+                                }
+                            ],
+                            id: "7180a687-c9dc-46bf-8bea-f96b52c99f68",
+                            index: 2
+                        }
+                    ],
+                    condition: {
+                        logicBlock: {
+                            enabled: true,
+                            fieldNumber: "ALL"
+                        },
+                        SkipOnExist: false
+                    }
+                }
+            },
             "woocommerce_new_order": {
                 "status": {
                     value: "open",
@@ -28,7 +111,7 @@ class HookStore {
                     }
                 },
             },
-            "woocommerce_update_order": {} //activation pour les produits
+            "woocommerce_update_order": {} //activation pour les produits.
             ,
             "woocommerce_order_status_on-hold": {
                 "status": {

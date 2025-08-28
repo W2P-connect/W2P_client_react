@@ -54,6 +54,13 @@ export const priorityFieldsKey: Record<Category, Array<string>> = {
     ]
 }
 
+export const requiredFieldsKey: Record<Category, Record<string, Array<string>>> = {
+    'deal' : {
+        'woocommerce_abandoned_cart' : ['title']
+    },
+    'organization': {},
+    'person': {},
+}
 
 export type AdditionalFieldsData = {
     [category in Category]: {

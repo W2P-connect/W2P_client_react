@@ -13,6 +13,7 @@ import { Category, HookField, PipedriveField } from 'Types';
 import Syncronize from './Syncronize';
 import { externalLinks } from 'appConstante';
 import { PopupContext } from '_CONTEXT/PopupContext';
+import DefaultSettingsPresentation from './DefaultSettingsPresentation';
 
 const Connexion = () => {
 
@@ -81,22 +82,7 @@ const Connexion = () => {
           </MainButton>
         </div>
 
-        <p className='font-medium'>This will configure the following parameters:</p>
-        <ul className='pl-4 list-disc'>
-          <li>
-            <strong>People:</strong> Create or update a Person whenever a WooCommerce user signs up or is updated.
-            Sends <em>full name</em>, <em>first/last name</em>, <em>email</em>, and <em>phone</em> when available.
-          </li>
-          <li>
-            <strong>Organizations:</strong> Create or update an Organization from the user’s <em>billing company name</em> on user updates
-            (e.g., when billing details are added during checkout).
-          </li>
-          <li>
-            <strong>Deals:</strong> Create and update Deals from WooCommerce orders, attaching line items
-            (product name, price, quantity) and the order comment. Deal title, status, and <em>won time</em> are set based on the order status.
-          </li>
-        </ul>
-
+        <DefaultSettingsPresentation />
 
         <small style={{ color: '#666' }}>
           You can update these defaults anytime in Settings.
@@ -427,21 +413,7 @@ const Connexion = () => {
       <div className='mt-20'>
         <form onSubmit={e => loadDefaultSettings(e)}>
           <h2>Load default settings</h2>
-          <p className='m-b-10 font-medium'>{translate(`This option allows you to load the plugin's default settings to start with a functional configuration.`)}</p>
-          <ul className='pl-4 list-disc'>
-            <li>
-              <strong>People:</strong> Create or update a Person whenever a WooCommerce user signs up or is updated.
-              Sends <em>full name</em>, <em>first/last name</em>, <em>email</em>, and <em>phone</em> when available.
-            </li>
-            <li>
-              <strong>Organizations:</strong> Create or update an Organization from the user’s <em>billing company name</em> on user updates
-              (e.g., when billing details are added during checkout).
-            </li>
-            <li>
-              <strong>Deals:</strong> Create and update Deals from WooCommerce orders, attaching line items
-              (product name, price, quantity) and the order comment. Deal title, status, and <em>won time</em> are set based on the order status.
-            </li>
-          </ul>
+          <DefaultSettingsPresentation />
 
           <div className='pt-4'>
             <button className='light-button'>

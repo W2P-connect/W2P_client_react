@@ -10,11 +10,13 @@ import { HookField as HookFieldType, Block, GroupedStages } from 'Types'
 import { hookFieldStore } from '_STORES/HookField'
 import { hookStore } from '_STORES/Hooks'
 import { appDataStore } from '_STORES/AppData'
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { getBlockExemple } from '_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useLoadPipedriveUsers } from 'utils/pipedrive'
+import HoverToolType from '_COMPONENTS/GENERAL/HoverToolType/HoverToolType'
+import { useNotification } from '_CONTEXT/hook/contextHook'
 
 interface Props {
   hookField: HookFieldType
@@ -23,6 +25,7 @@ interface Props {
 const HookField = ({ hookField }: Props) => {
 
   const callPipedriveApi = useCallPipedriveApi()
+  const notification = useNotification()
 
   const [open, setOpen] = useState<boolean>(false)
 
@@ -46,6 +49,11 @@ const HookField = ({ hookField }: Props) => {
 
   const loadPipedriveUsers = useLoadPipedriveUsers()
 
+  useEffect(() => {
+    if(hookField.enabled && hookFieldStore.isRequired(hookField)) {
+      updateHookField("enabled", true)
+    }
+  }, [])
   const loadPipedriveStages = (e: FormEvent) => {
     callPipedriveApi("stages", null, null, null, e)
       .then(res => {
@@ -57,7 +65,6 @@ const HookField = ({ hookField }: Props) => {
       })
   }
 
-  /** Select d'un seul choix */
   const selectOption = (id: number) => {
     if (
       hookField.pipedrive.field_type === "enum" ||
@@ -123,15 +130,27 @@ const HookField = ({ hookField }: Props) => {
       <div className='flex items-center'>
         <InputCheckbox
           checked={hookField.enabled}
-          onChange={(value) => updateHookField("enabled", value)}
+          onChange={(value) => {
+            if (hookFieldStore.isRequired(hookField)) {
+              notification.addNotification({
+                content: "This field is required",
+                error: true
+              })
+              return
+            }
+            updateHookField("enabled", value)
+          }}
         />
 
         <div
           onClick={_ => setOpen(prv => !prv)}
           className='flex justify-between items-center w-full cursor-pointer' >
           <div className='font-medium text-base'>
-            {hookFieldStore.isImportant(hookField)
-              ? <span>🚨</span>
+            {hookFieldStore.isRequired(hookField)
+              ? <HoverToolType
+                content={<span>🚨</span>}
+                toolTip="This field is required"
+              />
               : null}
             {`${hookField.pipedrive.name} `}
             {/* (<span className='subtext'>
@@ -148,9 +167,9 @@ const HookField = ({ hookField }: Props) => {
                   )}>
                   {
                     hookFieldStore.hasValue(hookField)
-                    ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
-                      ? getBlockExemple(hookField.value[0])
-                      : mayJsonParse(`${hookField.value}`, hookField.value)
+                      ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
+                        ? getBlockExemple(hookField.value[0])
+                        : mayJsonParse(`${hookField.value}`, hookField.value)
                       : <span>⚠️ you need to set a value</span>
 
                   }
@@ -169,11 +188,6 @@ const HookField = ({ hookField }: Props) => {
       </div>
       {selectedHook && hookField.enabled && open
         ? <div>
-          {/* {hookFieldStore.isRequired(hookField)
-            ? <p>{translate(`This field is required for creating a ${selectedHook?.category}.
-                If the value is null, no call will be made to Pipedrive for creation`)}</p>
-            : null} */}
-
           {additionalFieldsData[selectedHook.category][hookField.pipedrive.key]?.info
             ? <p>{additionalFieldsData[selectedHook.category][hookField.pipedrive.key].info}</p>
             : null}
