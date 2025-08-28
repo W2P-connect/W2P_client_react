@@ -58,7 +58,7 @@ export default function Orders() {
         <Input
           value={orderId}
           label='Order id'
-          placeholder={`7235`}
+          placeholder={`ex: 7235`}
           onInput={(value: string) => setOrderId(_ => (value))}>
         </Input>
       </div>
