@@ -72,7 +72,7 @@ export default function Query({ parentQuery }: { parentQuery: QueryType }) {
             <div>{getActionButton(query.state)}</div>
             <div>{query.hook}</div>
             <div>{query.category}</div>
-            <div>{`${query.source} (${query.source === 'cart' ? "user " : ""} ${query.source_id})`}</div>
+            <div>{`${query.source} (${query.source === 'cart' ? "user " : ""}${query.source_id})`}</div>
             <div onClick={(e) => e.stopPropagation()} className='cursor-default'>
               {query.target_id
                 ? appDataStore.appData.parameters.pipedrive.company_domain
