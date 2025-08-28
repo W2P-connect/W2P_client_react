@@ -221,7 +221,7 @@ export default function Order({ order }: { order: OrderType }) {
                                     </>
                                     : <>
                                         <div className='font-semibold text-center'>
-                                            None of the events you've set up for the deals have been triggered for this order yet. Therefore, no data can be sent to Pipedrive.
+                                            No event has been triggered for this order yet (this may be because it was created before you installed W2P, or because no events are configured for orders). You can still send it to Pipedrive based on its current status.
                                         </div>
                                         <div className='flex justify-center mt-3'>
                                             <input name='create-query' defaultValue={"1"} hidden />
@@ -229,7 +229,7 @@ export default function Order({ order }: { order: OrderType }) {
                                                 className='bg-white'
                                                 onClick={e => e.stopPropagation()} // Stop propagation here
                                             >
-                                                {translate("Send based on current state")}
+                                                {translate("Send to Pipedrive (based on current status)")}
                                             </button>
                                         </div>
                                     </>
