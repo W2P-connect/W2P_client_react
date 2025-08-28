@@ -15,6 +15,7 @@ export const externalLinks: Record<string, string> = {
     getStarted: "https://woocommerce-to-pipedrive.com/get-started/",
     setupGuide: "https://woocommerce-to-pipedrive.com/guides-releases-tutorials/woocommerce-pipedrive-sync-guide/",
     homePage: "https://woocommerce-to-pipedrive.com/",
+    contact: "https://woocommerce-to-pipedrive.com/contact",
 }
 
 export const unusableFieldsKey: string[] = [
