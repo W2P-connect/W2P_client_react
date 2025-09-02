@@ -40,9 +40,9 @@ class HookStore {
                                 },
                                 {
                                     id: "32e3ec72-dcf6-4a95-a953-6474a15b42aa",
-                                    exemple: "'s Woocommerce pending cart",
+                                    exemple: "'s Woocommerce abandoned cart",
                                     isFreeField: true,
-                                    value: "'s Woocommerce pending cart"
+                                    value: "'s Woocommerce abandoned cart"
                                 }
                             ],
                             id: "de3e94bc-6408-4eb8-b04a-0d8cb0e79b55",
@@ -66,9 +66,9 @@ class HookStore {
                                 },
                                 {
                                     id: "9ad449f8-5144-485f-8626-520b0e2201dc",
-                                    exemple: "'s Woocommerce pending cart",
+                                    exemple: "'s Woocommerce abandoned cart",
                                     isFreeField: true,
-                                    value: "'s Woocommerce pending cart"
+                                    value: "'s Woocommerce abandoned cart"
                                 }
                             ],
                             id: "4422a471-b8b9-4941-b244-a2842bbdfd7e",
@@ -85,9 +85,9 @@ class HookStore {
                                 },
                                 {
                                     id: "f82d890c-ec46-4f89-8d84-c301069683f0",
-                                    exemple: "'s Woocommerce pending cart",
+                                    exemple: "'s Woocommerce abandoned cart",
                                     isFreeField: true,
-                                    value: "'s Woocommerce pending cart"
+                                    value: "'s Woocommerce abandoned cart"
                                 }
                             ],
                             id: "7180a687-c9dc-46bf-8bea-f96b52c99f68",
