@@ -103,7 +103,7 @@ function CreateActivity({ hook }: { hook: Hook }) {
                             value={hook.option.activity?.type ?? activityTypesOptions[0]}
                             defaultOption={activityTypesOptions[0]}
                         />
-                        <form onSubmit={e => loadActivityTypes(e)}>
+                        <form className='!mb-0' onSubmit={e => loadActivityTypes(e)}>
                             <button
                                 className='light-button'
                             >
@@ -129,7 +129,7 @@ function CreateActivity({ hook }: { hook: Hook }) {
                             }
                             value={hook.option.activity?.owner_id ?? pipedriveUsersOptions[0].value}
                         />
-                        <form onSubmit={e => loadPipedriveUsers(e)}>
+                        <form className='!mb-0' onSubmit={e => loadPipedriveUsers(e)}>
                             <button
                                 className='light-button'
                             >
