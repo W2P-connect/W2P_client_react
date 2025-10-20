@@ -1,11 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react'
-import Variable from './Variable'
+import { useEffect, useState, useContext } from 'react'
 import { translate } from '../../translation'
 import { PopupContext } from '../../_CONTEXT/PopupContext'
 import MetaKeysCategories from '../METAKEYS/MetaKeysCategories'
-import { v4 as uuidv4 } from 'uuid';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Block, Variable as VariableType } from 'Types'
+import { Block, HookSources, MetaKeySources, Variable as VariableType } from 'Types'
 import VariableList from './VariableList'
 import { hookStore } from '_STORES/Hooks'
 import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
@@ -25,14 +22,22 @@ export const getBlockExemple = (block: Block) => {
 }
 
 interface Props {
-    defautBlock: Block;
+    defautBlock: Block | null;
     setter: (block: Block) => void;
     deleter?: (id: Block['id']) => void;
     showExemple?: boolean
-    source?: null
+    source?: MetaKeySources | null
+    className?: string
 }
 
-export default function VariableBlock({ defautBlock, setter, deleter, showExemple = true, source = null }: Props) {
+export default function VariableBlock({
+    defautBlock,
+    setter,
+    deleter,
+    source,
+    showExemple = true,
+    className = ""
+}: Props) {
 
     const { addPopupContent, showPopup } = useContext(PopupContext)
     const [block, setBlock] = useState<Block>(emptyBlock)
@@ -73,9 +78,9 @@ export default function VariableBlock({ defautBlock, setter, deleter, showExempl
     const addElement = () => {
         addPopupContent(<MetaKeysCategories onSelect={addVariables} source={source || selectedHook?.source} />)
     }
-    
+
     return (
-        <div className='block-container relative p-2'>
+        <div className={`block-container relative p-2 ${className}`}>
             <div className="flex">
                 {deleter
                     ? <div

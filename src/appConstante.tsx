@@ -1,4 +1,5 @@
-import { Category } from "Types"
+import { hookStore } from "_STORES/Hooks"
+import { Category, Hook, PreHook } from "Types"
 
 export const linkableFields: {
     person: string[],
@@ -55,12 +56,21 @@ export const priorityFieldsKey: Record<Category, Array<string>> = {
 }
 
 export const requiredFieldsKey: Record<Category, Record<string, Array<string>>> = {
-    'deal' : {
-        'woocommerce_abandoned_cart' : ['title']
+    'deal': {
+        'woocommerce_abandoned_cart': ['title']
     },
     'organization': {},
     'person': {},
 }
+
+export const defaultGuestPersonFiledsKey = [
+    'first_name',
+    'last_name',
+    'email',
+    'phone'
+]
+
+
 
 export type AdditionalFieldsData = {
     [category in Category]: {

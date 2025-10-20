@@ -64,7 +64,8 @@ class AppDataStore {
                 ],
                 id: "",
                 index: 0
-            }
+            },
+            syncPersonsForGuestOrders: true,
         },
         organization: {
             autoCreate: false,
@@ -94,6 +95,7 @@ class AppDataStore {
             searchBeforeCreate: true,
             productsName: null,
             productsComment: null,
+            syncPersonsForGuestOrders: false,
         },
         organization: {
             autoCreate: false,
@@ -170,14 +172,6 @@ class AppDataStore {
         runInAction(() => {
             this.initAppData = deepCopy(newAppData);
         })
-    }
-
-    getHookById(id: string): Hook | undefined {
-        return this.appData.parameters.w2p.hookList.find(hook => hook.id === id);
-    }
-
-    getPipedriveField(fieldId: number): PipedriveField | null {
-        return this.appData.parameters.pipedrive.fields.find((field: PipedriveField) => field.id === fieldId) ?? null;
     }
 
     setPipedriveParameter<K extends keyof PipedriveParameters>(key: K, value: PipedriveParameters[K]) {

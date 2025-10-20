@@ -17,7 +17,7 @@ interface Props {
 
 export default function MetaKeysCategories({ onSelect, source }: Props) {
 
-    // console.log(source, 'appDataStore.appData.CONSTANTES.W2PCIFW_META_KEYS', toJS(appDataStore.appData.CONSTANTES.W2PCIFW_META_KEYS));
+    console.log(source)
 
 
     const [currentCategory, setCurrentCategory] = useState<Item | null>(null)

@@ -51,13 +51,15 @@ export interface W2pParameters {
     person: PersonsConfig;
     cart_duration: number;
 }
-interface DealsConfig {
-    amountsAre: string | null;
+export interface DealsConfig {
+    amountsAre: string | null | undefined;
     defaultOrderName: Block
     sendProducts: boolean; //product
     searchBeforeCreate: boolean; //product
     productsName: Block | null;
     productsComment: Block | null;
+    syncPersonsForGuestOrders: boolean;
+    personGuestOrderOptions?: {}
 }
 
 interface OrganizationsConfig {
@@ -75,8 +77,9 @@ export type MetaKeySources =
     | "user"
     | "product"
     | 'w2p'
+    | "guestorder"
 
-type HookSources = "order" | "user" | "product"
+export type HookSources = "order" | "user" | "product" | "guestorder"
 
 export interface MetaKeyCategory {
     description: string | null
@@ -115,21 +118,23 @@ export interface Hook extends PreHook {
     enabled: boolean,
     show: boolean,
     category: Category,
-    option: {
-        createActivity?: boolean,
-        activity: {
-            subject: string,
-            type: string,
-            owner_id: number,
-            note: string,
-            done: boolean,
-            enable_due_date: boolean,
-            due_date_value: number,
-            due_time: string,
-            due_date_unit: 'day' | 'week' | 'month',
-        }
-    }
+    option: HookOptions,
     fields: HookField[],
+}
+
+export interface HookOptions {
+    createActivity?: boolean,
+    activity: {
+        subject: string,
+        type: string,
+        owner_id: number,
+        note: string,
+        done: boolean,
+        enable_due_date: boolean,
+        due_date_value: number,
+        due_time: string,
+        due_date_unit: 'day' | 'week' | 'month',
+    }
 }
 
 export type FieldCondition = {
@@ -153,6 +158,14 @@ export type BaseHookField = {
 export interface HookField extends BaseHookField {
     pipedrive: PipedriveField
     // hook: Hook
+}
+
+export interface GuestOrderFieldType {
+    enabled: boolean;
+    id: string
+    pipedriveField: PipedriveField;
+    value: number | Array<number> | Block[] | string;
+    condition: FieldCondition;
 }
 
 /****************************** LOGIC BLOCK  ****************************/
@@ -486,16 +499,16 @@ export interface User {
 }
 
 export type PipedriveActivityType = {
-  id: number;
-  order_nr: number;
-  name: string;
-  key_string: string;
-  icon_key: string;
-  active_flag: boolean;
-  color: string;
-  is_custom_flag: boolean;
-  add_time: string;   // format "YYYY-MM-DD HH:mm:ss"
-  update_time: string; // format "YYYY-MM-DD HH:mm:ss"
+    id: number;
+    order_nr: number;
+    name: string;
+    key_string: string;
+    icon_key: string;
+    active_flag: boolean;
+    color: string;
+    is_custom_flag: boolean;
+    add_time: string;   // format "YYYY-MM-DD HH:mm:ss"
+    update_time: string; // format "YYYY-MM-DD HH:mm:ss"
 };
 export interface PipedriveField {
     id: number;

@@ -62,7 +62,7 @@ class HookFieldStore {
 
             if (!hook) return null
 
-            const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId, hook.category);
+            const pipedriveField = pipedriveFieldsStore.getPipedriveField(field.pipedriveFieldId, hook.category);
             const result = pipedriveField
                 ? {
                     ...field,

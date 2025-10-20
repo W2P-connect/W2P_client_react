@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { BaseHookField, Category, Hook, HookField, PipedriveField, PreHook } from 'Types';
 import { v4 as uuidv4 } from 'uuid';
 import { pipedriveFieldsStore } from './PipedriveFields';
@@ -216,7 +216,142 @@ class HookStore {
                         SkipOnExist: false
                     }
                 },
-            },
+            }, "woocommerce_guest_person_order": {
+                "name": {
+                    "value": [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing first name",
+                                    "value": "billing_first_name",
+                                    "source": "order",
+                                    "description": "Customer billing first name.",
+                                    "exemple": "John",
+                                    "isFreeField": false,
+                                    "id": "eacddd70-6878-4b8f-b197-426660488372"
+                                },
+                                {
+                                    "label": "Billing last name",
+                                    "value": "billing_last_name",
+                                    "source": "order",
+                                    "description": "Customer billing last name.",
+                                    "exemple": "Doe",
+                                    "isFreeField": false,
+                                    "id": "f4e5ac22-1016-407e-b875-27ece2a36e93"
+                                }
+                            ],
+                            "id": "c262e0bb-0700-461b-bcae-005394a6d643",
+                            "index": 0
+                        }
+                    ],
+                    "condition": {
+                        "logicBlock": {
+                            "enabled": true,
+                            "fieldNumber": "ALL"
+                        }
+                    },
+                },
+                "phone": {
+                    "value": [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing phone",
+                                    "value": "billing_phone",
+                                    "source": "order",
+                                    "description": "Customer billing phone number.",
+                                    "exemple": "+33123456789",
+                                    "isFreeField": false,
+                                    "id": "3e374e7a-149f-440c-8004-8a8170ec2dfa"
+                                }
+                            ],
+                            "id": "dbcfc635-1a7b-42ce-865f-7bcb0c6e4314",
+                            "index": 0
+                        }
+                    ],
+                    "condition": {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    },
+                },
+                "email": {
+                    "value": [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing email",
+                                    "value": "billing_email",
+                                    "source": "order",
+                                    "description": "Customer billing email.",
+                                    "exemple": "john.doe@example.com",
+                                    "isFreeField": false,
+                                    "id": "cd2260ac-139d-4c84-8914-4b1f0d2841d0"
+                                }
+                            ],
+                            "id": "84c82ae8-3168-4d77-9ecd-6840fb0e1079",
+                            "index": 0
+                        }
+                    ],
+                    "condition": {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    },
+                },
+                "first_name": {
+                    "value": [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Billing first name",
+                                    "value": "billing_first_name",
+                                    "source": "order",
+                                    "description": "Customer billing first name.",
+                                    "exemple": "John",
+                                    "isFreeField": false,
+                                    "id": "28e1771c-d8b4-4028-9dd8-44b0d2dd0287"
+                                }
+                            ],
+                            "id": "dd298559-0ddc-4bd0-b261-ad4d9cacc89c",
+                            "index": 0
+                        }
+                    ],
+                    "condition": {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    },
+                },
+                "last_name": {
+                    "value": [
+                        {
+                            "variables": [
+                                {
+                                    "label": "Shipping last name",
+                                    "value": "shipping_last_name",
+                                    "source": "order",
+                                    "description": "Customer shipping last name.",
+                                    "exemple": "Doe",
+                                    "isFreeField": false,
+                                    "id": "1345047d-75f2-4a0b-9015-a9f0601ecbcc"
+                                }
+                            ],
+                            "id": "f26d930a-fe37-45bf-ad30-c09e5097d141",
+                            "index": 0
+                        }
+                    ],
+                    "condition": {
+                        "logicBlock": {
+                            "enabled": false,
+                            "fieldNumber": "1"
+                        }
+                    },
+                }
+            }
         },
         organization: {
             "profile_update": {
@@ -648,253 +783,273 @@ class HookStore {
         }
     };
 
-    emptyHookField: BaseHookField = {
-        id: '',
-        enabled: false,
-        value: 0,
-        condition: {
-            logicBlock: {
-                enabled: false,
-                fieldNumber: '1'
-            }
-        },
-        pipedriveFieldId: 0,
-        hookId: ''
-    };
-
-    emptyHook: Hook = {
-        id: "",
-        label: "",
-        key: "",
-        source: "user",
-        disabledFor: [],
-        description: "",
-        show: false,
-        enabled: false,
-        option: {
-            createActivity: false,
-            activity: {
-                subject: "",
-                due_time: "09:00",
-                due_date_unit: "day",
-                due_date_value: 2,
-                enable_due_date: true,
-                done: false,
-                note: "",
-                owner_id: 0,
-                type: "",
-            }
-        },
-        category: "person",
-        fields: [],
-    };
-
-    hooks: Hook[] = []
-
-    selectedHookId: Hook["id"] | null = null
-
-    selectHookId(id: Hook["id"] | null) {
-        if (id) {
-            runInAction(() => {
-                const hook = this.getHook(id);
-                this.selectedHookId = hook ? hook.id : null;
-            });
-        } else {
-            runInAction(() => {
-                this.selectedHookId = null;
-            });
+emptyHookField: BaseHookField = {
+    id: '',
+    enabled: false,
+    value: 0,
+    condition: {
+        logicBlock: {
+            enabled: false,
+            fieldNumber: '1'
         }
-    }
+    },
+    pipedriveFieldId: 0,
+    hookId: ''
+};
 
+emptyHook: Hook = {
+    id: "",
+    label: "",
+    key: "",
+    source: "user",
+    disabledFor: [],
+    description: "",
+    show: false,
+    enabled: false,
+    option: {
+        createActivity: false,
+        activity: {
+            subject: "",
+            due_time: "09:00",
+            due_date_unit: "day",
+            due_date_value: 2,
+            enable_due_date: true,
+            done: false,
+            note: "",
+            owner_id: 0,
+            type: "",
+        }
+    },
+    category: "person",
+    fields: [],
+};
 
-    addNewHook(hook: Hook) {
+hooks: Hook[] = []
+
+defaultGuestOrderHook: Hook = {
+    label: 'Guest Order (person)',
+    key: 'woocommerce_guest_person_order',
+    description: 'Fired when an order is using a guest as customer.',
+    disabledFor: ['person', 'organization', 'deal'], // HIDDEN
+    source: 'guestorder',
+    category: 'person',
+    show: false,
+    fields: [],
+    id: 'e85ac0d4-492c-480b-aa60-2f46b3e61005',
+    enabled: false,
+    option: this.emptyHook.option
+}
+
+selectedHookId: Hook["id"] | null = null
+
+selectHookId(id: Hook["id"] | null) {
+    if (id) {
         runInAction(() => {
-            const validatedHook = this.validHook(hook)
-            validatedHook && this.hooks.push(validatedHook)
+            const hook = this.getHook(id);
+            this.selectedHookId = hook ? hook.id : null;
+        });
+    } else {
+        runInAction(() => {
+            this.selectedHookId = null;
+        });
+    }
+}
+
+addNewHook(hook: Hook) {
+    runInAction(() => {
+        const validatedHook = this.validHook(hook)
+        validatedHook && this.hooks.push(validatedHook)
+    })
+}
+
+updateHook(id: string, updatedData: Partial<Hook>) {
+    const hookIndex = this.hooks.findIndex(hook => hook.id === id);
+    if (hookIndex > -1) {
+        runInAction(() => {
+            this.hooks[hookIndex] = { ...this.hooks[hookIndex], ...updatedData };
         })
     }
+}
 
-    updateHook(id: string, updatedData: Partial<Hook>) {
-        const hookIndex = this.hooks.findIndex(hook => hook.id === id);
-        if (hookIndex > -1) {
-            runInAction(() => {
-                this.hooks[hookIndex] = { ...this.hooks[hookIndex], ...updatedData };
-            })
+validHook(hook: Hook): Hook | null {
+    const referenceHook = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST
+        .find(hookRef => hook.key === hookRef.key)
+    if (referenceHook) {
+        return {
+            ...hook,
+            ...referenceHook,
         }
+    } else {
+        return null
     }
+}
 
-    validHook(hook: Hook): Hook | null {
-        const referenceHook = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST
-            .find(hookRef => hook.key === hookRef.key)
-        if (referenceHook) {
-            return {
-                ...hook,
-                ...referenceHook,
-            }
-        } else {
-            return null
-        }
-    }
+updateHookList(newHookList: Hook[]) {
+    const guestOrderHook = this.getHook(this.defaultGuestOrderHook.id)
+    runInAction(() => {
+        const newHooks = newHookList
+            .map(hook => this.validHook(hook))
+            .filter((hook): hook is Hook => hook !== null);
 
-    updateHookList(newHookList: Hook[]) {
-        runInAction(() => {
-            this.hooks = newHookList
-                .map(hook => this.validHook(hook))
-                .filter((hook): hook is Hook => hook !== null);
-        })
-    }
+        if (!guestOrderHook) newHooks.push(toJS(this.defaultGuestOrderHook))
 
-    getHookFromPreHook(preHook: PreHook, category: Category): Hook {
-        const wantedHook = this.hooks.find(h => preHook.key === h.key && category === h.category);
+        console.log(newHooks);
 
-        const hook = wantedHook
-            ? this.getHook(wantedHook.id)
-            : null
+        this.hooks = newHooks
+    })
+}
 
-        if (hook) {
-            return hook;
-        } else {
-            //Obligé de deepCopy sinon renvoie les mêmes fields pour tous les Hook o:
-            const newHook = deepCopy({ ...this.emptyHook, ...preHook, category, id: uuidv4() });
-            this.addNewHook(newHook);
-            return newHook;
-        }
-    }
+getHookFromPreHook(preHook: PreHook, category: Category): Hook {
+    const wantedHook = this.hooks.find(h => preHook.key === h.key && category === h.category);
 
-    getHook(id: string): Hook | null {
-        const wantedHook = this.hooks.find(hook => hook.id === id)
-        if (wantedHook) {
-            const fields = this.getFields(wantedHook.id)
-            return { ...wantedHook, fields: fields };
-        }
-        return null;
-    }
+    const hook = wantedHook
+        ? this.getHook(wantedHook.id)
+        : null
 
-    getHookIndex(id: string): number {
-        const wantedHookIndex = this.hooks.findIndex(hook => hook.id === id)
-        return wantedHookIndex;
-    }
-
-    getFields(hookId: string): HookField[] {
-        const hookIndex = this.getHookIndex(hookId)
-
-        const fields = this.hooks[hookIndex].fields
-            .map(field => this.formatHookField(field))
-            .filter((field): field is HookField => field !== null)
-
+    if (hook) {
+        return hook;
+    } else {
         //Obligé de deepCopy sinon renvoie les mêmes fields pour tous les Hook o:
-        return deepCopy(fields)
+        const newHook = deepCopy({ ...this.emptyHook, ...preHook, category, id: uuidv4() });
+        this.addNewHook(newHook);
+        return newHook;
     }
+}
+
+getHook(id: string): Hook | null {
+    const wantedHook = this.hooks.find(hook => hook.id === id)
+    if (wantedHook) {
+        const fields = this.getFields(wantedHook.id)
+        return { ...wantedHook, fields: fields };
+    }
+    return null;
+}
+
+getHookIndex(id: string): number {
+    const wantedHookIndex = this.hooks.findIndex(hook => hook.id === id)
+    return wantedHookIndex;
+}
+
+getFields(hookId: string): HookField[] {
+    const hookIndex = this.getHookIndex(hookId)
+
+    const fields = this.hooks[hookIndex].fields
+        .map(field => this.formatHookField(field))
+        .filter((field): field is HookField => field !== null)
+
+    //Obligé de deepCopy sinon renvoie les mêmes fields pour tous les Hook o:
+    return deepCopy(fields)
+}
 
 
-    /********** HOOK FIELDS ***********/
+/********** HOOK FIELDS ***********/
 
-    updateHookFieldsFromPipedriveFields(pipedriveFields: PipedriveField[]): void {
-        this.hooks.forEach((hook, idx) => {
-            this.addHookFieldsFromPipedrive(hook.category, hook.id, pipedriveFields, idx)
+updateHookFieldsFromPipedriveFields(pipedriveFields: PipedriveField[]): void {
+    this.hooks.forEach((hook, idx) => {
+        this.addHookFieldsFromPipedrive(hook.category, hook.id, pipedriveFields, idx)
+    })
+}
+
+addHookFieldsFromPipedrive(category: Category, hookId: string, pipedriveFields: PipedriveField[], hookIndex: number | null = null): void {
+    const hookIdx = hookIndex
+        ? hookIndex
+        : hookStore.getHookIndex(hookId);
+
+    if(hookIdx > -1) {
+    pipedriveFields
+        .forEach(pipedriveField => {
+            if (pipedriveField.category === category) {
+                this.addHookField(hookId, pipedriveField, hookIdx)
+            }
         })
+}
     }
 
-    addHookFieldsFromPipedrive(category: Category, hookId: string, pipedriveFields: PipedriveField[], hookIndex: number | null = null): void {
-        const hookIdx = hookIndex
-            ? hookIndex
-            : hookStore.getHookIndex(hookId);
+addHookField(hookId: string, pipedriveField: PipedriveField, hookIndex ?: number): HookField | null {
+    if (pipedriveFieldsStore.isFieldValid(pipedriveField)) {
+        const hIdx = hookIndex ?? hookStore.getHookIndex(hookId);
 
-        if (hookIdx > -1) {
-            pipedriveFields
-                .forEach(pipedriveField => {
-                    if (pipedriveField.category === category) {
-                        this.addHookField(hookId, pipedriveField, hookIdx)
-                    }
-                })
+        const existingField = this.hooks[hIdx].fields.find(field => field.pipedriveFieldId === pipedriveField.id)
+
+        if (!existingField) {
+            const newHookField: HookField = {
+                ...this.emptyHookField,
+                id: uuidv4(),
+                pipedriveFieldId: pipedriveField.id,
+                pipedrive: pipedriveField,
+                hookId,
+            };
+
+            runInAction(() => {
+
+                this.hooks[hIdx].fields.push(deepCopy(newHookField));
+                return newHookField;
+            })
+        } else {
+            runInAction(() => {
+                this.hooks[hIdx].fields = this.hooks[hIdx].fields.map(field =>
+                    field.pipedriveFieldId === pipedriveField.id
+                        ? { ...field, pipedrive: deepCopy(pipedriveField) }
+                        : field
+                );
+            });
+
+            return existingField;
+
         }
     }
+    return null;
+}
 
-    addHookField(hookId: string, pipedriveField: PipedriveField, hookIndex?: number): HookField | null {
-        if (pipedriveFieldsStore.isFieldValid(pipedriveField)) {
-            const hIdx = hookIndex ?? hookStore.getHookIndex(hookId);
+getHookFieldFromPipedrive(hookId: Hook["id"], pipedriveFieldId: PipedriveField["id"]): HookField | null {
+    const hook = hookStore.getHook(hookId);
 
-            const existingField = this.hooks[hIdx].fields.find(field => field.pipedriveFieldId === pipedriveField.id)
-
-            if (!existingField) {
-                const newHookField: HookField = {
-                    ...this.emptyHookField,
-                    id: uuidv4(),
-                    pipedriveFieldId: pipedriveField.id,
-                    pipedrive: pipedriveField,
-                    hookId,
-                };
-
-                runInAction(() => {
-
-                    this.hooks[hIdx].fields.push(deepCopy(newHookField));
-                    return newHookField;
-                })
-            } else {
-                runInAction(() => {
-                    this.hooks[hIdx].fields = this.hooks[hIdx].fields.map(field =>
-                        field.pipedriveFieldId === pipedriveField.id
-                            ? { ...field, pipedrive: deepCopy(pipedriveField) }
-                            : field
-                    );
-                });
-
-                return existingField;
-
-            }
+    if (hook) {
+        const hookField = hook.fields.find(hook => hook.pipedriveFieldId === pipedriveFieldId)
+        if (hookField) {
+            return this.formatHookField(hookField)
+        } else {
+            const pipedriveField = pipedriveFieldsStore.getPipedriveField(pipedriveFieldId, hook.category);
+            return pipedriveField
+                ? this.addHookField(hookId, pipedriveField)
+                : null
         }
-        return null;
+    } else {
+        return null
     }
+}
 
-
-    getHookFieldFromPipedrive(hookId: Hook["id"], pipedriveFieldId: PipedriveField["id"]): HookField | null {
-        const hook = hookStore.getHook(hookId);
+formatHookField(field: BaseHookField | HookField): HookField | null {
+    if ("pipedrive" in field) {
+        return field;
+    } else {
+        const hook = this.hooks.find(hook => hook.id === field.hookId)
         if (hook) {
-            const hookField = hook.fields.find(hook => hook.pipedriveFieldId === pipedriveFieldId)
-            if (hookField) {
-                return this.formatHookField(hookField)
-            } else {
-                const pipedriveField = pipedriveFieldsStore.getPiepdriveField(pipedriveFieldId, hook.category);
-                return pipedriveField
-                    ? this.addHookField(hookId, pipedriveField)
-                    : null
-            }
+            const pipedriveField = pipedriveFieldsStore.getPipedriveField(field.pipedriveFieldId, hook.category);
+            const formatedField = pipedriveField
+                ? {
+                    ...field,
+                    pipedrive: pipedriveField,
+                }
+                : null;
+
+            return formatedField
         } else {
             return null
         }
     }
+}
 
-    formatHookField(field: BaseHookField | HookField): HookField | null {
-        if ("pipedrive" in field) {
-            return field;
-        } else {
-            const hook = this.hooks.find(hook => hook.id === field.hookId)
-            if (hook) {
-                const pipedriveField = pipedriveFieldsStore.getPiepdriveField(field.pipedriveFieldId, hook.category);
-                const formatedField = pipedriveField
-                    ? {
-                        ...field,
-                        pipedrive: pipedriveField,
-                    }
-                    : null;
-
-                return formatedField
-            } else {
-                return null
-            }
-        }
+updateHookField(hook: Hook, fieldId: string, updatedData: Partial<HookField>): void {
+    const hookIdx = this.getHookIndex(hook.id)
+        if(hookIdx > -1) {
+    const hookFieldIndex = this.hooks[hookIdx].fields.findIndex(hookField => hookField.id === fieldId);
+    if (hookFieldIndex > -1) {
+        runInAction(() => {
+            this.hooks[hookIdx].fields[hookFieldIndex] = { ...this.hooks[hookIdx].fields[hookFieldIndex], ...updatedData };
+        })
     }
-
-    updateHookField(hook: Hook, fieldId: string, updatedData: Partial<HookField>): void {
-        const hookIdx = this.getHookIndex(hook.id)
-        if (hookIdx > -1) {
-            const hookFieldIndex = this.hooks[hookIdx].fields.findIndex(hookField => hookField.id === fieldId);
-            if (hookFieldIndex > -1) {
-                runInAction(() => {
-                    this.hooks[hookIdx].fields[hookFieldIndex] = { ...this.hooks[hookIdx].fields[hookFieldIndex], ...updatedData };
-                })
-            }
-        }
+}
     }
 }
 

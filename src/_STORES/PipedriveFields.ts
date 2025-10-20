@@ -46,14 +46,14 @@ class PipedriveFieldStore {
 
 
     addPipedriveField(pipedriveField: PipedriveField) {
-        if (!this.getPiepdriveField(pipedriveField.id, pipedriveField.category)) {
+        if (!this.getPipedriveField(pipedriveField.id, pipedriveField.category)) {
             runInAction(() => {
                 this.fields.push(pipedriveField);
             })
         }
     }
 
-    getPiepdriveField(id: number, category: Category): PipedriveField | undefined {
+    getPipedriveField(id: number, category: Category): PipedriveField | undefined {
         return this.fields.find(field => field.id === id && field.category === category);
     }
 

@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'
 import VariableBlock, { getBlockExemple } from '../../../_COMPONENTS/LOGICBLOCK/VariableBlock'
 import { appDataStore } from '_STORES/AppData'
 import { classNames, deepCopy } from 'utils/helpers'
-import { externalLinks } from 'appConstante'
 import NeedHelpSection from '_COMPONENTS/GENERAL/Parameters/NeedHelpSection'
+import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
+import { AppData, DealsConfig } from 'Types'
+import { hookStore } from '_STORES/Hooks'
+import HookFieldList from '_COMPONENTS/HOOK/HookField/HookFieldList'
+import { toJS } from 'mobx'
 
 export default function Deals() {
 
-  const [options, setOptions] = useState(null)
+  const [options, setOptions] = useState<DealsConfig | null>(null)
+  const gestOrderHook = hookStore.defaultGuestOrderHook
 
   useEffect(() => {
     setOptions(appDataStore.appData.parameters.w2p.deal)
@@ -22,35 +27,56 @@ export default function Deals() {
     appDataStore.setAppData(newAppData)
   }, [options])
 
-  const updateOption = (key, value) => {
-    setOptions(prv => ({ ...prv, [key]: value }))
+  const updateOption = (key: keyof DealsConfig, value: any) => {
+    setOptions(prev => {
+      if (!prev) return prev // ou return null
+      return { ...prev, [key]: value }
+    })
   }
+
 
   return (
     <>
       <NeedHelpSection />
-      
+
       {options
         ? <>
           <h2>{translate("General settings")}</h2>
 
-          <form>
-            <div className="mb-1 font-medium text-gray-900 text-sm leading-6">
-              {translate("Default deal name (if not defined in the event) : ")}
-              <span className='mb-1 text-gray-700 text-xs italic'>
-                {options.defaultOrderName
-                  ? getBlockExemple(options.defaultOrderName)
-                  : null
-                }
-              </span>
-            </div>
-            <VariableBlock
-              defautBlock={options.defaultOrderName}
-              setter={(value) => updateOption("defaultOrderName", value)}
-              showExemple={false}
-              source={"order"}
+          <div className="mb-1 font-medium text-gray-900 text-sm leading-6">
+            {translate("Default deal name (if not defined in the event) : ")}
+            <span className='mb-1 text-gray-700 text-xs italic'>
+              {options.defaultOrderName
+                ? getBlockExemple(options.defaultOrderName)
+                : null
+              }
+            </span>
+          </div>
+          <VariableBlock
+            defautBlock={options.defaultOrderName}
+            setter={(value) => updateOption("defaultOrderName", value)}
+            showExemple={false}
+            source={"order"}
+            className='!border-none'
+          />
+
+          <label className='flex items-center gap-1 mt-8 mb-2 cursor-pointer'>
+            <input
+              type="checkbox"
+              onChange={(e) => updateOption("syncPersonsForGuestOrders", e.target.checked)}
+              checked={options.syncPersonsForGuestOrders ?? false}
             />
-          </form>
+            Sync Pipedrive persons for guest orders
+          </label>
+
+          <RenderIf condition={options.syncPersonsForGuestOrders}>
+            <div className='p-4 border rounded-xl'>
+              <HookFieldList
+                hook={gestOrderHook}
+                showHookParameters={false}
+                search={false} />
+            </div>
+          </RenderIf>
 
           <h2 className='m-b-10 m-t-50'>{translate("Products settings")}</h2>
           <form>

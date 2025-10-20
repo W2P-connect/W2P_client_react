@@ -42,10 +42,11 @@ const HookField = ({ hookField }: Props) => {
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
   };
 
+  console.log(selectedHook);
+  
   const updateOptionHookField = (key: keyof HookFieldType["condition"], value: any) => {
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { condition: { ...hookField.condition, [key]: value } });
   };
-
 
   const loadPipedriveUsers = useLoadPipedriveUsers()
 
@@ -54,6 +55,7 @@ const HookField = ({ hookField }: Props) => {
       updateHookField("enabled", true)
     }
   }, [])
+
   const loadPipedriveStages = (e: FormEvent) => {
     callPipedriveApi("stages", null, null, null, e)
       .then(res => {
@@ -153,9 +155,6 @@ const HookField = ({ hookField }: Props) => {
               />
               : null}
             {`${hookField.pipedrive.name} `}
-            {/* (<span className='subtext'>
-              {hookField.pipedrive.key} - {hookField.pipedrive.field_type}
-            </span>) */}
           </div>
 
           <div className='flex gap-5'>
@@ -234,6 +233,7 @@ const HookField = ({ hookField }: Props) => {
               fieldCondition={hookField.condition}
               setter={(logicBlocks) => updateHookField("value", logicBlocks)}
               defaultLogicBlocks={hookField.value as Block[]}
+              source={selectedHook && selectedHook.source}
             />
             : null
           }

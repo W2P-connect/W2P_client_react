@@ -3,16 +3,17 @@ import { translate } from '../../translation'
 import VariableBlock, { emptyBlock } from './VariableBlock'
 import { v4 as uuidv4 } from 'uuid';
 import "./logicBlock.css"
-import { Block, FieldCondition } from 'Types';
+import { Block, FieldCondition, MetaKeySources } from 'Types';
 import RenderIf from '_COMPONENTS/GENERAL/RenderIf';
 
 interface Props {
     defaultLogicBlocks: Block[];
     setter: (logicBlock: Block[]) => void;
     fieldCondition: FieldCondition;
+    source?: MetaKeySources;
 }
 
-export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition }: Props) {
+export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition, source }: Props) {
 
     const [logicBlocks, setLogicBlocks] = useState<Block[]>([{ ...emptyBlock, id: uuidv4() }])
 
@@ -70,6 +71,7 @@ export default function LogicBlocks({ defaultLogicBlocks, setter, fieldCondition
                             defautBlock={{ ...block, index: index }}
                             setter={updateBlock}
                             deleter={deleteBlock}
+                            source={source}
                         />
                     </div>
                 }
