@@ -35,8 +35,6 @@ const HookFieldList = ({ hook, search = true, showHookParameters = true }: Props
             : []
         , [hook.id, categoryFields, searchField])
 
-    console.log(filteredHookFieldsList);
-
     return (
         <div key={hook.id}>
             {filteredHookFieldsList

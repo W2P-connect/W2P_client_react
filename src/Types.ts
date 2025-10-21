@@ -253,7 +253,7 @@ export type WoocommerceProductData = {
     item_type: string;
 }
 
-export type QuerySource = "user" | "order" | "product" | "cart"
+export type QuerySource = "user" | "order" | "product" | "cart" | "guestorder"
 
 export type PayloadData = {
     condition: FieldCondition,

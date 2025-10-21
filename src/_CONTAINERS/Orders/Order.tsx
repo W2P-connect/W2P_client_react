@@ -73,6 +73,8 @@ export default function Order({ order }: { order: OrderType }) {
 
     const lastDoneQuery = orderState.queries.find(query => query.state === "DONE")
 
+    console.log(orderState);
+    
     return (
         <form onSubmit={e => sendOrder(e)}>
             {orderState ? (
@@ -91,8 +93,12 @@ export default function Order({ order }: { order: OrderType }) {
                         </div>
                         <div>{orderState.id}</div>
                         <div>
-                            <div>{orderState.customer?.first_name} {orderState.customer?.last_name}</div>
-                            <div className='text-gray-600 text-sm'>{orderState.customer?.user_email}</div>
+                            <div>
+                                {orderState.customer?.first_name || orderState.billing?.first_name} {orderState.customer?.last_name || orderState.billing?.last_name}
+                            </div>
+                            <div className='text-gray-600 text-sm'>
+                                {orderState.customer?.user_email || orderState.billing?.email}
+                            </div>
                         </div>
 
                         {lastDoneQuery?.target_id

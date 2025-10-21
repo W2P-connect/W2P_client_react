@@ -41,8 +41,6 @@ const HookField = ({ hookField }: Props) => {
     }
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
   };
-
-  console.log(selectedHook);
   
   const updateOptionHookField = (key: keyof HookFieldType["condition"], value: any) => {
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { condition: { ...hookField.condition, [key]: value } });

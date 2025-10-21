@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FieldCategory from './FieldCategory'
 import { translate } from '../../../translation'
 import Select from '../../../_COMPONENTS/FORMS/INPUT/select/Select'
@@ -7,15 +7,15 @@ import { appDataStore } from '_STORES/AppData'
 import { classNames, deepCopy } from 'utils/helpers'
 import NeedHelpSection from '_COMPONENTS/GENERAL/Parameters/NeedHelpSection'
 import RenderIf from '_COMPONENTS/GENERAL/RenderIf'
-import { AppData, DealsConfig } from 'Types'
+import { DealsConfig } from 'Types'
 import { hookStore } from '_STORES/Hooks'
 import HookFieldList from '_COMPONENTS/HOOK/HookField/HookFieldList'
-import { toJS } from 'mobx'
+import { observer } from 'mobx-react-lite'
 
-export default function Deals() {
+const Deals = observer(() => {
 
   const [options, setOptions] = useState<DealsConfig | null>(null)
-  const gestOrderHook = hookStore.defaultGuestOrderHook
+  const gestOrderHook = hookStore.getHook(hookStore.defaultGuestOrderHook.id) || hookStore.defaultGuestOrderHook
 
   useEffect(() => {
     setOptions(appDataStore.appData.parameters.w2p.deal)
@@ -70,11 +70,11 @@ export default function Deals() {
           </label>
 
           <RenderIf condition={options.syncPersonsForGuestOrders}>
-            <div className='p-4 border rounded-xl'>
+            <div className='p-4 border rounded-xl max-h-[600px] overflow-y-auto'>
               <HookFieldList
                 hook={gestOrderHook}
                 showHookParameters={false}
-                search={false} />
+                search={true} />
             </div>
           </RenderIf>
 
@@ -162,4 +162,6 @@ export default function Deals() {
     </>
 
   )
-}
+})
+
+export default Deals
