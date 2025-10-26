@@ -10,6 +10,7 @@ export interface AppData {
             person: string[]
         },
         W2PCIFW_IS_WOOCOMERCE_ACTIVE: boolean
+        W2PCIFW_GUEST_CHECKOUT_ENABLED: boolean
     },
     parameters: Parameters,
     build_url: string,
@@ -59,6 +60,7 @@ export interface DealsConfig {
     productsName: Block | null;
     productsComment: Block | null;
     syncPersonsForGuestOrders: boolean;
+    syncOrganizationsForGuestOrders: boolean;
     personGuestOrderOptions?: {}
 }
 

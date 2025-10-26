@@ -72,8 +72,6 @@ export default function Order({ order }: { order: OrderType }) {
         : null
 
     const lastDoneQuery = orderState.queries.find(query => query.state === "DONE")
-
-    console.log(orderState);
     
     return (
         <form onSubmit={e => sendOrder(e)}>

@@ -28,7 +28,7 @@ export default function CustomMetakeys({ onSelect, source }: Props) {
         onSelect && onSelect({ ...metaKey, exemple: `{{${metaKey.value}}}`, source: sourceState })
     }
 
-    const [sourceState, setSourceState] = useState(source)
+    const [sourceState, setSourceState] = useState<MetaKeySources>(source === "guestorder" ? "order" : source ?? "order")
 
     return (
         <div>
@@ -62,7 +62,7 @@ export default function CustomMetakeys({ onSelect, source }: Props) {
                             },
                         ]
                             .filter(option => {
-                                if (source === option.value) {
+                                if (sourceState === option.value) {
                                     return true
                                 }
                                 return false

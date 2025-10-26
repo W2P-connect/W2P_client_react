@@ -66,6 +66,7 @@ class AppDataStore {
                 index: 0
             },
             syncPersonsForGuestOrders: true,
+            syncOrganizationsForGuestOrders: true,
         },
         organization: {
             autoCreate: false,
@@ -96,6 +97,7 @@ class AppDataStore {
             productsName: null,
             productsComment: null,
             syncPersonsForGuestOrders: false,
+            syncOrganizationsForGuestOrders: false,
         },
         organization: {
             autoCreate: false,
@@ -123,6 +125,7 @@ class AppDataStore {
             W2PCIFW_HOOK_LIST: [],
             W2PCIFW_HOOK_SOURCES: [],
             W2PCIFW_META_KEYS: [],
+            W2PCIFW_GUEST_CHECKOUT_ENABLED: false,
             W2PCIFW_REQUIRED_FIELDS: {
                 deal: [],
                 organization: [],

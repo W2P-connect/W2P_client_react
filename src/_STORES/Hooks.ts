@@ -304,6 +304,103 @@ class HookStore {
                         "SkipOnExist": true
                     }
                 }
+            },
+            "woocommerce_guest_organization_order": {
+                "name": {
+                    value: [
+                        {
+                            variables: [
+                                {
+                                    label: "Billing company",
+                                    value: "billing_company",
+                                    source: "guestorder",
+                                    description: "Customer billing company.",
+                                    exemple: "Acme Inc.",
+                                    isFreeField: false,
+                                    id: "7b928a87-bd0e-49ff-bf68-04f9cdc93a10"
+                                }
+                            ],
+                            id: "610228ab-50cd-4ab2-867f-2034fa192fc1",
+                            index: 0
+                        }
+                    ],
+                    condition: {
+                        logicBlock: {
+                            enabled: false,
+                            fieldNumber: "1"
+                        }
+                    }
+                },
+                "address": {
+                    value: [
+                        {
+                            variables: [
+                                {
+                                    label: "Billing address 1",
+                                    value: "billing_address_1",
+                                    source: "guestorder",
+                                    description: "Customer billing street address (line 1).",
+                                    exemple: "123 Main Street",
+                                    isFreeField: false,
+                                    id: "6a94af9b-f273-4afe-a1d2-30bf25029b9a"
+                                },
+                                {
+                                    label: "Billing address 2",
+                                    value: "billing_address_2",
+                                    source: "guestorder",
+                                    description: "Customer billing street address (line 2).",
+                                    exemple: "Apartment 4B",
+                                    isFreeField: false,
+                                    id: "e3ee0463-8800-42c0-b69a-65c7695c5ac9"
+                                },
+                                {
+                                    label: "Billing city",
+                                    value: "billing_city",
+                                    source: "guestorder",
+                                    description: "Customer billing city.",
+                                    exemple: "New York",
+                                    isFreeField: false,
+                                    id: "b48bbe77-8fb3-43bf-ae3d-e0f3bd555d89"
+                                },
+                                {
+                                    label: "Billing postcode",
+                                    value: "billing_postcode",
+                                    source: "guestorder",
+                                    description: "Customer billing postal code.",
+                                    exemple: "10001",
+                                    isFreeField: false,
+                                    id: "92ea3220-6550-478f-8942-f75fc8607581"
+                                },
+                                {
+                                    label: "Billing state",
+                                    value: "billing_state",
+                                    source: "guestorder",
+                                    description: "Customer billing state or province.",
+                                    exemple: "NY",
+                                    isFreeField: false,
+                                    id: "0c513707-d73f-44bc-bc5b-c6be02fc3a08"
+                                },
+                                {
+                                    label: "Billing country",
+                                    value: "billing_country",
+                                    source: "guestorder",
+                                    description: "Customer billing country.",
+                                    exemple: "US",
+                                    isFreeField: false,
+                                    id: "e467481b-2718-414f-93de-54f22f099c7e"
+                                }
+                            ],
+                            id: "8f480a81-5e43-4933-bcb2-32180966c0a1",
+                            index: 0
+                        }
+                    ],
+                    condition: {
+                        logicBlock: {
+                            enabled: false,
+                            fieldNumber: "1"
+                        }
+                    }
+                }
             }
 
         },
@@ -842,6 +939,20 @@ class HookStore {
         option: this.emptyHook.option
     }
 
+    defaultGuestOrganizationOrderHook: Hook = {
+        label: 'Guest Order (organization)',
+        key: 'woocommerce_guest_organization_order',
+        description: 'Fired when an order is using a guest as organization.',
+        disabledFor: ['person', 'organization', 'deal'], // HIDDEN
+        source: 'guestorder',
+        category: 'organization',
+        show: false,
+        fields: [],
+        id: 'e85ac0d4-492c-480b-aa60-2f46b3e61006',
+        enabled: false,
+        option: this.emptyHook.option
+    }
+
     selectedHookId: Hook["id"] | null = null
 
     selectHookId(id: Hook["id"] | null) {
@@ -888,14 +999,14 @@ class HookStore {
 
     updateHookList(newHookList: Hook[]) {
         const guestOrderHook = this.getHook(this.defaultGuestOrderHook.id)
+        const guestOrganizationOrderHook = this.getHook(this.defaultGuestOrganizationOrderHook.id)
         runInAction(() => {
             const newHooks = newHookList
                 .map(hook => this.validHook(hook))
                 .filter((hook): hook is Hook => hook !== null);
 
             if (!guestOrderHook) newHooks.push(toJS(this.defaultGuestOrderHook))
-
-            console.log(newHooks);
+            if (!guestOrganizationOrderHook) newHooks.push(toJS(this.defaultGuestOrganizationOrderHook))
 
             this.hooks = newHooks
         })
