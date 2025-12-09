@@ -47,7 +47,7 @@ const Deals = observer(() => {
 
           <div className="mb-1 font-medium text-gray-900 text-sm leading-6">
             {translate("Default deal name (if not defined in the event) : ")}
-            <span className='mb-1 text-gray-700 text-xs italic'>
+            <span className='mb-1 text-gray-700 text-xs italic' style={{ whiteSpace: 'pre-line' }}>
               {options.defaultOrderName
                 ? getBlockExemple(options.defaultOrderName)
                 : null
@@ -67,8 +67,8 @@ const Deals = observer(() => {
               <h3 className='mt-8 mb-4 font-medium text-gray-900'>{translate("Guest orders sync")}</h3>
               
               {/* Navigation tabs */}
-              <div className=' mb-4 border-b-2 border-gray-200 relative'>
-              <div className='relative flex gap-0 bottom-[-1px]'>
+              <div className='relative mb-4 border-gray-200 border-b-2'>
+              <div className='bottom-[-1px] relative flex gap-0'>
               <div
                 onClick={() => setGuestOrderTab('person')}
                 className={classNames(

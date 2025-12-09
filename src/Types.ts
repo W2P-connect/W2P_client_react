@@ -98,7 +98,7 @@ export interface Subcategories {
 
 export interface MetaKey {
     description: string
-    exemple: string
+    exemple?: string
     label: string
     value: string
     source: MetaKeySources

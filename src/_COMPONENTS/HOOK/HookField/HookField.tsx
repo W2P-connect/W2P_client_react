@@ -161,7 +161,8 @@ const HookField = ({ hookField }: Props) => {
                 <div className={
                   classNames(
                     "transition-opacity opacity-100"
-                  )}>
+                  )}
+                  style={{ whiteSpace: 'pre-line' }}>
                   {
                     hookFieldStore.hasValue(hookField)
                       ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"

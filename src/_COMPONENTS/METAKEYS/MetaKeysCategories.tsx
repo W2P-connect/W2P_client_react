@@ -16,10 +16,6 @@ interface Props {
 }
 
 export default function MetaKeysCategories({ onSelect, source }: Props) {
-
-    console.log(source)
-
-
     const [currentCategory, setCurrentCategory] = useState<Item | null>(null)
     const [variables, setVariables] = useState<VariableType[]>([])
 
@@ -29,11 +25,11 @@ export default function MetaKeysCategories({ onSelect, source }: Props) {
 
     const addVariable = (variable: VariableType) => {
         setVariables(prv => {
-            if (variable.value !== prv[prv.length - 1]?.value) {
-                return [...prv, variable]
-            } else {
-                return prv
-            }
+            // if (variable.value !== prv[prv.length - 1]?.value) {
+            return [...prv, variable]
+            // } else {
+            //     return prv
+            // }
         })
     }
 

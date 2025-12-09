@@ -43,7 +43,7 @@ export default function QueryDetails({ query }: { query: Query }) {
                                         </div>
                                         <RenderIf condition={!!product.comments}>
                                             <div className="text-gray-500 italic">
-                                                Comments: {product.comments}
+                                                Comments: <span dangerouslySetInnerHTML={{ __html: product.comments ?? '' }} />
                                             </div>
                                         </RenderIf>
                                     </div>

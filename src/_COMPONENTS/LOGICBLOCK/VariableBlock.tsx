@@ -15,10 +15,17 @@ export const emptyBlock: Block = {
 
 export const getBlockExemple = (block: Block) => {
     if (block.variables) {
-        return block.variables.map((variable, index) =>
-            `${variable.exemple ? variable.exemple : variable.value}${index !== (block.variables.length - 1) ? ' ' : ''}`
-        )
+        return block.variables
+            .map(variable => ({ ...variable, value: variable.value.replace("{{line break}}", "\n") }))
+            .map((variable, index) => {
+                const value = variable.exemple ? variable.exemple : variable.value;
+                // Don't add space after line break
+                const separator = value.includes('\n') ? '' : (index !== (block.variables.length - 1) ? ' ' : '');
+                return `${value}${separator}`;
+            })
+            .join('')
     }
+    return '';
 }
 
 interface Props {
@@ -126,7 +133,7 @@ export default function VariableBlock({
             </div>
             {
                 showExemple ?
-                    <div className='flex justify-end mt-1 text-gray-700 text-xs italic'>
+                    <div className='flex justify-end mt-1 text-gray-700 text-xs italic' style={{ whiteSpace: 'pre-line' }}>
                         {getBlockExemple(block)}
                     </div>
                     : null
