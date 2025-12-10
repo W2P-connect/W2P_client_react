@@ -479,7 +479,8 @@ class HookStore {
                                     "value": "user_email",
                                     "exemple": "john.doe@exemple.com",
                                     "isFreeField": false,
-                                    "id": "062a38fc-9bfa-4188-a066-2d90093e9e74"
+                                    "source": "user",
+                                    "id": "062a38fc-9bfs-4188-a066-2d90093e9e74"
                                 }
                             ],
                             "id": "37659736-d9d3-448f-b693-810c777a4d61",
@@ -595,7 +596,7 @@ class HookStore {
                                     "source": "user",
                                     "exemple": "john.doe@exemple.com",
                                     "isFreeField": false,
-                                    "id": "062a38fc-9bfa-4188-a066-2d90093e9e74"
+                                    "id": "062a38fc-9bfa-4188-a066-2d90093eae74"
                                 }
                             ],
                             "id": "3ed59736-d9d3-448f-b693-810c777a4d61",
@@ -620,7 +621,7 @@ class HookStore {
                                     "source": "user",
                                     "exemple": "john.doe@exemple.com",
                                     "isFreeField": false,
-                                    "id": "062a38fc-9bfa-4188-a066-2d90093e9e74"
+                                    "id": "062a38fc-9bfa-4188-a066-2d90e93e9e74"
                                 }
                             ],
                             "id": "37659736-d9d3-448f-b693-810c777a4d61",
