@@ -6,7 +6,7 @@ export const useLoadPipedriveUsers = () => {
     const callPipedriveApi = useCallPipedriveApi()
 
     const loadPipedriveUsers = (e: React.FormEvent) => {
-        callPipedriveApi("users", null, null, null, e)
+        callPipedriveApi("users", { method: "get", version: "v1" }, null, null, e)
             .then(res => {
                 if (res) {
                     const newAppDataStore = appDataStore.appData

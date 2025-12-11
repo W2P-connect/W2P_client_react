@@ -92,7 +92,7 @@ export const useCallPipedriveApi = () => {
     // Define the function with proper TypeScript types
     const callPipedriveApi = async (
         uri: string,
-        options: AxiosRequestConfig | null,
+        options: AxiosRequestConfig & { version?: 'v1' | 'v2' } | null,
         abortSignal: AbortSignal | null = null,
         data: object | null = null,
         e: React.FormEvent | null = null
@@ -101,7 +101,7 @@ export const useCallPipedriveApi = () => {
         if (!appData.parameters.pipedrive.company_domain || !appData.parameters.pipedrive.api_key) {
             return null;
         } else {
-            const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/api/v1/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
+            const url = `https://${appData.parameters.pipedrive.company_domain}.pipedrive.com/api/${options?.version ?? "v2"}/${uri}?api_token=${appData.parameters.pipedrive.api_key}`;
             const res = await callApi(url, options = options ?? { method: "get" }, abortSignal, data, e)
             return res
         }

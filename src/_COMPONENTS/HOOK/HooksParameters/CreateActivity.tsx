@@ -44,7 +44,7 @@ function CreateActivity({ hook }: { hook: Hook }) {
     const loadPipedriveUsers = useLoadPipedriveUsers()
 
     const loadActivityTypes = (e: React.FormEvent) => {
-        callPipedriveApi("activityTypes", null, null, null, e)
+        callPipedriveApi("activityTypes", { method: "get", version: "v1" }, null, null, e)
             .then(res => {
                 if (res) {
                     const newAppDataStore = appDataStore.appData
