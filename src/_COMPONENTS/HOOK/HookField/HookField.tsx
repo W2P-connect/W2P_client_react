@@ -41,7 +41,7 @@ const HookField = ({ hookField }: Props) => {
     }
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { [key]: value });
   };
-  
+
   const updateOptionHookField = (key: keyof HookFieldType["condition"], value: any) => {
     selectedHook && hookStore.updateHookField(selectedHook, hookField.id, { condition: { ...hookField.condition, [key]: value } });
   };
@@ -49,7 +49,7 @@ const HookField = ({ hookField }: Props) => {
   const loadPipedriveUsers = useLoadPipedriveUsers()
 
   useEffect(() => {
-    if(hookField.enabled && hookFieldStore.isRequired(hookField)) {
+    if (hookField.enabled && hookFieldStore.isRequired(hookField)) {
       updateHookField("enabled", true)
     }
   }, [])
@@ -70,10 +70,11 @@ const HookField = ({ hookField }: Props) => {
       hookField.pipedrive.field_type === "enum" ||
       hookField.pipedrive.field_type === "user" ||
       hookField.pipedrive.field_type === "status" ||
+      hookField.pipedrive.field_type === "visible_to" ||
       hookField.pipedrive.field_type === "stage"
     ) {
       updateHookField('value', id)
-    } else if (hookField.pipedrive.field_type === "set" || hookField.pipedrive.field_type === "visible_to") {
+    } else if (hookField.pipedrive.field_type === "set") {
       if (Array.isArray(hookField.value)) {
         if (isNumberArray(hookField.value) && hookField.value.includes(id)) {
           updateHookField('value', hookField.value.filter(val => val !== id));
@@ -84,6 +85,10 @@ const HookField = ({ hookField }: Props) => {
         updateHookField('value', [id]);
       }
     }
+  }
+
+  const selectBoolean = (value: boolean) => {
+    updateHookField('value', value)
   }
 
   const renderStages = () => {
@@ -152,7 +157,7 @@ const HookField = ({ hookField }: Props) => {
                 toolTip="This field is required"
               />
               : null}
-            {`${hookField.pipedrive.name} `}
+            {`${hookField.pipedrive.field_name}`}
           </div>
 
           <div className='flex gap-5'>
@@ -167,7 +172,9 @@ const HookField = ({ hookField }: Props) => {
                     hookFieldStore.hasValue(hookField)
                       ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
                         ? getBlockExemple(hookField.value[0])
-                        : mayJsonParse(`${hookField.value}`, hookField.value)
+                        : Array.isArray(hookField.value) && hookField.value.length ?
+                          hookField.value.map(value => mayJsonParse(`${value}`, value)).join(', ')
+                          : mayJsonParse(`${hookField.value}`, hookField.value)
                       : <span>⚠️ you need to set a value</span>
 
                   }
@@ -186,8 +193,8 @@ const HookField = ({ hookField }: Props) => {
       </div>
       {selectedHook && hookField.enabled && open
         ? <div>
-          {additionalFieldsData[selectedHook.category][hookField.pipedrive.key]?.info
-            ? <p>{additionalFieldsData[selectedHook.category][hookField.pipedrive.key].info}</p>
+          {additionalFieldsData[selectedHook.category][hookField.pipedrive.field_code]?.info
+            ? <p>{additionalFieldsData[selectedHook.category][hookField.pipedrive.field_code].info}</p>
             : null}
 
           {/* FIELDTYPE SET */}
@@ -210,7 +217,7 @@ const HookField = ({ hookField }: Props) => {
             : null
           }
           {/* FIELDTYPE ENUM */}
-          {(hookField.pipedrive.field_type === "enum" || hookField.pipedrive.field_type === "status")
+          {(hookField.pipedrive.field_type === "enum" || hookField.pipedrive.field_type === "status" || hookField.pipedrive.field_type === "visible_to")
             ? hookField.pipedrive.options
               ? <div className='pipedrive-option-field-container'> {
                 hookField.pipedrive.options.map((option, index) =>
@@ -237,34 +244,6 @@ const HookField = ({ hookField }: Props) => {
             : null
           }
 
-          {/* FIELDTYPE VISIBLE_TO */}
-          {(hookField.pipedrive.field_type === "visible_to")
-            ? appDataStore.appData.parameters.pipedrive.users.length
-              ? <div className='pipedrive-option-field-container'> {
-                appDataStore.appData.parameters.pipedrive.users.map((user, index) =>
-                  <div
-                    key={index}
-                    onClick={e => selectOption(user.id)}
-                    className={`pipedrive-option-field ${(isNumberArray(hookField.value) && hookField.value.includes(user.id))
-                      ? "selected"
-                      : ""}`}
-                    style={{ backgroundColor: "white" }}
-                  >{user.name}</div>
-                )
-              }
-              </div>
-              : <form onSubmit={e => loadPipedriveUsers(e)}>
-                <button
-                  className='light-button'
-                >
-                  {appDataStore.appData.parameters.pipedrive.users.length
-                    ? translate("Reload pipedrive's users")
-                    : translate("Load pipedrive's users")
-                  }
-                </button>
-              </form>
-            : null
-          }
 
           {/* FIELDTYPE USER */}
           {(hookField.pipedrive.field_type === "user")
@@ -314,6 +293,27 @@ const HookField = ({ hookField }: Props) => {
             : null
           }
 
+          {/* FIELDTYPE BOOLEAN */}
+          {(hookField.pipedrive.field_type === "boolean")
+            ? <div className='pipedrive-option-field-container'>
+              <div
+                onClick={() => selectBoolean(true)}
+                className={`pipedrive-option-field ${typeof hookField.value === "boolean" && hookField.value === true ? "selected" : ""}`}
+                style={{ backgroundColor: "white" }}
+              >
+                Yes
+              </div>
+              <div
+                onClick={() => selectBoolean(false)}
+                className={`pipedrive-option-field ${typeof hookField.value === "boolean" && hookField.value === false ? "selected" : ""}`}
+                style={{ backgroundColor: "white" }}
+              >
+                No
+              </div>
+            </div>
+            : null
+          }
+
           <div>
             <h5 className='m-b-10 m-t-40 strong-1'>
               {translate("Condition")}
@@ -346,7 +346,7 @@ const HookField = ({ hookField }: Props) => {
 
               <div>
                 {
-                  linkableFields[selectedHook.category].includes(hookField.pipedrive.key)
+                  linkableFields[selectedHook.category].includes(hookField.pipedrive.field_code)
                     ? <label className='flex items-center gap-1'>
                       <input
                         type='checkbox'

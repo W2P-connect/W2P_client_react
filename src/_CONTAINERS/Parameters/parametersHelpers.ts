@@ -17,10 +17,12 @@ export const isFieldTypeText = (fieldType: PipedriveFieldType) => {
         || fieldType === "phone"
         || fieldType === "text"
         || fieldType === "varchar_options"
+
 }
 
 export const isLogicBlockField = (field: PipedriveField) => {
-    return isFieldTypeText(field.field_type)
+    return isFieldTypeText(field.field_type as PipedriveFieldType)
         || field.field_type === "date"
-        || isFieldTypeNumber(field.field_type)
+        || field.field_type === "time"
+        || isFieldTypeNumber(field.field_type as PipedriveFieldType)
 } 

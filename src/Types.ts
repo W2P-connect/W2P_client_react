@@ -151,9 +151,9 @@ export type FieldCondition = {
 export type BaseHookField = {
     enabled: boolean;
     id: string;
-    value: number | Array<number> | Block[] | string;
+    value: number | Array<number> | Block[] | string | boolean;
     condition: FieldCondition;
-    pipedriveFieldId: number;
+    pipedriveFieldId: string;
     hookId: string;
 };
 
@@ -262,7 +262,7 @@ export type PayloadData = {
     isLogicBlock: boolean,
     key: string,
     name: string,
-    pipedriveFieldId: number,
+    pipedriveFieldId: string,
     value: any,
 }
 
@@ -513,25 +513,13 @@ export type PipedriveActivityType = {
     update_time: string; // format "YYYY-MM-DD HH:mm:ss"
 };
 export interface PipedriveField {
-    id: number;
-    key: string;
-    name: string;
-    order_nr: number;
+    field_code: string;
+    field_name: string;
     field_type: PipedriveFieldType;
-    add_time: string;
-    update_time: string | null;
-    active_flag: boolean;
-    edit_flag: boolean;
-    index_visible_flag: boolean;
-    details_visible_flag: boolean;
-    add_visible_flag: boolean;
-    important_flag: boolean;
-    bulk_edit_allowed: boolean;
-    search_enabled: boolean;
-    filtering_allowed: boolean;
-    sortable_flag: boolean;
-    mandatory_flag: boolean;
-    json: any;
+    is_custom_field: boolean;
+    is_optional_response_field: boolean
+    subfields: null | any;
+
     options?: Array<{ id: number; label: string; color?: string }>; // If the field has options like dropdowns
     category: Category  //Ajout manuel car n'est pas inclus par détault dans Pipedrive ! (gestion plus simple)
 }
@@ -554,7 +542,7 @@ export type PipedriveFieldType =
     | 'people'
     | 'stage'
     | 'address'
-    | 'bool'
+    | 'boolean'
     | 'email'
     | 'timeinterval'
     | 'varchar_options'

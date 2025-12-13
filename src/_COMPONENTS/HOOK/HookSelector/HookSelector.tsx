@@ -70,7 +70,7 @@ const HookSelector = ({ preHook, category }: Props) => {
                         <div className='flex flex-wrap gap-[4px] my-1'>
                             {hook.fields
                                 .filter(field => field.enabled)
-                                .sort((a, b) => a.pipedrive.name.length - b.pipedrive.name.length)
+                                .sort((a, b) => a.pipedrive.field_name.length - b.pipedrive.field_name.length)
                                 .map((field: HookField) => {
                                     return <div
                                         className='flex gap-1 bg-gray-100 shadow-sm px-2 py-[2px] border rounded-xl'
@@ -82,7 +82,7 @@ const HookSelector = ({ preHook, category }: Props) => {
                                                     toolTip="no value configured"
                                                 />
                                             </RenderIf>
-                                            {field.pipedrive.name}
+                                            {field.pipedrive.field_name}
                                         </div>
                                     </div>
                                 }

@@ -31,7 +31,7 @@ class PipedriveFieldStore {
     addPipedriveFields(PipedriveFields: PipedriveField[]) {
         const fieldqNoDuplicate = deepCopy(this.fields).filter((existingField: PipedriveField) =>
             !PipedriveFields.some(newField =>
-                newField.id === existingField.id && newField.category === existingField.category
+                newField.field_code === existingField.field_code && newField.category === existingField.category
             )
         );
 
@@ -46,15 +46,15 @@ class PipedriveFieldStore {
 
 
     addPipedriveField(pipedriveField: PipedriveField) {
-        if (!this.getPipedriveField(pipedriveField.id, pipedriveField.category)) {
+        if (!this.getPipedriveField(pipedriveField.field_code, pipedriveField.category)) {
             runInAction(() => {
                 this.fields.push(pipedriveField);
             })
         }
     }
 
-    getPipedriveField(id: number, category: Category): PipedriveField | undefined {
-        return this.fields.find(field => field.id === id && field.category === category);
+    getPipedriveField(field_code: string, category: Category): PipedriveField | undefined {
+        return this.fields.find(field => field.field_code === field_code && field.category === category);
     }
 
     removeUnvalidFields = (pipedriveFieldsResponse: PipedriveField[]) => {
@@ -64,7 +64,7 @@ class PipedriveFieldStore {
     }
 
     isFieldValid(field: PipedriveField): boolean {
-        return (field.bulk_edit_allowed && field.id && !unusableFieldsKey.includes(field.key) && field.category)
+        return (!field.is_optional_response_field && field.field_code && !unusableFieldsKey.includes(field.field_code) && field.category)
             ? true
             : false
     }

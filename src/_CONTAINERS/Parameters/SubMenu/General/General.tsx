@@ -198,7 +198,7 @@ const Connexion = () => {
             const fieldValue = defaultValues[fieldKey];
             const fields = hookStore.getFields(hook.id)
             fields.forEach((field: HookField) => {
-              if (field.pipedrive.key === fieldKey && field.pipedrive.category === category) {
+              if (field.pipedrive.field_code === fieldKey && field.pipedrive.category === category) {
                 hookStore.updateHookField(hook, field.id, {
                   value: fieldValue.value,
                   condition: { ...field.condition, ...fieldValue.condition },

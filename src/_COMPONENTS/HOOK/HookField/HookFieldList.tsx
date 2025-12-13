@@ -28,9 +28,9 @@ const HookFieldList = ({ hook, search = true, showHookParameters = true }: Props
         hook
             ? categoryFields
                 .filter(field => searchField
-                    ? field.name.includes(searchField)
+                    ? field.field_name.includes(searchField)
                     : true)
-                .map(field => hookStore.getHookFieldFromPipedrive(hook.id, field.id))
+                .map(field => hookStore.getHookFieldFromPipedrive(hook.id, field.field_code))
                 .filter((hookfield): hookfield is HookFieldType => hookfield !== null)
             : []
         , [hook.id, categoryFields, searchField])
@@ -49,7 +49,7 @@ const HookFieldList = ({ hook, search = true, showHookParameters = true }: Props
                             <Datalist
                                 label={translate('Search a Pipedrive field')}
                                 placeholder={translate('Name, owner, email,...')}
-                                items={categoryFields.map(field => ({ value: field.name, id: field.id }))}
+                                items={categoryFields.map(field => ({ value: field.field_name, id: field.field_code }))}
                                 value={searchField}
                                 onInput={setSearchField}
                             />

@@ -26,6 +26,7 @@ export const unusableFieldsKey: string[] = [
     "open_deals_count",
     "add_time",
     "update_time",
+    "is_deleted",
     //deal
     "value",
     // "won_time",
@@ -33,7 +34,10 @@ export const unusableFieldsKey: string[] = [
     "expected_close_date",
     "channel_id",
     "person_id", //Forcément l'utilisateur
-    "label_ids", //Doublon avec Label ?
+    "local_won_date",
+    "local_lost_date",
+    "local_close_date",
+    "close_time",
 ]
 
 export const priorityFieldsKey: Record<Category, Array<string>> = {

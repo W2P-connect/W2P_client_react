@@ -471,7 +471,7 @@ class HookStore {
                         "SkipOnExist": true
                     },
                 },
-                "email": {
+                "emails": {
                     value: [
                         {
                             "variables": [
@@ -480,7 +480,7 @@ class HookStore {
                                     "exemple": "john.doe@exemple.com",
                                     "isFreeField": false,
                                     "source": "user",
-                                    "id": "062a38fc-9bfs-4188-a066-2d90093e9e74"
+                                    "id": "062a38fc-9bfa-4188-a066-2d90093e9e74"
                                 }
                             ],
                             "id": "37659736-d9d3-448f-b693-810c777a4d61",
@@ -612,7 +612,7 @@ class HookStore {
                         "SkipOnExist": true
                     },
                 },
-                "email": {
+                "emails": {
                     value: [
                         {
                             "variables": [
@@ -803,7 +803,7 @@ class HookStore {
                         }
                     },
                 },
-                "email": {
+                "emails": {
                     "value": [
                         {
                             "variables": [
@@ -893,7 +893,7 @@ class HookStore {
                 fieldNumber: '1'
             }
         },
-        pipedriveFieldId: 0,
+        pipedriveFieldId: '',
         hookId: ''
     };
 
@@ -1083,13 +1083,13 @@ class HookStore {
         if (pipedriveFieldsStore.isFieldValid(pipedriveField)) {
             const hIdx = hookIndex ?? hookStore.getHookIndex(hookId);
 
-            const existingField = this.hooks[hIdx].fields.find(field => field.pipedriveFieldId === pipedriveField.id)
+            const existingField = this.hooks[hIdx].fields.find(field => field.pipedriveFieldId === pipedriveField.field_code)
 
             if (!existingField) {
                 const newHookField: HookField = {
                     ...this.emptyHookField,
                     id: uuidv4(),
-                    pipedriveFieldId: pipedriveField.id,
+                    pipedriveFieldId: pipedriveField.field_code,
                     pipedrive: pipedriveField,
                     hookId,
                 };
@@ -1102,7 +1102,7 @@ class HookStore {
             } else {
                 runInAction(() => {
                     this.hooks[hIdx].fields = this.hooks[hIdx].fields.map(field =>
-                        field.pipedriveFieldId === pipedriveField.id
+                        field.pipedriveFieldId === pipedriveField.field_code
                             ? { ...field, pipedrive: deepCopy(pipedriveField) }
                             : field
                     );
@@ -1115,7 +1115,7 @@ class HookStore {
         return null;
     }
 
-    getHookFieldFromPipedrive(hookId: Hook["id"], pipedriveFieldId: PipedriveField["id"]): HookField | null {
+    getHookFieldFromPipedrive(hookId: Hook["id"], pipedriveFieldId: PipedriveField["field_code"]): HookField | null {
         const hook = hookStore.getHook(hookId);
 
         if (hook) {

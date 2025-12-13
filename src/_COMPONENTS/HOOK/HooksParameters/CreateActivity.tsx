@@ -6,7 +6,7 @@ import { classNames, updateIn, useCallPipedriveApi } from 'utils/helpers'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { translate } from 'translation'
-import { Hook } from 'Types'
+import { Hook, PipedriveActivityType } from 'Types'
 import { useLoadPipedriveUsers } from 'utils/pipedrive'
 import InputCheckbox from '_COMPONENTS/FORMS/InputCheckbox/InputCheckbox'
 
@@ -49,6 +49,7 @@ function CreateActivity({ hook }: { hook: Hook }) {
                 if (res) {
                     const newAppDataStore = appDataStore.appData
                     newAppDataStore.parameters.pipedrive.activityTypes = res.data.data
+                        .filter((activityType: PipedriveActivityType) => activityType.active_flag)
                     appDataStore.setAppData(newAppDataStore)
                 }
             })

@@ -23,7 +23,7 @@ class HookFieldStore {
                 fieldNumber: '1'
             }
         },
-        pipedriveFieldId: 0,
+        pipedriveFieldId: '',
         hookId: ''
     };
 
@@ -95,7 +95,7 @@ class HookFieldStore {
     isImportant(hookField: HookField): boolean {
         const hook = hookStore.hooks.find(hook => hook.id === hookField.hookId)
         return (pipedriveFieldsStore.isFieldValid(hookField.pipedrive)
-            && hook && priorityFieldsKey[hook.category]?.includes(hookField.pipedrive.key))
+            && hook && priorityFieldsKey[hook.category]?.includes(hookField.pipedrive.field_code))
             ? true
             : false
     }
@@ -103,7 +103,7 @@ class HookFieldStore {
     isRequired(hookField: HookField): boolean {
         const hook = hookStore.hooks.find(hook => hook.id === hookField.hookId)
         if (hook && requiredFieldsKey[hook.category][hook.key]) {
-            return requiredFieldsKey[hook.category][hook.key]?.includes(hookField.pipedrive.key)
+            return requiredFieldsKey[hook.category][hook.key]?.includes(hookField.pipedrive.field_code)
         } else {
             return false
         }
