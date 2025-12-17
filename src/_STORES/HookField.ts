@@ -116,17 +116,18 @@ class HookFieldStore {
             return !isNaN(value) && value > 0;
         }
 
+        if (typeof value === "boolean") {          
+            return true;
+        }
+
         if (typeof value === "string") {
             return value.trim().length > 0;
         }
 
         if (Array.isArray(value)) {
-            // Array<number>
             if (typeof value[0] === "number") {
                 return value.length > 0;
             }
-
-            // Block[]
             return (value as Block[]).some(block => block.variables.length > 0);
         }
 

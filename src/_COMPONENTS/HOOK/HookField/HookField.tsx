@@ -29,6 +29,33 @@ const HookField = ({ hookField }: Props) => {
 
   const [open, setOpen] = useState<boolean>(false)
 
+  // Format the displayed value based on its type
+  const getDisplayValue = (hookField: HookFieldType): string | JSX.Element => {
+    if (!hookFieldStore.hasValue(hookField)) {
+      return <span>⚠️ you need to set a value</span>
+    }
+
+    const value = hookField.value
+
+    // Handle boolean values
+    if (typeof value === "boolean") {
+      return value ? "Yes" : "No"
+    }
+
+    // Handle array of blocks (LogicBlocks)
+    if (Array.isArray(value) && value.length && typeof value[0] !== "number") {
+      return getBlockExemple(value[0])
+    }
+
+    // Handle array of numbers/strings
+    if (Array.isArray(value) && value.length) {
+      return value.map(v => mayJsonParse(`${v}`, v)).join(', ')
+    }
+
+    // Handle other values (string, number, etc.)
+    return mayJsonParse(`${value}`, value)
+  }
+
   const selectedHook = useMemo(() => hookStore.getHook(hookField.hookId), [hookField])
 
   const updateHookField = (key: keyof HookFieldType, value: any) => {
@@ -168,16 +195,7 @@ const HookField = ({ hookField }: Props) => {
                     "transition-opacity opacity-100"
                   )}
                   style={{ whiteSpace: 'pre-line' }}>
-                  {
-                    hookFieldStore.hasValue(hookField)
-                      ? Array.isArray(hookField.value) && hookField.value.length && typeof hookField.value[0] !== "number"
-                        ? getBlockExemple(hookField.value[0])
-                        : Array.isArray(hookField.value) && hookField.value.length ?
-                          hookField.value.map(value => mayJsonParse(`${value}`, value)).join(', ')
-                          : mayJsonParse(`${hookField.value}`, hookField.value)
-                      : <span>⚠️ you need to set a value</span>
-
-                  }
+                  {getDisplayValue(hookField)}
                 </div>
 
               </div>
