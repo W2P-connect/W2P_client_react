@@ -1,11 +1,15 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useContext, useEffect, useState } from 'react'
 import ProgressBar from '_COMPONENTS/GENERAL/ProgressBar/ProgressBar';
 import { translate } from 'translation';
 import { classNames, useCallApi } from 'utils/helpers';
 import { useNotification } from '_CONTEXT/hook/contextHook';
+import { PopupContext } from '_CONTEXT/PopupContext';
 import { appDataStore } from '_STORES/AppData';
+import { hookStore } from '_STORES/Hooks';
+import { Hook, HookField } from 'Types';
 import Tooltip from '_COMPONENTS/GENERAL/ToolType/ToolType.';
 import RenderIf from '_COMPONENTS/GENERAL/RenderIf';
+import SyncPreviewModal from './SyncPreviewModal';
 
 interface SyncData {
     running: boolean;
@@ -63,6 +67,7 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
 
     const callApi = useCallApi()
     const { addNotification } = useNotification()
+    const { addPopupContent, showPopup } = useContext(PopupContext)
 
     const [syncData, setSyncData] = useState<SyncData>(emptySyncData)
 
@@ -112,59 +117,143 @@ export default function Syncronize({ checkPipedriveApi, checkW2pAPI }: Props) {
         }
     }
 
-    const syncroniseAll = async (e: FormEvent, resume: boolean) => {
-        e.preventDefault()
-        if (window.confirm("Are you sure you have correctly configured your settings for the 'User Updated' and order events ?")) {
 
-            const w2pOk = await checkW2pAPI(e, false)
-            const pipeOk = await checkPipedriveApi(e, false)
+    // Collect synchronization data
+    const collectSyncData = () => {
+        const syncInfo: {
+            personHook?: { hook: Hook; fields: HookField[] };
+            organizationHook?: { hook: Hook; fields: HookField[] };
+            dealHooks: { hook: Hook; fields: HookField[] }[];
+        } = {
+            dealHooks: []
+        }
 
-            if (w2pOk && pipeOk) {
-                !resume && setSyncData(prv => ({
-                    ...prv,
-                    running: false,
-                    sync_progress_users: 0,
-                    sync_progress_orders: 0,
-                    last_heartbeat: "",
-                    last_error: "",
-                    sync_additional_datas: {
-                        total_users: 0,
-                        current_user: 0,
-                        total_orders: 0,
-                        current_order: 0,
-                        current_user_index: 0,
-                        current_order_index: 0,
-                        total_person_errors: 0,
-                        total_person_uptodate: 0,
-                        total_person_done: 0,
-                        total_order_errors: 0,
-                        total_order_uptodate: 0,
-                        total_order_done: 0,
-                    },
-                }))
-                callApi(
-                    `${appDataStore.appData.w2pcifw_client_rest_url}/start-sync`,
-                    { method: "GET" },
-                    null,
-                    { "resume": resume, time: new Date().getTime() }
-                )
-                    .then(async res => {
-                        setSyncData(prv => ({ ...prv, running: true }))
-                        addNotification({
-                            "error": !res?.data?.success,
-                            "content": res?.data?.message
-                                ? res.data.message
-                                : res?.data?.success ? "Synchronization has started" : "Failed to start synchronization"
-                        })
-                    })
-                    .catch(error => {
-                        addNotification({
-                            "error": true,
-                            "content": translate("Wa have encountered an error, try again later")
-                        })
-                    })
+        // Find User Updated hook for persons
+        const userUpdatedPreHook = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST.find(
+            hook => hook.source === "user" && hook.label.toLowerCase().includes("user updated")
+        )
+
+        if (userUpdatedPreHook) {
+            // Person hook
+            const personHook = hookStore.getHookFromPreHook(userUpdatedPreHook, "person")
+            if (personHook.enabled) {
+                const personFields = hookStore.getFields(personHook.id).filter(f => f.enabled)
+                if (personFields.length > 0) {
+                    syncInfo.personHook = { hook: personHook, fields: personFields }
+                }
+            }
+
+            // Organization hook
+            const organizationHook = hookStore.getHookFromPreHook(userUpdatedPreHook, "organization")
+            if (organizationHook.enabled) {
+                const organizationFields = hookStore.getFields(organizationHook.id).filter(f => f.enabled)
+                if (organizationFields.length > 0) {
+                    syncInfo.organizationHook = { hook: organizationHook, fields: organizationFields }
+                }
             }
         }
+
+        // Find all enabled deal hooks (only specific order hooks)
+        const allowedOrderHooks = [
+            "Order on hold",
+            "Order processing",
+            "Order pending",
+            "Order completed",
+            "Order refunded",
+            "Order canceled",
+            "Order failed"
+        ]
+
+        const dealPreHooks = appDataStore.appData.CONSTANTES.W2PCIFW_HOOK_LIST.filter(
+            hook => !hook.disabledFor?.includes("deal") && allowedOrderHooks.includes(hook.label)
+        )
+
+        dealPreHooks.forEach(preHook => {
+            const dealHook = hookStore.getHookFromPreHook(preHook, "deal")
+            if (dealHook.enabled) {
+                const dealFields = hookStore.getFields(dealHook.id).filter(f => f.enabled)
+                if (dealFields.length > 0) {
+                    syncInfo.dealHooks.push({ hook: dealHook, fields: dealFields })
+                }
+            }
+        })
+
+        return syncInfo
+    }
+
+
+    // Start synchronization (extracted from syncroniseAll)
+    const startSync = async (resume: boolean) => {
+        const w2pOk = await checkW2pAPI({ preventDefault: () => {} } as FormEvent, false)
+        const pipeOk = await checkPipedriveApi({ preventDefault: () => {} } as FormEvent, false)
+
+        if (w2pOk && pipeOk) {
+            !resume && setSyncData(prv => ({
+                ...prv,
+                running: false,
+                sync_progress_users: 0,
+                sync_progress_orders: 0,
+                last_heartbeat: "",
+                last_error: "",
+                sync_additional_datas: {
+                    total_users: 0,
+                    current_user: 0,
+                    total_orders: 0,
+                    current_order: 0,
+                    current_user_index: 0,
+                    current_order_index: 0,
+                    total_person_errors: 0,
+                    total_person_uptodate: 0,
+                    total_person_done: 0,
+                    total_order_errors: 0,
+                    total_order_uptodate: 0,
+                    total_order_done: 0,
+                },
+            }))
+            callApi(
+                `${appDataStore.appData.w2pcifw_client_rest_url}/start-sync`,
+                { method: "GET" },
+                null,
+                { "resume": resume, time: new Date().getTime() }
+            )
+                .then(async res => {
+                    setSyncData(prv => ({ ...prv, running: true }))
+                    addNotification({
+                        "error": !res?.data?.success,
+                        "content": res?.data?.message
+                            ? res.data.message
+                            : res?.data?.success ? "Synchronization has started" : "Failed to start synchronization"
+                    })
+                })
+                .catch(error => {
+                    addNotification({
+                        "error": true,
+                        "content": translate("Wa have encountered an error, try again later")
+                    })
+                })
+        }
+    }
+
+    const syncroniseAll = async (e: FormEvent, resume: boolean) => {
+        e.preventDefault()
+        
+        // Collect synchronization data
+        const syncInfo = collectSyncData()
+        
+        // Show preview modal
+        const modalContent = (
+            <SyncPreviewModal
+                syncInfo={syncInfo}
+                onCancel={() => {
+                    showPopup(false)
+                }}
+                onStart={async () => {
+                    showPopup(false)
+                    await startSync(resume)
+                }}
+            />
+        )
+        addPopupContent(modalContent, "900px")
     }
 
     return (
