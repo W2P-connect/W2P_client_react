@@ -1,6 +1,8 @@
 import React from 'react'
 import { translate } from 'translation'
-import { Hook, HookField } from 'Types'
+import { Hook, HookField, Block } from 'Types'
+import { mayJsonParse } from 'utils/helpers'
+import { getBlockExemple } from '_COMPONENTS/LOGICBLOCK/VariableBlock'
 import MainButton from '_COMPONENTS/GENERAL/MainButton/MainButton'
 
 interface SyncInfo {
@@ -15,12 +17,49 @@ interface Props {
     onStart: () => void
 }
 
+// Field badge component
+const FieldBadge = ({ field }: { field: HookField }) => {
+    // Get example value from field
+    const getExampleValue = (): string => {
+        const value = field.value
+
+        // Handle array of blocks (LogicBlocks)
+        if (Array.isArray(value) && value.length && typeof value[0] !== "number") {
+            return getBlockExemple(value[0] as Block)
+        }
+
+        // Handle array of numbers/strings
+        if (Array.isArray(value) && value.length) {
+            return value.map(v => mayJsonParse(`${v}`, v)).join(', ')
+        }
+
+        // Handle boolean values
+        if (typeof value === "boolean") {
+            return value ? translate("Yes") : translate("No")
+        }
+
+        // Handle other values (string, number, etc.)
+        return mayJsonParse(`${value}`, value)
+    }
+
+    const exampleValue = getExampleValue()
+
+    return (
+        <div className="flex items-center gap-0.5 bg-gray-100 shadow-sm px-2 py-[2px] border rounded-xl">
+            <span>{field.pipedrive.field_name}</span>
+            {exampleValue && (
+                <span className="text-gray-600 text-xs italic">: {exampleValue}</span>
+            )}
+        </div>
+    )
+}
+
 export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props) {
     return (
         <div className="p-6">
             <h2 className="mb-4 font-bold text-2xl">{translate("Synchronization Preview")}</h2>
             <p className="mb-2">{translate("The following data will be synchronized")}</p>
-            <p className="mb-6 text-sm">
+            <p className="mb-6">
                 {translate("If you want to change the data being synchronized, go to each category’s settings to configure your hooks and fields.")}
             </p>
 
@@ -38,12 +77,7 @@ export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props)
                                             {syncInfo.personHook.fields
                                                 .sort((a, b) => a.pipedrive.field_name.length - b.pipedrive.field_name.length)
                                                 .map((field: HookField) => (
-                                                    <div
-                                                        key={field.id}
-                                                        className="flex gap-1 bg-gray-100 shadow-sm px-2 py-[2px] border rounded-xl"
-                                                    >
-                                                        {field.pipedrive.field_name}
-                                                    </div>
+                                                    <FieldBadge key={field.id} field={field} />
                                                 ))}
                                         </div>
                                     )}
@@ -77,12 +111,7 @@ export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props)
                                             {syncInfo.organizationHook.fields
                                                 .sort((a, b) => a.pipedrive.field_name.length - b.pipedrive.field_name.length)
                                                 .map((field: HookField) => (
-                                                    <div
-                                                        key={field.id}
-                                                        className="flex gap-1 bg-gray-100 shadow-sm px-2 py-[2px] border rounded-xl"
-                                                    >
-                                                        {field.pipedrive.field_name}
-                                                    </div>
+                                                    <FieldBadge key={field.id} field={field} />
                                                 ))}
                                         </div>
                                     )}
@@ -106,7 +135,7 @@ export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props)
 
 
             {/* Orders Category */}
-            <div className="mb-6">
+            <div className="mb-2">
                 <h3 className="mb-2 font-semibold text-lg">{translate("Orders")}</h3>
                 {syncInfo.dealHooks.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
@@ -122,12 +151,7 @@ export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props)
                                             {dealHookInfo.fields
                                                 .sort((a, b) => a.pipedrive.field_name.length - b.pipedrive.field_name.length)
                                                 .map((field: HookField) => (
-                                                    <div
-                                                        key={field.id}
-                                                        className="flex gap-1 bg-gray-100 shadow-sm px-2 py-[2px] border rounded-xl"
-                                                    >
-                                                        {field.pipedrive.field_name}
-                                                    </div>
+                                                    <FieldBadge key={field.id} field={field} />
                                                 ))}
                                         </div>
                                     )}
@@ -141,6 +165,12 @@ export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props)
                     </div>
                 )}
             </div>
+
+            <p className="mt-2 mb-6">
+                {translate("The synchronization of each order depends on its current status.")}
+                <br />
+                {translate("Only orders with configured status hooks will be synchronized.")}
+            </p>
 
             <div className="flex justify-end gap-2 mt-6">
                 <MainButton
@@ -159,6 +189,8 @@ export default function SyncPreviewModal({ syncInfo, onCancel, onStart }: Props)
                     {translate("Start Synchronization")}
                 </MainButton>
             </div>
+
+
         </div>
     )
 }
