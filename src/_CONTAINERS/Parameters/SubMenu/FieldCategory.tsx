@@ -34,7 +34,7 @@ const FieldCategory = ({ category }: { category: Category }) => {
   const getCategoryFields = (e: React.FormEvent) => {
     e.preventDefault()
     if (hookStore.selectedHookId) {
-      callPipedriveApi(`${category}Fields`, null, null, null, e)
+      callPipedriveApi(`${category}Fields`, null, null, { limit: 500 }, e)
         .then((res: AxiosResponse<any, any> | null) => {
           if (!res?.data?.data) {
             throw Error("No data in Pipedrive response")
