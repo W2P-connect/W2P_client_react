@@ -86,7 +86,7 @@ class AppDataStore {
         hookList: [],
         cart_duration: 2,
         deal: {
-            amountsAre: "Tax exclusive",
+            amountsAre: "exclusive",
             defaultOrderName: {
                 variables: [],
                 id: '',

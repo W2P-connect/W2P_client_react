@@ -139,7 +139,7 @@ const HookField = ({ hookField }: Props) => {
     return groupedStagesArray.map(group => (
       <div key={group.pipeline_name} className='flex m-b-10 column'>
         <div className='m-b-5 strong-1'>{group.pipeline_name}</div>
-        <div className='flex gap-1'>
+        <div className='flex flex-wrap gap-1'>
           {
             group.stages.map(stage => (
               <div
