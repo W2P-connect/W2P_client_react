@@ -81,12 +81,16 @@ const HookField = ({ hookField }: Props) => {
     }
   }, [])
 
-  const loadPipedriveStages = (e: FormEvent) => {
+  const loadPipedriveStages = async (e: FormEvent) => {
+    const pipelines = await callPipedriveApi("pipelines", null, null, { limit: 500 }, e)
     callPipedriveApi("stages", null, null, null, e)
       .then(res => {
         if (res) {
           const newAppDataStore = appDataStore.appData
-          newAppDataStore.parameters.pipedrive.stages = res.data.data
+          newAppDataStore.parameters.pipedrive.stages = res.data.data.map((stage: any) => ({
+            ...stage,
+            pipeline_name: pipelines?.data?.data?.find((pipeline: any) => pipeline.id === stage.pipeline_id)?.name ?? undefined
+          }))
           appDataStore.setAppData(newAppDataStore)
         }
       })

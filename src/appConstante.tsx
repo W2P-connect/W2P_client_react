@@ -29,6 +29,16 @@ export const unusableFieldsKey: string[] = [
     "is_deleted",
     //deal
     "value",
+    "stage_change_time",
+    "last_activity_id",
+    "next_activity_id",
+    "add_time",
+    "update_time",
+    "last_incoming_mail_time",
+    "last_outgoing_mail_time",
+    "activities_count",
+    
+
     // "won_time",
     "lost_time",
     "expected_close_date",
